@@ -10,10 +10,10 @@ something Wyatt can open in a browser and screenshot.
 
 ## Phases
 
-- [ ] **Phase 1: Foundation** - Password gate, design system, shared shell, scope doc moved to /plan
-- [ ] **Phase 2: Public pages** - Home, Workbooks, Research, Groups, About, Contact with client feedback applied
-- [ ] **Phase 3: Accounts & member area** - Firebase auth (with local demo mode), My Path, self-service deletion
-- [ ] **Phase 4: Interactive workbook** - Workbook at /workbook, native styling, progress-only sync
+- [x] **Phase 1: Foundation** - Password gate, design system, shared shell, scope doc moved to /plan
+- [x] **Phase 2: Public pages** - Home, Workbooks, Research, Groups, About, Contact with client feedback applied
+- [x] **Phase 3: Accounts & member area** - Firebase auth (with local demo mode), My Path, self-service deletion
+- [x] **Phase 4: Interactive workbook** - Workbook at /workbook, native styling, progress-only sync
 
 ## Phase Details
 
@@ -30,8 +30,8 @@ something Wyatt can open in a browser and screenshot.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: Move scope doc to /plan; build the password gate as a shared include
-- [ ] 01-02: Design tokens, fonts, shared shell components (header/nav/footer), base layout
+- [x] 01-01: Move scope doc to /plan; build the password gate as a shared include
+- [x] 01-02: Design tokens, fonts, shared shell components (header/nav/footer), base layout
 
 ### Phase 2: Public pages
 **Goal**: All six public pages live with the client's corrections applied — the two-door homepage, groups-first video framing, and every CSV wording ruling.
@@ -47,9 +47,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: Homepage
-- [ ] 02-02: Workbooks + Research pages
-- [ ] 02-03: Groups, About, Contact, privacy/accessibility/404
+- [x] 02-01: Homepage
+- [x] 02-02: Workbooks + Research pages
+- [x] 02-03: Groups, About, Contact, privacy/accessibility/404
 
 ### Phase 3: Accounts & member area
 **Goal**: A visitor can create an account, sign in, and land in a member area that knows them — running against Firebase when configured, and against a labeled local demo mode when not.
@@ -65,8 +65,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: Auth layer (Firebase + demo fallback), join/sign-in screens
-- [ ] 03-02: My Path member area, series shells, account settings + deletion
+- [x] 03-01: Auth layer (Firebase + demo fallback), join/sign-in screens
+- [x] 03-02: My Path member area, series shells, account settings + deletion
 
 ### Phase 4: Interactive workbook
 **Goal**: The interactive workbook lives at /workbook feeling native to the platform, and signed-in users keep their place across devices without their writing ever leaving the device.
@@ -80,14 +80,14 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: Copy workbook in, integrate shell/styling, platform links
-- [ ] 04-02: Progress-only sync + My Path progress card + privacy copy update
+- [x] 04-01: Copy workbook in, integrate shell/styling, platform links
+- [x] 04-02: Progress-only sync + My Path progress card + privacy copy update
 
 ## Progress
 
 | Phase | Status | Completed |
 |-------|--------|-----------|
-| 1. Foundation | Not started | - |
-| 2. Public pages | Not started | - |
-| 3. Accounts & member area | Not started | - |
-| 4. Interactive workbook | Not started | - |
+| 1. Foundation | Complete | 2026-08-21 |
+| 2. Public pages | Complete | 2026-08-21 |
+| 3. Accounts & member area | Complete | 2026-08-21 |
+| 4. Interactive workbook | Complete | 2026-08-21 |

@@ -564,7 +564,7 @@ function viewWelcome() {
         ${CHECKLEAF}
         <div>
           <h2>Everything you write stays with you.</h2>
-          <p>This workbook asks you to write about real hurts. So there are <b>no accounts, no logins, and no server</b>. Your words are saved only in this browser, on this device — they are never sent anywhere, and we couldn't read them even if we wanted to. <a href="#/privacy">How this works →</a></p>
+          <p>This workbook asks you to write about real hurts. So <b>your words are saved only in this browser, on this device</b> — they are never sent anywhere, and we couldn't read them even if we wanted to. No account is needed; if you sign in on this site, we remember only how far you've gotten — never a word you write. <a href="#/privacy">How this works →</a></p>
         </div>
       </div>
       <div class="welcome-facts">
@@ -598,7 +598,7 @@ function viewJourney() {
   const prog = store.getProgress();
   const inner = el(`<div class="journey"><h1 class="page-title">Your journey</h1></div>`);
   if (!store.hasAnyData()) {
-    inner.appendChild(el(`<div class="promise slim">${CHECKLEAF}<div><p><b>Private by design:</b> everything you write is saved only on this device. No account, no server. <a href="#/privacy">How this works</a></p></div></div>`));
+    inner.appendChild(el(`<div class="promise slim">${CHECKLEAF}<div><p><b>Private by design:</b> everything you write is saved only on this device — signed in or not. <a href="#/privacy">How this works</a></p></div></div>`));
   }
   if (prog && !(completed.size === LESSONS.length)) {
     const lesson = LESSONS.find((l) => l.n === prog.lesson);
@@ -706,7 +706,8 @@ function viewPrivacy() {
       <h1 class="page-title">Privacy &amp; your data</h1>
       <div class="promise slim">${CHECKLEAF}<div><p><b>The short version:</b> everything you write stays on this device. Nothing is ever sent anywhere.</p></div></div>
       <h2>How it works</h2>
-      <p>This site is a set of static files — there is <b>no server, no database, no account, and no analytics</b>. When you type a response, it is saved by your browser using a feature called <i>localStorage</i>, which lives entirely on your device. Your responses are never transmitted over the internet. You can verify this: open your browser's developer tools and watch the network tab — after the page loads, no requests are made at all.</p>
+      <p>This workbook is a set of static files — there is <b>no database of your answers and no analytics</b>, and it works without any account. When you type a response, it is saved by your browser using a feature called <i>localStorage</i>, which lives entirely on your device. Your responses are never transmitted over the internet. You can verify this: open your browser's developer tools and watch the network tab — after the page loads, no requests carry anything you typed.</p>
+      <p>One honest distinction: this workbook is part of the Global Forgiveness Movement site, where you can optionally create a free account. If you sign in, the site syncs <b>your place</b> — which lesson and step you're on, and which lessons you've completed — so you can pick up on another device. It never syncs your answers. What you write stays here.</p>
       <h2>What that means in practice</h2>
       <ul>
         <li>${LEAF()}<span>Your writing persists between visits, so you can complete the 12 lessons over days or weeks. It stays until <b>you</b> delete it.</span></li>
