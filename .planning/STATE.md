@@ -81,6 +81,12 @@ on 2026-08-21.
 
 (None.)
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 1 | Header collapses to hamburger below 1100px (Wyatt review note #1) | 2026-08-21 | 54db937, 10ab673 | .planning/quick/260821-rx2-responsive-header-hamburger-below-1100px/ |
+
 ## Session Continuity
 
 **Handoff from 2026-08-21 (post-transfer session) — read this before doing anything:**
