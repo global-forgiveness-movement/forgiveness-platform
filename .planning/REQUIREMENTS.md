@@ -106,4 +106,16 @@ integration when files arrive, and leader account types if Kate confirms that mo
 
 ## Traceability
 
-(Filled by roadmap.)
+| Requirement | Phase |
+|-------------|-------|
+| GATE-01, GATE-02, GATE-03 | Phase 1 |
+| SHELL-01, SHELL-02, SHELL-03 | Phase 1 |
+| HOME-01 … HOME-07 | Phase 2 |
+| WB-01, WB-02, WB-03 | Phase 2 |
+| RES-01 | Phase 2 |
+| GRP-01 … GRP-04 | Phase 2 |
+| ABT-01, UTIL-01 | Phase 2 |
+| ACCT-01 … ACCT-05 | Phase 3 |
+| IWB-01, IWB-02, IWB-03 | Phase 4 |
+
+All 28 v1 requirements map to exactly one phase. No orphans.
