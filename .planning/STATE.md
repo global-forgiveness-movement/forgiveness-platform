@@ -96,10 +96,11 @@ on 2026-08-21.
   footer stamp current, homepage two-doors + nameless testimonials correct, groups page correct.
 - **Network allowlist** (environment "Default", Custom access, updated 2026-08-21): sessions
   reach `global-forgiveness-movement.github.io`, `www.gstatic.com`, `*.youtube.com`,
-  `*.ytimg.com`, plus trusted defaults. **Still missing: `*.youtube-nocookie.com`** — the embeds
-  in js/data.js use that host, so they stay unloadable from a container until Wyatt adds it.
-  Visitors are unaffected; the embeds themselves remain the one thing only checkable in a real
-  browser or after that allowlist line.
+  `*.ytimg.com`, `*.youtube-nocookie.com` (added later on 2026-08-21), plus trusted defaults.
+  The embed URL itself verified 2026-08-21: curl returns 200 with a full YouTube player page.
+  The iframe *rendering* as a player is still unverified — headless Chrome can't reach that
+  host through the proxy (same TLS passthrough quirk as github.io below) — so it's one
+  real-browser glance, covered by Wyatt's review pass.
 - **Container QA how-to (hard-won):** headless Chromium cannot reach github.io through the
   egress proxy even when curl can (TLS passthrough quirk) — QA by serving the repo locally
   (`python3 -m http.server` from the repo root; byte-identity with live makes it equivalent).
