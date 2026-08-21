@@ -83,8 +83,29 @@ on 2026-08-21.
 
 ## Session Continuity
 
-Repo home: github.com/global-forgiveness-movement/forgiveness-platform (org transfer done
-2026-08-21; after transfer, verify Settings→Pages still says main/root and note the new URL).
-Last session: 2026-08-21 — initialization in a Claude Code cloud container
+**Handoff from 2026-08-21 (post-transfer session) — read this before doing anything:**
+
+- **Repo home:** github.com/global-forgiveness-movement/forgiveness-platform. Org transfer is
+  DONE and fully unblocked: the Claude GitHub App is installed on the org, pushes work, and
+  `main` and `claude/forgiveness-platform-v1-kvyc0t` are even (both at the same commit —
+  verify with `git fetch origin` first, per the standing rules, not from this sentence).
+- **Pages:** deploy verified green from `main`/root at the new URL
+  `global-forgiveness-movement.github.io/forgiveness-platform/`. The rendered page itself was
+  NOT eyeballed from a container (github.io egress was blocked at the time).
+- **Network allowlist updated 2026-08-21** (environment "Default", Custom access): sessions can
+  now reach `global-forgiveness-movement.github.io`, `www.gstatic.com`, `*.youtube.com`,
+  `*.ytimg.com`, plus the trusted defaults. **First task of the next session: fetch the live
+  site at the new URL and confirm it renders (gate up, correct build stamp), and check the
+  YouTube placeholder embeds load — that clears the two standing NOT-verified items above.**
+  If the allowlist change didn't take, curl to github.io fails with a proxy 403; tell Wyatt
+  rather than working around it.
+- **Project position unchanged:** V1.0 skeleton 100% built; the gate everything waits on is
+  Wyatt's review of the site (password `reach1`). Nothing is in flight.
+- **Known record gap:** `.planning/` has no phase directories — `validate health` reports W006
+  for all 5 phases. The code is all committed; the per-phase PLAN/SUMMARY record is not.
+  Rebuild only if Wyatt asks; it has zero visitor impact.
+
+Last session: 2026-08-21 — org-transfer cleanup in a Claude Code cloud container (docs commit
+applied + pushed, org app access fixed, Pages deploy verified, network allowlist widened).
 Environment note: gsd-core is not preinstalled in cloud containers; install with
 `npx -y @opengsd/gsd-core -g --claude` at session start (see .claude/CLAUDE.md).
