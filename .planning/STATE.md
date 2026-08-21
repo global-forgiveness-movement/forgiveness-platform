@@ -89,16 +89,24 @@ on 2026-08-21.
   DONE and fully unblocked: the Claude GitHub App is installed on the org, pushes work, and
   `main` and `claude/forgiveness-platform-v1-kvyc0t` are even (both at the same commit —
   verify with `git fetch origin` first, per the standing rules, not from this sentence).
-- **Pages:** deploy verified green from `main`/root at the new URL
-  `global-forgiveness-movement.github.io/forgiveness-platform/`. The rendered page itself was
-  NOT eyeballed from a container (github.io egress was blocked at the time).
-- **Network allowlist updated 2026-08-21** (environment "Default", Custom access): sessions can
-  now reach `global-forgiveness-movement.github.io`, `www.gstatic.com`, `*.youtube.com`,
-  `*.ytimg.com`, plus the trusted defaults. **First task of the next session: fetch the live
-  site at the new URL and confirm it renders (gate up, correct build stamp), and check the
-  YouTube placeholder embeds load — that clears the two standing NOT-verified items above.**
-  If the allowlist change didn't take, curl to github.io fails with a proxy 403; tell Wyatt
-  rather than working around it.
+- **Live site VERIFIED 2026-08-21** at the new URL
+  `global-forgiveness-movement.github.io/forgiveness-platform/`: Pages deploys green from
+  `main`/root; curl returns 200; six key live files hashed byte-identical to the repo; and the
+  site was rendered and screenshotted (desktop 1280 + mobile 390) — gate unlocks with `reach1`,
+  footer stamp current, homepage two-doors + nameless testimonials correct, groups page correct.
+- **Network allowlist** (environment "Default", Custom access, updated 2026-08-21): sessions
+  reach `global-forgiveness-movement.github.io`, `www.gstatic.com`, `*.youtube.com`,
+  `*.ytimg.com`, plus trusted defaults. **Still missing: `*.youtube-nocookie.com`** — the embeds
+  in js/data.js use that host, so they stay unloadable from a container until Wyatt adds it.
+  Visitors are unaffected; the embeds themselves remain the one thing only checkable in a real
+  browser or after that allowlist line.
+- **Container QA how-to (hard-won):** headless Chromium cannot reach github.io through the
+  egress proxy even when curl can (TLS passthrough quirk) — QA by serving the repo locally
+  (`python3 -m http.server` from the repo root; byte-identity with live makes it equivalent).
+  For any HTTPS the browser fetches through the proxy, first import the proxy CA into NSS:
+  `apt-get install -y libnss3-tools`, split `/root/.ccr/ca-bundle.crt` on BEGIN CERTIFICATE,
+  `certutil -A -t "C,," -d sql:/root/.pki/nssdb` each part. Playwright needs
+  `proxy: {server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1'}`.
 - **Project position unchanged:** V1.0 skeleton 100% built; the gate everything waits on is
   Wyatt's review of the site (password `reach1`). Nothing is in flight.
 - **Known record gap:** `.planning/` has no phase directories — `validate health` reports W006
