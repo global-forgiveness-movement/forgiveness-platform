@@ -302,7 +302,10 @@ hr.leafline { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
   /* Promote the auth slot's children to header flex items, in both auth
      states: the .btn stays in the top row, the .signin joins the menu panel. */
   .site-auth { display: contents; }
-  .site-auth .btn { order: 1; flex: none; padding: 0.55rem 1.1rem; }
+  /* margin-left:auto right-aligns the controls when a narrow phone wraps
+     them onto their own row; in a single row it dissolves into the same gap
+     the brand's margin-right:auto already owns. */
+  .site-auth .btn { order: 1; flex: none; padding: 0.55rem 1.1rem; margin-left: auto; }
   .site-nav {
     display: none;
     order: 10; flex-basis: 100%;
