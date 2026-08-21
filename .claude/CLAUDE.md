@@ -101,6 +101,9 @@ definition in `~/.claude/agents/`, as the GSD workflows' own fallback prescribes
 
 ## Project facts
 
+- **Home:** `github.com/global-forgiveness-movement/forgiveness-platform` (org owned by Wyatt,
+  transferable to a successor — moved from his personal account 2026-08-21). Site serves at
+  `global-forgiveness-movement.github.io/forgiveness-platform/` until the custom domain lands.
 - **Stack:** vanilla HTML/CSS/JS ES modules, no build, GitHub Pages from `main` root.
 - **Gate password:** `reach1` for the site (changed 2026-08-21 — Wyatt doesn't want Kate seeing
   the platform yet). The `/plan/` scope doc keeps its own separate password `reach`, which Kate

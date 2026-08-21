@@ -83,6 +83,8 @@ on 2026-08-21.
 
 ## Session Continuity
 
+Repo home: github.com/global-forgiveness-movement/forgiveness-platform (org transfer done
+2026-08-21; after transfer, verify Settings→Pages still says main/root and note the new URL).
 Last session: 2026-08-21 — initialization in a Claude Code cloud container
 Environment note: gsd-core is not preinstalled in cloud containers; install with
 `npx -y @opengsd/gsd-core -g --claude` at session start (see .claude/CLAUDE.md).
