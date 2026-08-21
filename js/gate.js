@@ -3,8 +3,11 @@
    A curtain, not a lock: it keeps the preview out of casual view. It carries
    its own styles so any page can use it without the site stylesheet. */
 
-const GATE_KEY = 'gfm.gate.v1';
-const GATE_HASH = 'ed4561f685f133532832f705209e693c573c85ed7f93865ffe6dfea3653bd8a6'; // sha256("reach")
+/* Key bumped to v2 when the password changed (2026-08-21, Wyatt's call: Kate
+   shouldn't see the site yet) — bumping invalidates any earlier unlock.
+   The /plan scope doc keeps its own separate password. */
+const GATE_KEY = 'gfm.gate.v2';
+const GATE_HASH = 'c340b23d6607ae41367b3c4ca08f46f750c539a5e37a93c8ce05ebdf4c504e4b'; // sha256("reach1")
 
 async function sha256(text) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));

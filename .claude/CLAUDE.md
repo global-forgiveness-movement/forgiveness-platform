@@ -102,7 +102,10 @@ definition in `~/.claude/agents/`, as the GSD workflows' own fallback prescribes
 ## Project facts
 
 - **Stack:** vanilla HTML/CSS/JS ES modules, no build, GitHub Pages from `main` root.
-- **Gate password:** `reach` (also unlocks `/plan/`).
+- **Gate password:** `reach1` for the site (changed 2026-08-21 — Wyatt doesn't want Kate seeing
+  the platform yet). The `/plan/` scope doc keeps its own separate password `reach`, which Kate
+  has. When Wyatt is ready to show her the site, change `GATE_HASH` in `js/gate.js` and bump its
+  `GATE_KEY`.
 - **Brand:** the workbook's identity — cream `#F4EFE3`, teal `#1B7F72`, ink navy `#123B53`, plum
   `#7E3A67`, mustard `#E7B54A`, sage `#8FBCAD`; Poppins / Nunito Sans / Sacramento, self-hosted.
   True up against the GFM Brand Cheat Sheet when Wyatt adds it to the repo.
