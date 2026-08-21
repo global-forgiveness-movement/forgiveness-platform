@@ -119,3 +119,13 @@ integration when files arrive, and leader account types if Kate confirms that mo
 | IWB-01, IWB-02, IWB-03 | Phase 4 |
 
 All 28 v1 requirements map to exactly one phase. No orphans.
+
+## v1.1 Requirements — CMS (added 2026-08-21, Wyatt's direction)
+
+### Content management
+
+- [ ] **CMS-01**: One schema file defines every editable content type and every page block type; admin forms and site rendering both derive from it
+- [ ] **CMS-02**: Site reads collections (testimonials, videos, events, publications, people, stats) through one merge layer — published override wins, committed defaults otherwise
+- [ ] **CMS-03**: /admin lets an allowlisted editor edit any collection as plain forms; saves publish instantly and every save keeps a history entry with one-click restore
+- [ ] **CMS-04**: An editor can create, edit, and unpublish whole new pages assembled from blocks (hero, text, cards, video, stats, quotes, notice, closing band), each reachable at its own URL and optionally in the nav
+- [ ] **CMS-05**: All of it works in demo mode today and against Firestore when the config lands, through the same store interface
