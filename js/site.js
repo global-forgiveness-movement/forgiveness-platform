@@ -1,10 +1,11 @@
-/* The one shell. Every page loads this module and nothing else.
-   It runs the pre-launch gate, injects the shared header/nav/footer,
-   hydrates video embeds from data.js, and counts workbook downloads.
+/* The one shell. Every standard page loads this module and nothing else.
+   It runs the pre-launch gate (js/gate.js), injects the shared header/nav/
+   footer, hydrates video embeds from data.js, and counts workbook downloads.
    Written once, used everywhere — page files contain only their <main>. */
 
 import { NAV, FOOTER_COLS, VIDEOS } from './data.js';
 import { recordDownload } from './metrics.js';
+import { ensureGate, leaf } from './gate.js';
 
 export const STAMP = 'GFM-P4 · 2026-08-21d';
 
@@ -13,52 +14,6 @@ export const STAMP = 'GFM-P4 · 2026-08-21d';
 const ROOT = new URL('..', import.meta.url);
 export const href = (path) => new URL(path, ROOT).pathname;
 
-/* ---------------------------------------------------------------- gate
-   A curtain, not a lock: it keeps the pre-launch site out of casual view
-   and search engines. The repo is public and the content is not sensitive. */
-const GATE_KEY = 'gfm.gate.v1';
-const GATE_HASH = 'ed4561f685f133532832f705209e693c573c85ed7f93865ffe6dfea3653bd8a6';
-
-async function sha256(text) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
-  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
-}
-
-const leaf = (fill) =>
-  `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z" fill="${fill}" transform="rotate(40 12 12)"/></svg>`;
-
-function showGate() {
-  const gate = document.createElement('div');
-  gate.className = 'gate';
-  gate.innerHTML = `
-    <div class="gate-card">
-      ${leaf('#1b7f72')}
-      <span class="script">Global Forgiveness</span>
-      <h1>A site in the making</h1>
-      <p>This preview isn't public yet. Enter the password Wyatt sent you to look around.</p>
-      <form>
-        <label class="visually-hidden" for="gatePw">Password</label>
-        <input id="gatePw" type="password" autocomplete="off" autofocus>
-        <button class="btn btn--primary" type="submit">Enter</button>
-      </form>
-      <div class="gate-err" role="alert" aria-live="polite"></div>
-    </div>`;
-  document.body.append(gate);
-  document.documentElement.setAttribute('data-shell-ready', '');
-  gate.querySelector('form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const pw = gate.querySelector('input').value.trim().toLowerCase();
-    if ((await sha256(pw)) === GATE_HASH) {
-      localStorage.setItem(GATE_KEY, 'open');
-      gate.remove();
-      buildShell();
-    } else {
-      gate.querySelector('.gate-err').textContent = 'That’s not it — check the note from Wyatt.';
-    }
-  });
-}
-
-/* ---------------------------------------------------------------- shell */
 function el(tag, attrs = {}, html = '') {
   const node = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
@@ -145,8 +100,4 @@ async function buildShell() {
   main?.dispatchEvent(new CustomEvent('shell:ready', { bubbles: true }));
 }
 
-if (localStorage.getItem(GATE_KEY) === 'open') {
-  buildShell();
-} else {
-  showGate();
-}
+ensureGate(buildShell);

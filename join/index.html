@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create account — Global Forgiveness Movement</title>
+  <meta name="description" content="A free account so we can save your place. The workbook needs no account at all.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z' fill='%231b7f72' transform='rotate(40 12 12)'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../css/site.css">
+</head>
+<body>
+<main>
+  <section class="section section--paper">
+    <div class="wrap grid grid--2" style="align-items:start">
+
+      <div>
+        <p class="kicker">Free account</p>
+        <h1>Create an account so we can save your place</h1>
+        <p>The interactive workbook runs over many sittings. With an account you can stop halfway through a lesson and pick up in the same place later, on any device.</p>
+        <div class="card card--tint" style="margin-bottom:1rem">
+          <h3 style="font-size:1rem">What you get</h3>
+          <p class="small" style="margin:0">Your place in the workbook saved across devices · the Forgiveness Group video series in your member area when it arrives this fall · your materials in one place.</p>
+        </div>
+        <div class="card card--tint">
+          <h3 style="font-size:1rem">What we don’t do</h3>
+          <p class="small" style="margin:0">We never sell or share your details. We don’t ask what you are forgiving, or who hurt you — and what you write in the workbook never leaves your device, signed in or not. You can delete your account whenever you like.</p>
+        </div>
+        <p class="small muted" style="margin-top:1rem">Just want the workbook? The PDF is free and needs no account. <a href="../workbooks/">Download it here →</a></p>
+      </div>
+
+      <div class="card">
+        <div class="notice" data-demo-note hidden style="margin-bottom:1rem">
+          Preview note: the account backend isn’t connected yet, so accounts here live in this browser only. Every flow works; it just doesn’t leave your machine.
+        </div>
+
+        <h2 data-mode-title style="font-size:1.3rem">Create your account</h2>
+
+        <button class="btn btn--outline" id="googleBtn" style="width:100%">Continue with Google</button>
+        <p class="center muted small" style="margin:0.8rem 0">— or —</p>
+
+        <form class="form" id="authForm">
+          <label data-signup-only>Your name <input name="name" autocomplete="name"></label>
+          <label>Email <input name="email" type="email" required autocomplete="email"></label>
+          <label>Password <input name="password" type="password" required minlength="8" autocomplete="new-password"></label>
+          <label class="check" data-signup-only>
+            <input type="checkbox" name="newsletter">
+            <span>Send me occasional emails about new resources and events. Optional, and you can unsubscribe any time.</span>
+          </label>
+          <button class="btn btn--primary" type="submit" data-submit>Create account</button>
+          <div class="form-msg" hidden role="alert"></div>
+          <p class="form-note" data-signup-only>By creating an account you agree to our <a href="../privacy/">privacy notice</a>.</p>
+        </form>
+
+        <hr class="leafline" style="margin:1.2rem 0">
+        <p class="small" data-mode-switch>Already have an account? <a href="#" id="toggleMode">Sign in</a></p>
+        <p class="small" hidden data-signin-only><a href="#" id="forgotBtn">Forgot your password?</a></p>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<script type="module">
+  import { signUp, signIn, signInGoogle, resetPassword, onAuth, AUTH_MODE } from '../js/auth.js';
+
+  if (AUTH_MODE === 'demo') document.querySelector('[data-demo-note]').hidden = false;
+
+  /* Signed in — whether already or just now — this page's job is done. */
+  onAuth((u) => { if (u) location.replace('../my-path/'); });
+
+  let mode = 'signup';
+  const form = document.getElementById('authForm');
+  const msg = form.querySelector('.form-msg');
+
+  function render() {
+    const signup = mode === 'signup';
+    document.querySelector('[data-mode-title]').textContent = signup ? 'Create your account' : 'Welcome back';
+    document.querySelector('[data-submit]').textContent = signup ? 'Create account' : 'Sign in';
+    document.querySelectorAll('[data-signup-only]').forEach((n) => (n.hidden = !signup));
+    document.querySelectorAll('[data-signin-only]').forEach((n) => (n.hidden = signup));
+    document.querySelector('[data-mode-switch]').innerHTML = signup
+      ? 'Already have an account? <a href="#" id="toggleMode">Sign in</a>'
+      : 'New here? <a href="#" id="toggleMode">Create an account</a>';
+    form.password.autocomplete = signup ? 'new-password' : 'current-password';
+    msg.hidden = true;
+  }
+  document.addEventListener('click', (e) => {
+    if (e.target.id === 'toggleMode') { e.preventDefault(); mode = mode === 'signup' ? 'signin' : 'signup'; render(); }
+  });
+  render();
+
+  const fail = (err) => { msg.className = 'form-msg form-msg--err'; msg.textContent = err.message || String(err); msg.hidden = false; };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = Object.fromEntries(new FormData(form));
+    try {
+      if (mode === 'signup') {
+        await signUp({ name: f.name || f.email.split('@')[0], email: f.email, password: f.password, newsletter: !!f.newsletter });
+      } else {
+        await signIn({ email: f.email, password: f.password });
+      }
+    } catch (err) { fail(err); }
+  });
+
+  document.getElementById('googleBtn').addEventListener('click', () => signInGoogle().catch(fail));
+  document.getElementById('forgotBtn')?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    try {
+      await resetPassword(form.email.value);
+      msg.className = 'form-msg form-msg--ok';
+      msg.textContent = 'Reset email sent — check your inbox.';
+      msg.hidden = false;
+    } catch (err) { fail(err); }
+  });
+</script>
+<script type="module" src="../js/site.js"></script>
+</body>
+</html>

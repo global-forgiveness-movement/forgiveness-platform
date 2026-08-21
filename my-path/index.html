@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Path — Global Forgiveness Movement</title>
+  <meta name="description" content="Your place in the workbook, your series, your materials.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z' fill='%231b7f72' transform='rotate(40 12 12)'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../css/site.css">
+</head>
+<body>
+<main>
+
+  <!-- Signed out -->
+  <section class="section section--paper" data-when="out" hidden>
+    <div class="wrap center">
+      <h1>My Path</h1>
+      <p style="margin:0 auto 1.4rem">Sign in to see your place in the workbook and your Forgiveness Group series.</p>
+      <a class="btn btn--primary" href="../join/">Sign in or create an account</a>
+    </div>
+  </section>
+
+  <!-- Signed in -->
+  <div data-when="in" hidden>
+    <section class="section section--paper">
+      <div class="wrap">
+        <p class="kicker">My Path</p>
+        <h1>Welcome back<span data-render="firstname"></span></h1>
+        <p class="muted">There’s no hurry. Pick up whenever you’re ready.</p>
+        <div class="card" style="max-width:680px" data-render="progress-card"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <h2>Your Forgiveness Group series</h2>
+        <p class="muted" style="max-width:62ch">These are the videos a leader plays at each group meeting. The films are in production and land here this fall — the structure below is what to expect. Thinking of leading? <a href="../groups/">Everything about running a group →</a></p>
+        <div class="grid grid--2" data-render="series" style="margin-top:1.2rem"></div>
+      </div>
+    </section>
+
+    <section class="section section--paper">
+      <div class="wrap">
+        <h2>Your materials</h2>
+        <div class="grid grid--2">
+          <div class="card">
+            <h3 style="font-size:1rem">REACH Forgiveness Workbook</h3>
+            <p class="small muted">Every edition and language, always free.</p>
+            <a class="btn btn--outline" href="../workbooks/">Get the PDF</a>
+          </div>
+          <div class="card">
+            <h3 style="font-size:1rem">Leader materials</h3>
+            <p class="small muted">The leader guide and session film arrive with the video series this fall.</p>
+            <span class="pill pill--plum">Coming soon</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <h2>Your account</h2>
+        <p class="small muted" data-render="email"></p>
+        <div class="dl-row">
+          <button class="btn btn--outline" id="signOutBtn">Sign out</button>
+          <button class="btn" id="deleteBtn" style="color:var(--plum)">Delete my account…</button>
+        </div>
+        <p class="form-note" style="margin-top:0.6rem">Deleting removes your account and everything it stores, immediately. What’s saved on your own devices stays yours — the workbook has its own “erase everything” control.</p>
+        <div class="form-msg" hidden role="status"></div>
+      </div>
+    </section>
+  </div>
+
+</main>
+
+<script type="module">
+  import { onAuth, signOutUser, deleteAccount } from '../js/auth.js';
+  import { syncProgress } from '../js/progress-sync.js';
+  import { SERIES } from '../js/data.js';
+
+  const TOTAL_LESSONS = 12;
+
+  document.querySelector('[data-render="series"]').innerHTML = [SERIES.secular, SERIES.church]
+    .map((s) => `
+      <div class="card">
+        <p class="kicker">${s.framing}</p>
+        <h3 style="font-size:1.05rem">${s.name}</h3>
+        <ol class="sessions">
+          ${s.sessions.map((x) => `<li><span class="n">${x.n}</span><span><b>${x.title}</b><span>${x.detail} · <i>video arrives this fall</i></span></span></li>`).join('')}
+        </ol>
+      </div>`).join('');
+
+  function progressCard(p) {
+    const done = p.completed.length;
+    if (!p.progress && !done) {
+      return `<p class="kicker" style="margin-bottom:0.3rem">The interactive workbook</p>
+        <h3>Ready when you are</h3>
+        <p class="small">Twelve lessons, one gentle step at a time. Start with fifteen minutes — your place is saved as you go.</p>
+        <a class="btn btn--primary" href="../workbook/">Begin lesson 1</a>`;
+    }
+    const pct = Math.round((done / TOTAL_LESSONS) * 100);
+    const at = p.progress ? `You’re in lesson ${p.progress.lesson}.` : 'Ready to continue.';
+    return `<p class="kicker" style="margin-bottom:0.3rem">The interactive workbook</p>
+      <h3>Continue where you left off</h3>
+      <p class="small">${at} ${done} of ${TOTAL_LESSONS} lessons complete · ${pct}%. There’s no hurry.</p>
+      <a class="btn btn--primary" href="../workbook/">Continue</a>`;
+  }
+
+  onAuth(async (u) => {
+    document.querySelectorAll('[data-when="in"]').forEach((n) => (n.hidden = !u));
+    document.querySelectorAll('[data-when="out"]').forEach((n) => (n.hidden = !!u));
+    if (!u) return;
+    document.querySelector('[data-render="firstname"]').textContent = `, ${u.name.split(' ')[0]}`;
+    document.querySelector('[data-render="email"]').textContent = `Signed in as ${u.email}`;
+    const p = await syncProgress(u.id);
+    document.querySelector('[data-render="progress-card"]').innerHTML = progressCard(p);
+  });
+
+  document.getElementById('signOutBtn').addEventListener('click', async () => {
+    await signOutUser();
+    location.href = '../';
+  });
+
+  document.getElementById('deleteBtn').addEventListener('click', async () => {
+    const sure = confirm('Delete your account and everything it stores? This cannot be undone.');
+    if (!sure) return;
+    const msg = document.querySelector('.form-msg');
+    try {
+      await deleteAccount();
+      msg.className = 'form-msg form-msg--ok';
+      msg.textContent = 'Your account and its data are gone. Thank you for spending time here.';
+      msg.hidden = false;
+      setTimeout(() => (location.href = '../'), 1800);
+    } catch (err) {
+      msg.className = 'form-msg form-msg--err';
+      msg.textContent = err.message || String(err);
+      msg.hidden = false;
+    }
+  });
+</script>
+<script type="module" src="../js/site.js"></script>
+</body>
+</html>
