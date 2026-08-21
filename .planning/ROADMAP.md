@@ -91,6 +91,7 @@ Plans:
 | 2. Public pages | Complete | 2026-08-21 |
 | 3. Accounts & member area | Complete | 2026-08-21 |
 | 4. Interactive workbook | Complete | 2026-08-21 |
+| 5. CMS | Complete | 2026-08-21 |
 
 ### Phase 5: CMS — Kate edits the site (added 2026-08-21)
 **Goal**: A completely non-technical editor can change every content list on the site and create whole new block-built pages, instantly, with history — no developer involved.
@@ -105,5 +106,5 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 05-01: Schema, content merge layer, block renderer, dynamic page routing; site wired through it
-- [ ] 05-02: /admin editor app — collection forms, page builder, history & restore
+- [x] 05-01: Schema, content merge layer, block renderer, dynamic page routing; site wired through it
+- [x] 05-02: /admin editor app — collection forms, page builder, history & restore

@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Site editor — Global Forgiveness Movement</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z' fill='%231b7f72' transform='rotate(40 12 12)'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../css/site.css">
+  <style>
+    /* Admin-only dressing on top of the site system. */
+    .adm-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 1rem 0 1.4rem; }
+    .adm-tabs button { border: 1.5px solid var(--line); background: var(--white); border-radius: 999px;
+      padding: 0.45rem 1rem; font-family: var(--font-head); font-weight: 500; font-size: 0.9rem; }
+    .adm-tabs button[aria-selected="true"] { background: var(--teal); border-color: var(--teal); color: #fff; }
+    .adm-item { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 1rem 1.2rem; margin-bottom: 0.8rem; }
+    .adm-item .form { max-width: none; }
+    .adm-row { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; margin-top: 0.6rem; }
+    .adm-row .spacer { flex: 1; }
+    .adm-mini { border: 1px solid var(--line); background: var(--cream-soft); border-radius: 999px;
+      padding: 0.25rem 0.75rem; font-size: 0.8rem; font-family: var(--font-head); }
+    .adm-sub { border-left: 3px solid var(--sage); padding-left: 0.9rem; margin: 0.6rem 0; }
+    .adm-block-head { display: flex; align-items: center; gap: 0.6rem; }
+    .adm-block-head b { font-family: var(--font-head); color: var(--navy); }
+    .adm-save { position: sticky; bottom: 0; background: var(--cream); padding: 0.8rem 0; }
+  </style>
+</head>
+<body>
+<main>
+  <section class="section">
+    <div class="wrap">
+      <p class="kicker">Site editor</p>
+      <h1 style="font-size:1.7rem">Edit the site</h1>
+
+      <div data-view="signin" hidden>
+        <p>Sign in with your editor account to make changes.</p>
+        <a class="btn btn--primary" href="../join/">Sign in</a>
+      </div>
+
+      <div data-view="denied" hidden>
+        <p class="notice">This account isn’t on the editor list. If it should be, ask Wyatt to add your email.</p>
+      </div>
+
+      <div data-view="editor" hidden>
+        <div class="notice" data-demo-note hidden style="margin-bottom:1rem">
+          Preview note: the backend isn’t connected yet, so edits here save in this browser only —
+          perfect for trying the editor, not yet shared with the world.
+        </div>
+        <p class="muted small">Changes go live the moment you save. Every save is kept in History, so nothing is ever lost — edit freely.</p>
+        <div class="adm-tabs" role="tablist" data-tabs></div>
+        <div data-panel></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+  import { onAuth } from '../js/auth.js';
+  import { MODE } from '../js/store.js';
+  import { COLLECTIONS, BLOCKS, PAGE_FIELDS } from '../js/content-schema.js';
+  import {
+    getCollection, getPages, getPage, saveCollection, savePage,
+    listHistory, restoreHistory, isEditor, slugify,
+  } from '../js/content.js';
+  import { esc } from '../js/blocks.js';
+
+  const $ = (sel, el = document) => el.querySelector(sel);
+  const show = (name) => document.querySelectorAll('[data-view]').forEach((v) => (v.hidden = v.dataset.view !== name));
+  let editor = null;
+
+  /* ---------------------------------------------- form generator */
+  function fieldHTML(f, value = '') {
+    const v = value ?? '';
+    const help = f.help ? `<span class="form-note">${esc(f.help)}</span>` : '';
+    if (f.type === 'textarea') return `<label>${esc(f.label)}<textarea data-key="${f.key}" rows="3">${esc(v)}</textarea>${help}</label>`;
+    if (f.type === 'check') return `<label class="check"><input type="checkbox" data-key="${f.key}" ${v ? 'checked' : ''}><span>${esc(f.label)}</span></label>`;
+    if (f.type === 'select') return `<label>${esc(f.label)}<select data-key="${f.key}">${f.options.map((o) => `<option ${o === v ? 'selected' : ''}>${o}</option>`).join('')}</select>${help}</label>`;
+    if (f.type === 'list') {
+      const items = Array.isArray(v) ? v : [];
+      return `<div class="adm-sub" data-list="${f.key}"><b class="small">${esc(f.label)}</b>
+        ${items.map((item) => subItemHTML(f, item)).join('')}
+        <button type="button" class="adm-mini" data-addsub='${esc(JSON.stringify(f.key))}'>+ add</button></div>`;
+    }
+    return `<label>${esc(f.label)}<input data-key="${f.key}" value="${esc(v)}">${help}</label>`;
+  }
+  function subItemHTML(f, item = {}) {
+    return `<div class="adm-item" data-subitem>
+      <div class="form">${f.fields.map((sf) => fieldHTML(sf, item[sf.key])).join('')}</div>
+      <div class="adm-row"><span class="spacer"></span><button type="button" class="adm-mini" data-removesub>remove</button></div>
+    </div>`;
+  }
+  function readFields(container, fields) {
+    const out = {};
+    for (const f of fields) {
+      if (f.type === 'list') {
+        out[f.key] = [...container.querySelectorAll(`[data-list="${f.key}"] [data-subitem]`)]
+          .map((el) => readFields(el, f.fields));
+      } else {
+        const el = container.querySelector(`[data-key="${f.key}"]`);
+        out[f.key] = f.type === 'check' ? el.checked : el.value;
+      }
+    }
+    return out;
+  }
+  /* add/remove for nested lists, one delegated handler */
+  document.addEventListener('click', (e) => {
+    if (e.target.matches('[data-removesub]')) e.target.closest('[data-subitem]').remove();
+    if (e.target.matches('[data-addsub]')) {
+      const key = JSON.parse(e.target.dataset.addsub);
+      const schema = findListField(key);
+      if (schema) e.target.insertAdjacentHTML('beforebegin', subItemHTML(schema));
+    }
+  });
+  let activeListFields = [];
+  const findListField = (key) => activeListFields.find((f) => f.key === key);
+
+  /* ---------------------------------------------- tabs */
+  const TABS = [...Object.keys(COLLECTIONS), 'pages', 'history'];
+  function renderTabs(active) {
+    $('[data-tabs]').innerHTML = TABS.map((t) => {
+      const label = t === 'pages' ? 'Pages' : t === 'history' ? 'History' : COLLECTIONS[t].label;
+      return `<button role="tab" aria-selected="${t === active}" data-tab="${t}">${label}</button>`;
+    }).join('');
+  }
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-tab]');
+    if (b) openTab(b.dataset.tab);
+  });
+  function openTab(name) {
+    renderTabs(name);
+    if (name === 'pages') return renderPagesTab();
+    if (name === 'history') return renderHistoryTab();
+    renderCollectionTab(name);
+  }
+
+  /* ---------------------------------------------- collections */
+  async function renderCollectionTab(name) {
+    const schema = COLLECTIONS[name];
+    activeListFields = schema.fields.filter((f) => f.type === 'list');
+    const items = await getCollection(name);
+    $('[data-panel]').innerHTML = `
+      <p class="muted small" style="max-width:62ch">${esc(schema.help)}</p>
+      <div data-items>${items.map((it) => `
+        <div class="adm-item" data-subitem>
+          <div class="form">${schema.fields.map((f) => fieldHTML(f, it[f.key])).join('')}</div>
+          <div class="adm-row"><span class="spacer"></span><button type="button" class="adm-mini" data-removesub>remove</button></div>
+        </div>`).join('')}
+      </div>
+      <div class="adm-row">
+        <button type="button" class="adm-mini" data-additem>+ add another</button>
+      </div>
+      <div class="adm-save"><button class="btn btn--primary" data-savecoll>Save — goes live now</button>
+        <span class="form-msg" hidden role="status" style="margin-left:0.6rem"></span></div>`;
+    $('[data-additem]').addEventListener('click', () => {
+      $('[data-items]').insertAdjacentHTML('beforeend', `
+        <div class="adm-item" data-subitem>
+          <div class="form">${schema.fields.map((f) => fieldHTML(f, f.type === 'list' ? [] : '')).join('')}</div>
+          <div class="adm-row"><span class="spacer"></span><button type="button" class="adm-mini" data-removesub>remove</button></div>
+        </div>`);
+    });
+    $('[data-savecoll]').addEventListener('click', async () => {
+      const items = [...$('[data-items]').children].map((el) => readFields(el, schema.fields));
+      await saveCollection(name, items, editor.email);
+      flash('Saved — it’s live.');
+    });
+  }
+
+  /* ---------------------------------------------- pages */
+  async function renderPagesTab() {
+    const pages = await getPages();
+    $('[data-panel]').innerHTML = `
+      <p class="muted small" style="max-width:62ch">Build whole new pages from sections. A page gets its own web address, and can appear in the site menu.</p>
+      ${pages.map((p) => `<div class="adm-item"><div class="adm-block-head">
+        <b>${esc(p.title)}</b><span class="muted small">/${esc(p.slug)}/</span>
+        ${p.showInNav ? '<span class="pill">in menu</span>' : ''}
+        <span class="spacer" style="flex:1"></span>
+        <a class="adm-mini" href="../${esc(p.slug)}/" target="_blank" rel="noopener">view</a>
+        <button type="button" class="adm-mini" data-editpage="${esc(p.slug)}">edit</button>
+      </div></div>`).join('') || '<p class="muted">No pages yet.</p>'}
+      <div class="adm-row"><button class="btn btn--primary" data-newpage>+ New page</button></div>`;
+    $('[data-newpage]').addEventListener('click', () => renderPageEditor(null));
+    document.querySelectorAll('[data-editpage]').forEach((b) =>
+      b.addEventListener('click', async () => renderPageEditor(await getPage(b.dataset.editpage))));
+  }
+
+  function blockEditorHTML(type, values = {}) {
+    const schema = BLOCKS[type];
+    return `<div class="adm-item" data-block="${type}">
+      <div class="adm-block-head"><b>${esc(schema.label)}</b><span class="spacer" style="flex:1"></span>
+        <button type="button" class="adm-mini" data-moveup>↑</button>
+        <button type="button" class="adm-mini" data-movedown>↓</button>
+        <button type="button" class="adm-mini" data-removeblock>remove</button></div>
+      <div class="form" style="margin-top:0.6rem">${schema.fields.map((f) => fieldHTML(f, values[f.key])).join('')}</div>
+    </div>`;
+  }
+
+  function renderPageEditor(page) {
+    activeListFields = Object.values(BLOCKS).flatMap((b) => b.fields.filter((f) => f.type === 'list'));
+    const p = page || { title: '', slug: '', showInNav: false, blocks: [] };
+    $('[data-panel]').innerHTML = `
+      <div class="adm-item"><div class="form" data-pagefields>
+        ${PAGE_FIELDS.map((f) => fieldHTML(f, p[f.key])).join('')}
+      </div></div>
+      <h3 class="small" style="margin:1rem 0 0.4rem">Sections, top to bottom</h3>
+      <div data-blocks>${(p.blocks || []).map((b) => blockEditorHTML(b.type, b)).join('')}</div>
+      <div class="adm-row">
+        <select data-blockpicker>${Object.entries(BLOCKS).map(([k, b]) => `<option value="${k}">${esc(b.label)}</option>`).join('')}</select>
+        <button type="button" class="adm-mini" data-addblock>+ add section</button>
+      </div>
+      <div class="adm-save">
+        <button class="btn btn--primary" data-savepage>Save page — goes live now</button>
+        <button type="button" class="btn btn--outline" data-backpages>Back to pages</button>
+        <span class="form-msg" hidden role="status" style="margin-left:0.6rem"></span>
+      </div>`;
+    $('[data-addblock]').addEventListener('click', () => {
+      $('[data-blocks]').insertAdjacentHTML('beforeend', blockEditorHTML($('[data-blockpicker]').value));
+    });
+    $('[data-backpages]').addEventListener('click', renderPagesTab);
+    $('[data-savepage]').addEventListener('click', async () => {
+      const meta = readFields($('[data-pagefields]'), PAGE_FIELDS);
+      if (!meta.title) return flash('Give the page a title first.', true);
+      const blocks = [...$('[data-blocks]').children].map((el) => ({
+        type: el.dataset.block,
+        ...readFields(el, BLOCKS[el.dataset.block].fields),
+      }));
+      const slug = await savePage({ ...meta, slug: slugify(meta.slug || meta.title), blocks, published: true }, editor.email);
+      flash(`Saved — live at /${slug}/`);
+    });
+  }
+  document.addEventListener('click', (e) => {
+    const item = e.target.closest('[data-block]');
+    if (!item) return;
+    if (e.target.matches('[data-removeblock]')) item.remove();
+    if (e.target.matches('[data-moveup]') && item.previousElementSibling) item.previousElementSibling.before(item);
+    if (e.target.matches('[data-movedown]') && item.nextElementSibling) item.nextElementSibling.after(item);
+  });
+
+  /* ---------------------------------------------- history */
+  async function renderHistoryTab() {
+    const entries = await listHistory();
+    $('[data-panel]').innerHTML = `
+      <p class="muted small">Every save, newest first. Restore brings that version back (and the version it replaces is itself kept here).</p>
+      ${entries.map((h) => `<div class="adm-item"><div class="adm-block-head">
+        <b>${esc(h.target.startsWith('page:') ? `Page: ${h.target.slice(5)}` : (COLLECTIONS[h.target]?.label || h.target))}</b>
+        <span class="muted small">${new Date(h.savedAt).toLocaleString()} · ${esc(h.editor)}</span>
+        <span class="spacer" style="flex:1"></span>
+        <button type="button" class="adm-mini" data-restore="${esc(h.id)}">restore this version</button>
+      </div></div>`).join('') || '<p class="muted">No saves yet.</p>'}`;
+    document.querySelectorAll('[data-restore]').forEach((b) =>
+      b.addEventListener('click', async () => {
+        await restoreHistory(entries.find((x) => x.id === b.dataset.restore), editor.email);
+        flash('Restored — it’s live.');
+      }));
+  }
+
+  function flash(text, isErr = false) {
+    const el = $('[data-panel] .form-msg') || $('[data-panel]').appendChild(Object.assign(document.createElement('span'), { className: 'form-msg' }));
+    el.className = `form-msg ${isErr ? 'form-msg--err' : 'form-msg--ok'}`;
+    el.textContent = text;
+    el.hidden = false;
+    setTimeout(() => (el.hidden = true), 4000);
+  }
+
+  /* ---------------------------------------------- boot */
+  onAuth(async (user) => {
+    if (!user) return show('signin');
+    if (!(await isEditor(user))) return show('denied');
+    editor = user;
+    if (MODE === 'demo') $('[data-demo-note]').hidden = false;
+    show('editor');
+    openTab(Object.keys(COLLECTIONS)[0]);
+  });
+</script>
+<script type="module" src="../js/site.js"></script>
+</body>
+</html>

@@ -20,8 +20,8 @@ See: .planning/PROJECT.md (updated 2026-08-21)
 
 ## Current Position
 
-Phase: 4 of 4 (Interactive workbook) — all four phases built
-Plan: 9 of 9 complete
+Phase: 5 of 5 (CMS) — all five phases built
+Plan: 11 of 11 complete
 Status: V1.0 skeleton complete, awaiting Wyatt's review (then Kate's)
 Last activity: 2026-08-21 — All phases executed in one session; browser-QA'd with
 screenshots (desktop + mobile); pushed to claude/forgiveness-platform-v1-kvyc0t
@@ -71,7 +71,11 @@ on 2026-08-21.
 - Direct PDF URLs for the four workbooks (js/data.js TODO) — currently land on the HFP page
 - Contact inbox: confirm with Kate which email receives site contact (contact/index.html TODO)
 - Community of Practice registration link (js/data.js TODO)
-- Enable GitHub Pages on the repo (main branch, root) when ready for Kate's preview
+- At Firebase go-live, security rules must also cover the CMS: content/* and pages/* world-readable,
+  editor-writable via settings/editors allowlist; contentHistory editor-only; seed settings/editors
+  with Wyatt's and Kate's emails
+- SEO note for launch: editor-created pages are served as 404-status; commit a stub file for any
+  Kate page that should be indexed (automatable with an Action later)
 
 ### Blockers
 
