@@ -3,7 +3,8 @@
    footer, hydrates video embeds from data.js, and counts workbook downloads.
    Written once, used everywhere — page files contain only their <main>. */
 
-import { NAV, FOOTER_COLS, VIDEOS } from './data.js';
+import { NAV, FOOTER_COLS } from './data.js';
+import { getVideos, getPages } from './content.js';
 import { recordDownload } from './metrics.js';
 import { ensureGate, leaf } from './gate.js';
 
@@ -62,15 +63,32 @@ function buildFooter() {
 }
 
 /* Video slots: <figure class="video" data-video="key"></figure> hydrates from
-   data.js. Swapping a placeholder for the real Vimeo file is a data change. */
-function hydrateVideos() {
+   the videos collection (editor-published version wins, committed default
+   otherwise). Swapping a placeholder for the real Vimeo file is a data edit. */
+async function hydrateVideos() {
+  const videos = await getVideos();
   document.querySelectorAll('[data-video]').forEach((slot) => {
-    const v = VIDEOS[slot.dataset.video];
+    const v = videos[slot.dataset.video];
     if (!v) return;
     slot.innerHTML = `
       <iframe src="${v.src}" title="${v.title}" loading="lazy"
         allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>
       <figcaption>${v.caption}</figcaption>`;
+  });
+}
+
+/* Editor-created pages that asked for a menu spot appear after the core nav. */
+async function appendCustomNav() {
+  const pages = (await getPages()).filter((p) => p.showInNav);
+  if (!pages.length) return;
+  const nav = document.querySelector('.site-nav');
+  const here = currentPath();
+  pages.forEach((p) => {
+    const a = document.createElement('a');
+    a.href = href(p.slug + '/');
+    a.textContent = p.title;
+    if (here === p.slug + '/' || here === p.slug) a.setAttribute('aria-current', 'page');
+    nav.append(a);
   });
 }
 
@@ -88,6 +106,7 @@ async function buildShell() {
   document.body.prepend(buildHeader());
   document.body.append(buildFooter());
   hydrateVideos();
+  appendCustomNav();
   watchDownloads();
   document.documentElement.setAttribute('data-shell-ready', '');
   /* Auth is optional dressing on every page; it must never block the shell. */

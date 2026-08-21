@@ -67,6 +67,8 @@
         <p>Learn about forgiveness research and implementation best practice, and connect with others spreading forgiveness. First Friday of every month, 12pm ET, on Zoom.</p>
         <a class="btn btn--outline" href="https://hfh.fas.harvard.edu/global-forgiveness-movement" target="_blank" rel="noopener">Register</a>
       </div>
+      <h3 style="margin-top:1.6rem">Upcoming events</h3>
+      <ol class="sessions" data-render="events" style="max-width:680px"></ol>
     </div>
   </section>
 
@@ -96,8 +98,14 @@
 
 <script type="module">
   import { SERIES } from '../js/data.js';
+  import { getCollection } from '../js/content.js';
   import { submitGroupForm } from '../js/metrics.js';
   import { MODE } from '../js/store.js';
+
+  getCollection('events').then((events) => {
+    document.querySelector('[data-render="events"]').innerHTML = events
+      .map((ev, i) => `<li><span class="n">${i + 1}</span><span><b>${ev.title}</b><span>${ev.date}${ev.detail ? ' · ' + ev.detail : ''} · <a href="${ev.href}" target="_blank" rel="noopener">Details →</a></span></span></li>`).join('');
+  });
 
   const seriesCard = (s) => `
     <div class="card">

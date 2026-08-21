@@ -91,3 +91,19 @@ Plans:
 | 2. Public pages | Complete | 2026-08-21 |
 | 3. Accounts & member area | Complete | 2026-08-21 |
 | 4. Interactive workbook | Complete | 2026-08-21 |
+
+### Phase 5: CMS — Kate edits the site (added 2026-08-21)
+**Goal**: A completely non-technical editor can change every content list on the site and create whole new block-built pages, instantly, with history — no developer involved.
+**Mode:** mvp
+**Depends on**: Phase 3
+**Requirements**: CMS-01, CMS-02, CMS-03, CMS-04, CMS-05
+**Success Criteria** (what must be TRUE):
+  1. Editing a testimonial in /admin changes the homepage on the next load; the previous version is one click away in history
+  2. An editor can build a brand-new page from section blocks and open it at its own URL, and optionally see it in the nav
+  3. Every form in /admin is generated from the schema — adding a new content type is one schema entry
+  4. All flows work in demo mode now and switch to Firestore with the config, unchanged
+**Plans**: 2 plans
+
+Plans:
+- [ ] 05-01: Schema, content merge layer, block renderer, dynamic page routing; site wired through it
+- [ ] 05-02: /admin editor app — collection forms, page builder, history & restore

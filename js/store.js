@@ -38,6 +38,9 @@ const demo = {
     delete data[collection]?.[id];
     write(data);
   },
+  async list(collection) {
+    return Object.entries(read()[collection] || {}).map(([id, value]) => ({ id, ...value }));
+  },
 };
 
 /* --------------------------------------------------------- firebase */
@@ -75,6 +78,11 @@ const firebase = {
   async remove(collection, id) {
     const { db, fs } = await firestore();
     await fs.deleteDoc(fs.doc(db, collection, id));
+  },
+  async list(collection) {
+    const { db, fs } = await firestore();
+    const snap = await fs.getDocs(fs.collection(db, collection));
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
   },
 };
 

@@ -92,10 +92,13 @@
 </main>
 
 <script type="module">
-  import { GROUP_STATS, TRIAL, REACH_STEPS, TESTIMONIALS } from './js/data.js';
+  import { TRIAL, REACH_STEPS } from './js/data.js';
+  import { getCollection } from './js/content.js';
 
-  document.querySelector('[data-render="group-stats"]').innerHTML = GROUP_STATS
-    .map(([n, label]) => `<div class="stat"><b>${n}</b><span>${label}</span></div>`).join('');
+  getCollection('stats').then((stats) => {
+    document.querySelector('[data-render="group-stats"]').innerHTML = stats
+      .map((s) => `<div class="stat"><b>${s.number}</b><span>${s.label}</span></div>`).join('');
+  });
 
   document.querySelector('[data-render="participants"]').textContent = TRIAL.participants;
   document.querySelector('[data-render="countries"]').textContent = TRIAL.countries;
@@ -108,8 +111,10 @@
   document.querySelector('[data-render="reach"]').innerHTML = REACH_STEPS
     .map((s) => `<li><span class="letter">${s.letter}</span><b>${s.word}</b><span>${s.line}</span></li>`).join('');
 
-  document.querySelector('[data-render="testimonials"]').innerHTML = TESTIMONIALS
-    .map((t) => `<blockquote class="quote"><p>“${t.quote}”</p><footer>${t.permissionConfirmed ? `${t.name} · ${t.role}` : t.role}</footer></blockquote>`).join('');
+  getCollection('testimonials').then((testimonials) => {
+    document.querySelector('[data-render="testimonials"]').innerHTML = testimonials
+      .map((t) => `<blockquote class="quote"><p>“${t.quote}”</p><footer>${t.permissionConfirmed ? `${t.name} · ${t.role}` : t.role}</footer></blockquote>`).join('');
+  });
 </script>
 <script type="module" src="js/site.js"></script>
 </body>

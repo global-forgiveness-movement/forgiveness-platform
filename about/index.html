@@ -61,9 +61,11 @@
 </main>
 
 <script type="module">
-  import { PEOPLE } from '../js/data.js';
-  document.querySelector('[data-render="people"]').innerHTML = PEOPLE
-    .map((p) => `<div class="person"><div class="por">${p.initials}</div><b>${p.name}</b><span>${p.role}</span><p class="small muted" style="margin-top:0.4rem">${p.line}</p></div>`).join('');
+  import { getCollection } from '../js/content.js';
+  getCollection('people').then((people) => {
+    document.querySelector('[data-render="people"]').innerHTML = people
+      .map((p) => `<div class="person"><div class="por">${p.initials}</div><b>${p.name}</b><span>${p.role}</span><p class="small muted" style="margin-top:0.4rem">${p.line}</p></div>`).join('');
+  });
 </script>
 <script type="module" src="../js/site.js"></script>
 </body>

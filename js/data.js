@@ -76,10 +76,32 @@ export const VIDEOS = {
 /* Program & group stats for the homepage band (CSV part 2: group stats up top,
    trial numbers down in the evidence section). */
 export const GROUP_STATS = [
-  ['6–12', 'people in a Forgiveness Group'],
-  ['3 or 6', 'sessions — secular or church series'],
-  ['1–1.5 hrs', 'per meeting, guided by ~10 min of video'],
-  ['6', 'languages the workbook speaks'],
+  { number: '6–12', label: 'people in a Forgiveness Group' },
+  { number: '3 or 6', label: 'sessions — secular or church series' },
+  { number: '1–1.5 hrs', label: 'per meeting, guided by ~10 min of video' },
+  { number: '6', label: 'languages the workbook speaks' },
+];
+
+/* Upcoming events (Groups page). Dates from the program's current listings. */
+export const EVENTS = [
+  {
+    title: 'Forgiveness Community of Practice',
+    date: '4 September · 12pm ET · Zoom',
+    detail: 'Everett Worthington, a pioneer of the psychology research on forgiveness',
+    href: 'https://hfh.fas.harvard.edu/global-forgiveness-movement',
+  },
+  {
+    title: 'Forgiveness Community of Practice',
+    date: '2 October · 12pm ET · Zoom',
+    detail: 'Monthly gathering for everyone spreading forgiveness',
+    href: 'https://hfh.fas.harvard.edu/global-forgiveness-movement',
+  },
+  {
+    title: 'Christianity & Public Health Conference',
+    date: '24 October · Cambridge, MA',
+    detail: 'In person at Harvard',
+    href: 'https://hfh.fas.harvard.edu/events',
+  },
 ];
 
 /* Trial numbers, phrased the clients' way, with units on every figure. */

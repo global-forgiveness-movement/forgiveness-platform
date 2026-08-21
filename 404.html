@@ -6,31 +6,54 @@
   <title>Page not found — Global Forgiveness Movement</title>
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z' fill='%231b7f72' transform='rotate(40 12 12)'/%3E%3C/svg%3E">
-  <!-- GitHub Pages serves this file at any missing path, so it is fully
-       self-contained: no relative assets, no shell script. -->
+  <!-- GitHub Pages serves this file for every address with no committed file.
+       That makes it the door to editor-created pages: before showing "not
+       found", it checks whether an /admin-built page lives at this address
+       and renders it via js/page-render.js. The static fallback below is
+       self-contained (no relative assets) since this can load at any path. -->
   <style>
-    body { margin: 0; min-height: 100vh; display: grid; place-items: center;
-      background: #f4efe3; color: #24333e; text-align: center;
-      font-family: 'Nunito Sans', 'Avenir', 'Segoe UI', sans-serif; padding: 2rem; }
-    h1 { font-family: 'Poppins', 'Trebuchet MS', sans-serif; color: #123b53; margin: 0.3rem 0 0.6rem; }
-    a.btn { display: inline-block; margin-top: 1rem; background: #1b7f72; color: #fff;
+    body { margin: 0; min-height: 100vh; background: #f4efe3; color: #24333e;
+      font-family: 'Nunito Sans', 'Avenir', 'Segoe UI', sans-serif; }
+    #nf { min-height: 100vh; display: grid; place-items: center; text-align: center; padding: 2rem; }
+    #nf h1 { font-family: 'Poppins', 'Trebuchet MS', sans-serif; color: #123b53; margin: 0.3rem 0 0.6rem; }
+    #nf a.btn { display: inline-block; margin: 1rem 0.3rem 0; background: #1b7f72; color: #fff;
       text-decoration: none; font-weight: 600; padding: 0.75rem 1.6rem; border-radius: 999px; }
-    svg { width: 40px; height: 40px; }
+    #nf svg { width: 40px; height: 40px; }
   </style>
 </head>
 <body>
-  <div>
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z" fill="#1b7f72" transform="rotate(40 12 12)"/></svg>
-    <h1>That page doesn’t exist</h1>
-    <p>No harm done. The whole site is a few steps away.</p>
-    <a class="btn" href="javascript:history.back()">Go back</a>
-    <a class="btn" id="homeLink" href="/">Back to the start</a>
+  <div id="nf" hidden>
+    <div>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z" fill="#1b7f72" transform="rotate(40 12 12)"/></svg>
+      <h1>That page doesn’t exist</h1>
+      <p>No harm done. The whole site is a few steps away.</p>
+      <a class="btn" href="javascript:history.back()">Go back</a>
+      <a class="btn" id="homeLink" href="/">Back to the start</a>
+    </div>
   </div>
-  <script>
-    /* Point home at the site root whether we're on github.io/<repo>/ or a domain. */
-    var onPages = /\.github\.io$/.test(location.hostname);
-    var seg = location.pathname.split('/')[1];
-    document.getElementById('homeLink').href = onPages && seg ? '/' + seg + '/' : '/';
+  <noscript><div style="padding:4rem;text-align:center">That page doesn’t exist — head <a href="/">back to the start</a>.</noscript>
+  <script type="module">
+    /* Site root: github.io project path or a bare domain. */
+    const onPages = /\.github\.io$/.test(location.hostname);
+    const repo = location.pathname.split('/')[1];
+    const root = onPages && repo ? `/${repo}/` : '/';
+    document.getElementById('homeLink').href = root;
+
+    const slug = decodeURIComponent(location.pathname)
+      .slice(root.length).replace(/\/+$/, '').replace(/^\/+/, '');
+    const showNotFound = () => { document.getElementById('nf').hidden = false; };
+
+    if (slug && !slug.includes('.') && !slug.includes('/')) {
+      try {
+        const { renderCustomPage } = await import(`${root}js/page-render.js`);
+        if (!(await renderCustomPage(slug, root))) showNotFound();
+      } catch (err) {
+        console.warn('custom page lookup failed:', err);
+        showNotFound();
+      }
+    } else {
+      showNotFound();
+    }
   </script>
 </body>
 </html>

@@ -69,14 +69,17 @@
 </main>
 
 <script type="module">
-  import { TRIAL, PUBLICATIONS } from '../js/data.js';
+  import { TRIAL } from '../js/data.js';
+  import { getCollection } from '../js/content.js';
 
   document.querySelector('[data-render="effects"]').innerHTML = TRIAL.effects
     .map((e) => `<div class="effect"><b>${e.change}</b><span>${e.measure}</span><span class="muted">${e.unit} · ${e.ci}</span></div>`).join('');
   document.querySelector('[data-render="paper-link"]').href = TRIAL.paper;
 
-  document.querySelector('[data-render="publications"]').innerHTML = PUBLICATIONS
-    .map((p) => `<div class="card"><h3 style="font-size:1rem">${p.title}</h3><p class="small muted" style="margin:0">${p.meta} · <a href="${p.doi}" target="_blank" rel="noopener">DOI →</a></p></div>`).join('');
+  getCollection('publications').then((pubs) => {
+    document.querySelector('[data-render="publications"]').innerHTML = pubs
+      .map((p) => `<div class="card"><h3 style="font-size:1rem">${p.title}</h3><p class="small muted" style="margin:0">${p.meta} · <a href="${p.doi}" target="_blank" rel="noopener">DOI →</a></p></div>`).join('');
+  });
 </script>
 <script type="module" src="../js/site.js"></script>
 </body>
