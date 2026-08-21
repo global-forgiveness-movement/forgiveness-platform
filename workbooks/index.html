@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Workbooks — Global Forgiveness Movement</title>
+  <meta name="description" content="Every REACH forgiveness workbook, every edition, every language. Free, no account needed.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z' fill='%231b7f72' transform='rotate(40 12 12)'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../css/site.css">
+</head>
+<body>
+<main>
+
+  <section class="section section--paper">
+    <div class="wrap">
+      <p class="kicker">Free · No account needed</p>
+      <h1>The REACH Forgiveness Workbook</h1>
+      <p>A self-guided workbook designed to take two to three hours. It was tested in a randomized trial with over 4,500 participants in 5 relatively high-conflict countries. You can download it, print it, share it, and translate it for your community. It is free, and it will stay free.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>Which workbook is right for me?</h2>
+      <p class="muted">Two questions, and we’ll point you to the one you want.</p>
+      <div class="grid grid--2" style="max-width:820px">
+        <div class="card card--tint">
+          <h3 style="font-size:1rem">Are you forgiving another person, or seeking forgiveness yourself?</h3>
+          <div class="dl-row">
+            <a class="btn btn--outline" href="#reach">Forgiving someone else</a>
+            <a class="btn btn--outline" href="#receive">Seeking God’s forgiveness</a>
+          </div>
+        </div>
+        <div class="card card--tint">
+          <h3 style="font-size:1rem">Would you like the material framed within Christian faith?</h3>
+          <div class="dl-row">
+            <a class="btn btn--outline" href="#church">Yes, church edition</a>
+            <a class="btn btn--outline" href="#reach">No, standard edition</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--paper">
+    <div class="wrap grid grid--2" data-render="workbooks-main"></div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>Available languages</h2>
+      <p>Our materials are available in the primary languages of more than two-thirds of the world’s population. An Arabic edition is in development with the Salam Institute for Peace and Justice.</p>
+      <div class="dl-row" data-render="languages"></div>
+      <p class="small muted" style="margin-top:0.9rem">Want to translate the workbook for your community? <a href="../contact/">Get in touch →</a></p>
+    </div>
+  </section>
+
+  <section class="section section--paper">
+    <div class="wrap">
+      <h2>Rather do it on a screen?</h2>
+      <div class="card" style="max-width:680px">
+        <p class="kicker" style="margin-bottom:0.3rem">Interactive workbook</p>
+        <p>The same twelve lessons as the PDF, one gentle step at a time — timers, saved answers, and a growing tree as you go. Everything you write stays on your own device. If you make a free account, we can also save your place across devices (your place, never your words).</p>
+        <a class="btn btn--primary" href="../workbook/">Open the interactive workbook</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>If REACH helped, here is where to go next</h2>
+      <p class="muted">The REACH workbook is about forgiving someone who hurt you. These two take up different questions, and both are free.</p>
+      <div class="grid grid--2" data-render="workbooks-more"></div>
+    </div>
+  </section>
+
+  <section class="section section--navy center">
+    <div class="wrap">
+      <h2>Doing this with other people changes it</h2>
+      <p style="margin:0 auto 1.4rem">A Forgiveness Group is a handful of people doing the workbook on their own and meeting to talk about the experience. We provide the videos and show you how to lead one.</p>
+      <a class="btn btn--primary" href="../groups/">Start a Forgiveness Group</a>
+    </div>
+  </section>
+
+</main>
+
+<script type="module">
+  import { WORKBOOKS, LANGUAGES } from '../js/data.js';
+
+  const langSelect = (id) => `
+    <label class="visually-hidden" for="lang-${id}">Language</label>
+    <select id="lang-${id}" data-lang-for="${id}">
+      ${LANGUAGES.map(([code, name]) => `<option value="${code}">${name}</option>`).join('')}
+    </select>`;
+
+  const card = (w) => `
+    <div class="card" id="${w.id}">
+      <p class="kicker">${w.badge}</p>
+      <h3>${w.title}</h3>
+      <p>${w.desc}</p>
+      <p class="dl-row">${w.pills.map((p) => `<span class="pill">${p}</span>`).join('')}</p>
+      <div class="dl-row">
+        ${w.languages ? langSelect(w.id) : ''}
+        <a class="btn btn--primary" href="${w.url}" data-download="${w.id}:en" target="_blank" rel="noopener">Download PDF</a>
+      </div>
+    </div>`;
+
+  document.querySelector('[data-render="workbooks-main"]').innerHTML =
+    WORKBOOKS.filter((w) => ['reach', 'church'].includes(w.id)).map(card).join('');
+  document.querySelector('[data-render="workbooks-more"]').innerHTML =
+    WORKBOOKS.filter((w) => ['receive', 'activity'].includes(w.id)).map(card).join('');
+  document.querySelector('[data-render="languages"]').innerHTML =
+    LANGUAGES.map(([, name]) => `<span class="pill">${name}</span>`).join('');
+
+  /* Language choice rides along in the counted download tag. */
+  document.addEventListener('change', (e) => {
+    const sel = e.target.closest('[data-lang-for]');
+    if (!sel) return;
+    const btn = document.querySelector(`#${sel.dataset.langFor} [data-download]`);
+    btn.dataset.download = `${sel.dataset.langFor}:${sel.value}`;
+  });
+</script>
+<script type="module" src="../js/site.js"></script>
+</body>
+</html>

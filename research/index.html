@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Research — Global Forgiveness Movement</title>
+  <meta name="description" content="The evidence behind the REACH Forgiveness workbook: the international randomized trial, what it shows, and what it doesn't.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z' fill='%231b7f72' transform='rotate(40 12 12)'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../css/site.css">
+</head>
+<body>
+<main>
+
+  <section class="section section--paper">
+    <div class="wrap">
+      <p class="kicker">The evidence base</p>
+      <h1>Does this actually work?</h1>
+      <p>It’s a fair question, and one we have spent years working on. Below is what the research shows, what it does not yet show, and where you can read it for yourself.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <p class="kicker">The headline study</p>
+      <h2>International REACH forgiveness intervention: a multisite randomised controlled trial</h2>
+      <p class="muted small">Ho, Worthington, Cowden, Bechara et al. · BMJ Public Health, 2024 · Trial NCT04257773</p>
+      <p>The largest randomised controlled trial of an interpersonal forgiveness intervention conducted to date. Between February 2020 and September 2021, over 4,500 participants took part across 5 relatively high-conflict countries — Colombia, Hong Kong, Indonesia, South Africa, and Ukraine.</p>
+      <p>Participants worked through the self-directed REACH workbook. A waitlist group received the same materials after a two-week delay. At two weeks, the immediate group showed significantly lower unforgiveness, depression, and anxiety.</p>
+      <div class="effects" data-render="effects" style="margin:1.2rem 0"></div>
+      <p><b>What it does not show:</b> the effects are definitively established only at a two-week follow-up. Improvements in depression and anxiety continued to four weeks, but because the waitlist group eventually received the same materials, the trial could not test how long the benefit lasts.</p>
+      <p class="dl-row">
+        <a class="btn btn--primary" data-render="paper-link" target="_blank" rel="noopener">Read the paper</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--paper">
+    <div class="wrap grid grid--2" style="align-items:center">
+      <div>
+        <p class="kicker">In their own words</p>
+        <h2>The research, on film</h2>
+        <p>The researchers and site leads explain what they set out to test and what they found.</p>
+      </div>
+      <figure class="video" data-video="research"></figure>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>How much forgiveness work is enough?</h2>
+      <p>A useful question for anyone planning a group or a curriculum. Across the wider forgiveness literature, benefit broadly scales with time invested. But the international trial found something encouraging: on forgiveness of the target hurt, the 2–3 hour self-directed workbook performed comparably to a six-hour group program.</p>
+      <div class="grid grid--3">
+        <div class="card"><p class="kicker">Under 2 hours</p><h3>Brief workbook</h3><p class="small">Abbreviated. Worthington describes these shorter versions as not yet formally tested.</p></div>
+        <div class="card card--tint"><p class="kicker">2–3 hours</p><h3>The tested workbook</h3><p class="small">The version used in the international trial. This is what our Forgiveness Groups work through.</p></div>
+        <div class="card"><p class="kicker">6–7 hours</p><h3>Full six-section workbook</h3><p class="small">Worthington’s longer self-directed format, suited to a group running over several weeks.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--paper">
+    <div class="wrap">
+      <h2>Publications</h2>
+      <div class="grid" data-render="publications" style="max-width:820px"></div>
+      <p class="small muted" style="margin-top:1rem">More from the program on the <a href="https://hfh.fas.harvard.edu/blog" target="_blank" rel="noopener">Human Flourishing Program blog →</a></p>
+    </div>
+  </section>
+
+</main>
+
+<script type="module">
+  import { TRIAL, PUBLICATIONS } from '../js/data.js';
+
+  document.querySelector('[data-render="effects"]').innerHTML = TRIAL.effects
+    .map((e) => `<div class="effect"><b>${e.change}</b><span>${e.measure}</span><span class="muted">${e.unit} · ${e.ci}</span></div>`).join('');
+  document.querySelector('[data-render="paper-link"]').href = TRIAL.paper;
+
+  document.querySelector('[data-render="publications"]').innerHTML = PUBLICATIONS
+    .map((p) => `<div class="card"><h3 style="font-size:1rem">${p.title}</h3><p class="small muted" style="margin:0">${p.meta} · <a href="${p.doi}" target="_blank" rel="noopener">DOI →</a></p></div>`).join('');
+</script>
+<script type="module" src="../js/site.js"></script>
+</body>
+</html>

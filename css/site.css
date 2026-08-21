@@ -37,6 +37,10 @@
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: -1px;
+  clip-path: inset(50%); overflow: hidden; white-space: nowrap;
+}
 html { scroll-behavior: smooth; }
 
 /* The shell script reveals the page once the gate has decided; no flash of content. */

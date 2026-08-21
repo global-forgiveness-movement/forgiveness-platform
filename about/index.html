@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About — Global Forgiveness Movement</title>
+  <meta name="description" content="Who is behind the Global Forgiveness Movement, and how it connects to Harvard's Human Flourishing Program.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z' fill='%231b7f72' transform='rotate(40 12 12)'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../css/site.css">
+</head>
+<body>
+<main>
+
+  <section class="section section--paper">
+    <div class="wrap">
+      <p class="kicker">About the movement</p>
+      <h1>Using evidence-based interventions to make the world a more loving and forgiving place</h1>
+      <p>The Global Forgiveness Movement is an initiative of the Human Flourishing Program at Harvard University. We take one of the most widely tested models of forgiveness in psychology, put it into free workbooks, and help people and communities everywhere actually work through it.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap grid grid--3">
+      <div class="card"><h3>What we believe</h3><p class="small">A world where everyone is skilled at forgiving. Not a world without wrongdoing, and not a world where wrongs go unnamed — forgiveness is compatible with accountability, truth, and justice.</p></div>
+      <div class="card"><h3>How we work</h3><p class="small">Rigorous research first, then free materials, then the people and communities who carry them. Everything we publish is grounded in evidence and given away.</p></div>
+      <div class="card"><h3>Where we are going</h3><p class="small">Into every willing heart, home, and homeland. Materials already exist in the primary languages of more than two-thirds of the world’s population.</p></div>
+    </div>
+  </section>
+
+  <section class="section section--paper">
+    <div class="wrap">
+      <h2 class="center">The people behind this</h2>
+      <div class="grid grid--4" data-render="people" style="margin-top:1.6rem"></div>
+      <p class="small muted center" style="margin-top:1.2rem"><a href="https://hfh.fas.harvard.edu/team" target="_blank" rel="noopener">See the full program team and research collaborators →</a></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>Partners &amp; collaborators</h2>
+      <p>The international trial was supported by the Templeton World Charity Foundation and carried out with partners in Colombia, Hong Kong, Indonesia, South Africa, and Ukraine, alongside Virginia Commonwealth University. The Salam Institute for Peace and Justice is leading an Arabic adaptation.</p>
+    </div>
+  </section>
+
+  <section class="section section--paper">
+    <div class="wrap grid grid--2" style="align-items:center">
+      <div>
+        <h2>Part of the Human Flourishing Program</h2>
+        <p>Since 2016, the Human Flourishing Program at Harvard University has studied what it means to live well and worked to translate that knowledge into efforts that strengthen people, communities, and institutions.</p>
+        <a class="btn btn--outline" href="https://hfh.fas.harvard.edu/" target="_blank" rel="noopener">Visit the Human Flourishing Program</a>
+      </div>
+      <div class="card card--tint">
+        <h3>Get in touch</h3>
+        <p class="small">Questions about the movement, the workbooks, or running a group.</p>
+        <a class="btn btn--primary" href="../contact/">Contact us</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script type="module">
+  import { PEOPLE } from '../js/data.js';
+  document.querySelector('[data-render="people"]').innerHTML = PEOPLE
+    .map((p) => `<div class="person"><div class="por">${p.initials}</div><b>${p.name}</b><span>${p.role}</span><p class="small muted" style="margin-top:0.4rem">${p.line}</p></div>`).join('');
+</script>
+<script type="module" src="../js/site.js"></script>
+</body>
+</html>

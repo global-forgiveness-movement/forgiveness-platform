@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Forgiveness Groups — Global Forgiveness Movement</title>
+  <meta name="description" content="What a Forgiveness Group is, how to run one, and the video series that guides each session.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z' fill='%231b7f72' transform='rotate(40 12 12)'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../css/site.css">
+</head>
+<body>
+<main>
+
+  <section class="section section--paper">
+    <div class="wrap grid grid--2" style="align-items:center">
+      <div>
+        <p class="kicker">Forgiveness Groups</p>
+        <h1>Doing this work alongside other people changes it</h1>
+        <p>A Forgiveness Group is six to twelve people working through the REACH workbook on their own and meeting to talk about the experience. You don’t need to be a therapist or an expert to lead one — we provide the videos, the guidance, and the materials.</p>
+        <p style="display:flex;gap:0.7rem;flex-wrap:wrap">
+          <a class="btn btn--plum" href="#lead">I want to lead a group</a>
+          <a class="btn btn--outline" href="#what">I want to join a group</a>
+        </p>
+      </div>
+      <figure class="video" data-video="groupFilm"></figure>
+    </div>
+  </section>
+
+  <section class="section" id="what">
+    <div class="wrap">
+      <h2>What happens in a Forgiveness Group</h2>
+      <p>In a Forgiveness Group, participants work through the evidence-based REACH Forgiveness Workbook on their own and then meet periodically to discuss their experience with the material. The group provides solidarity, support, and accountability in a community setting.</p>
+      <p>Participants are encouraged to start with a small hurt as they learn about the REACH process and build their “forgiveness muscle.” No one is ever asked to share the specific hurt they are working through, which helps ensure the group remains a safe space to explore insights about forgiveness without divulging personal information.</p>
+      <p>Each meeting runs one to one and a half hours. The leader plays a video — 8 to 12 minutes of educational content and a guided embodied activity — and the group spends the rest of the session on the reflection questions it raises. There is a 3-session series to use with the REACH Forgiveness Workbook and a 6-session series to use with the REACH Workbook Adapted for Churches.</p>
+      <p class="notice">The REACH workbooks and Forgiveness Groups are not therapy and not a replacement for professional mental-health support. Start with a small hurt, not the largest thing you carry — like training before a marathon. If you ever need to skip a section or stop, you should: each person is on their own forgiveness journey, and not everyone will reach full emotional forgiveness. That’s okay. Forgiveness is a choice.</p>
+    </div>
+  </section>
+
+  <section class="section section--paper" id="lead">
+    <div class="wrap">
+      <h2>Running a group, step by step</h2>
+      <div class="grid grid--4" style="margin-top:1.2rem">
+        <div class="card"><p class="kicker">Step 1</p><h3>Choose your format</h3><p class="small">Three sessions using the standard workbook, or six sessions using the church edition.</p></div>
+        <div class="card"><p class="kicker">Step 2</p><h3>Gather 6–12 people</h3><p class="small">A church small group, a class, a workplace team, or friends.</p></div>
+        <div class="card"><p class="kicker">Step 3</p><h3>Everyone gets the workbook</h3><p class="small">Free PDF or print. Participants do the lessons on their own before each meeting.</p></div>
+        <div class="card"><p class="kicker">Step 4</p><h3>Press play, then talk</h3><p class="small">Each session: watch the short video together, then discuss. The video carries the structure so you don’t have to.</p></div>
+      </div>
+      <p class="small muted" style="margin-top:1rem">A leader guide and a short film on running a session are in production and will appear here. <span class="pill pill--plum">Coming with the video series</span></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>The two series</h2>
+      <p class="muted">Both are ways of getting a group through the tested workbook — the evidence attaches to the workbook, and the series inherit it.</p>
+      <div class="grid grid--2" data-render="series" style="margin-top:1.2rem"></div>
+    </div>
+  </section>
+
+  <section class="section section--paper">
+    <div class="wrap">
+      <h2>Connect with other practitioners</h2>
+      <div class="card" style="max-width:680px">
+        <p class="kicker">Monthly · Free</p>
+        <h3>Forgiveness Community of Practice</h3>
+        <p>Learn about forgiveness research and implementation best practice, and connect with others spreading forgiveness. First Friday of every month, 12pm ET, on Zoom.</p>
+        <a class="btn btn--outline" href="https://hfh.fas.harvard.edu/global-forgiveness-movement" target="_blank" rel="noopener">Register</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>Tell us about your group</h2>
+      <p class="muted" style="max-width:560px">If you’re planning to run the material, let us know. It helps us support you, send you new resources as they appear, and understand where this work is taking root.</p>
+      <form class="form" id="groupForm">
+        <label>Your name <input name="name" required autocomplete="name"></label>
+        <label>Email <input name="email" type="email" required autocomplete="email"></label>
+        <label>Where is your group? (city, country) <input name="location" required></label>
+        <label>How many people do you expect? <input name="size" type="number" min="2" max="99" required></label>
+        <label>Which series will you use?
+          <select name="series">
+            <option value="secular">3-session series · REACH workbook</option>
+            <option value="church">6-session series · church edition</option>
+          </select>
+        </label>
+        <label>Anything you’d like us to know? <textarea name="notes" rows="3"></textarea></label>
+        <button class="btn btn--primary" type="submit">Send</button>
+        <div class="form-msg" hidden role="status"></div>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<script type="module">
+  import { SERIES } from '../js/data.js';
+  import { submitGroupForm } from '../js/metrics.js';
+  import { MODE } from '../js/store.js';
+
+  const seriesCard = (s) => `
+    <div class="card">
+      <p class="kicker">${s.framing}</p>
+      <h3>${s.name}</h3>
+      <p class="small muted">Uses the ${s.workbook}. Sessions run 1–1.5 hours, guided by ~10 minutes of video.</p>
+      <ol class="sessions">
+        ${s.sessions.map((x) => `<li><span class="n">${x.n}</span><span><b>${x.title}</b><span>${x.detail}</span></span></li>`).join('')}
+      </ol>
+      <figure class="video" data-video="${s.videoKey}" style="margin-top:1rem"></figure>
+    </div>`;
+
+  document.querySelector('[data-render="series"]').innerHTML =
+    [SERIES.secular, SERIES.church].map(seriesCard).join('');
+
+  const form = document.getElementById('groupForm');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = form.querySelector('.form-msg');
+    try {
+      await submitGroupForm(Object.fromEntries(new FormData(form)));
+      form.reset();
+      msg.className = 'form-msg form-msg--ok';
+      msg.textContent = MODE === 'demo'
+        ? 'Sent — thank you! (Preview note: the backend isn’t connected yet, so this submission is stored in this browser only.)'
+        : 'Sent — thank you! We’ll be in touch as new resources appear.';
+    } catch (err) {
+      msg.className = 'form-msg form-msg--err';
+      msg.textContent = 'That didn’t send. Please try again, or email us via the Contact page.';
+    }
+    msg.hidden = false;
+  });
+</script>
+<script type="module" src="../js/site.js"></script>
+</body>
+</html>
