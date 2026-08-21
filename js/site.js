@@ -8,7 +8,7 @@ import { getVideos, getPages } from './content.js';
 import { recordDownload } from './metrics.js';
 import { ensureGate, leaf } from './gate.js';
 
-export const STAMP = 'GFM-V1 · 2026-08-21g';
+export const STAMP = 'GFM-V1 · 2026-08-21h';
 
 /* Resolve everything relative to the site root (js/ → root), so pages work
    at any depth and on any host (github.io project path or a custom domain). */
@@ -35,16 +35,53 @@ function buildHeader() {
     const current = path === here ? ' aria-current="page"' : '';
     return `<a href="${href(path)}"${current}>${label}</a>`;
   }).join('');
-  return el('header', { class: 'site-head' }, `
+  const head = el('header', { class: 'site-head' }, `
     <a class="site-brand" href="${href('')}">
       ${leaf('#1b7f72')}
       <span class="t"><b>Global Forgiveness Movement</b>
       <span>Human Flourishing Program at Harvard</span></span>
     </a>
-    <nav class="site-nav" aria-label="Main">${nav}</nav>
+    <nav class="site-nav" id="site-menu" aria-label="Main">${nav}</nav>
     <div class="site-auth" data-auth-slot>
       <a class="signin" href="${href('join/')}">Sign in</a>
-    </div>`);
+         <a class="btn btn--outline" href="${href('join/')}">Create account</a>
+    </div>
+    <button class="nav-toggle" type="button" aria-expanded="false"
+      aria-controls="site-menu" aria-label="Menu">
+      <svg viewBox="0 0 22 22" width="22" height="22" aria-hidden="true"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M3 6h16M3 11h16M3 16h16"></path>
+      </svg>
+    </button>`);
+  wireMenu(head);
+  return head;
+}
+
+/* Collapsed-header menu (below 1100px). One piece of state — the
+   data-menu-open attribute on .site-head — and CSS draws everything from it.
+   At ≥1100px the toggle is display:none and none of this can run. */
+function wireMenu(header) {
+  const toggle = header.querySelector('.nav-toggle');
+  const isOpen = () => header.hasAttribute('data-menu-open');
+  const setOpen = (open) => {
+    header.toggleAttribute('data-menu-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+  };
+  toggle.addEventListener('click', () => setOpen(!isOpen()));
+  /* A chosen link closes the menu (belt-and-braces beside the page load). */
+  header.addEventListener('click', (e) => {
+    if (isOpen() && e.target.closest('a')) setOpen(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isOpen()) {
+      setOpen(false);
+      toggle.focus();
+    }
+  });
+  /* Resizing back to desktop never strands the menu open. */
+  matchMedia('(min-width: 1100px)').addEventListener('change', (e) => {
+    if (e.matches) setOpen(false);
+  });
 }
 
 function buildFooter() {

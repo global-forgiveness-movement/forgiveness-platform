@@ -284,3 +284,40 @@ hr.leafline { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
   * { transition: none !important; animation: none !important; }
   html { scroll-behavior: auto; }
 }
+
+/* ------------------------------------------------ collapsed header (<1100px)
+   Below 1100px the nav links and "Sign in" fold behind the .nav-toggle button;
+   the header row keeps brand + auth button + toggle. Everything lives in this
+   base rule and one max-width block, so the ≥1100px header cannot change. */
+.nav-toggle {
+  display: none;
+  background: none; border: 0; color: var(--navy);
+  padding: 0.65rem; border-radius: 999px; line-height: 0;
+}
+
+@media (max-width: 1099.98px) {
+  .nav-toggle { display: inline-flex; align-items: center; justify-content: center; order: 2; flex: none; }
+  .site-brand { min-width: 0; }
+  .site-brand .t { min-width: 0; }
+  /* Promote the auth slot's children to header flex items, in both auth
+     states: the .btn stays in the top row, the .signin joins the menu panel. */
+  .site-auth { display: contents; }
+  .site-auth .btn { order: 1; flex: none; padding: 0.55rem 1.1rem; }
+  .site-nav {
+    display: none;
+    order: 10; flex-basis: 100%;
+    flex-direction: column; align-items: stretch; gap: 0.1rem;
+    border-top: 1px solid var(--line); padding-top: 0.55rem; margin-top: 0.15rem;
+  }
+  .site-nav a { padding: 0.65rem 0.75rem; }
+  .site-auth .signin { display: none; order: 11; flex-basis: 100%; padding: 0.65rem 0.75rem; }
+  .site-head[data-menu-open] .site-nav { display: flex; }
+  .site-head[data-menu-open] .site-auth .signin { display: block; }
+  .site-head[data-menu-open] .site-nav,
+  .site-head[data-menu-open] .site-auth .signin { animation: menu-in 180ms ease-out; }
+}
+
+@keyframes menu-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: none; }
+}
