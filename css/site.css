@@ -134,6 +134,11 @@ button.btn { font-size: 1rem; }
 
 /* ------------------------------------------------ cards & grids */
 .grid { display: grid; gap: 1.1rem; }
+/* Grid items default to min-width:auto, so a card whose content has a wide
+   min-content width refuses to shrink and drags the whole track past the
+   viewport (the sign-up page did exactly this at 390px). One rule here
+   rather than a fix per card. */
+.grid > * { min-width: 0; }
 @media (min-width: 720px) {
   .grid--2 { grid-template-columns: 1fr 1fr; }
   .grid--3 { grid-template-columns: repeat(3, 1fr); }

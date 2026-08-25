@@ -57,6 +57,11 @@ textarea, input[type='text'], input[type='number'] {
 .accent { color: var(--teal); }
 
 /* ------------------------------------------------ page & chrome */
+/* Decorative art (the welcome branch) is positioned to overhang its box.
+   Clip horizontally at the page root so an overhang can never open a
+   sideways scrollbar on a narrow screen. `clip` leaves overflow-y visible,
+   so the branch keeps its upward overhang. */
+#app { overflow-x: clip; }
 .page { min-height: 100vh; display: flex; flex-direction: column; }
 .page--dark { background: var(--navy); color: #f2f4f0; }
 .page--dark a { color: var(--sage); }

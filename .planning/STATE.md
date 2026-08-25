@@ -86,6 +86,7 @@ on 2026-08-21.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 1 | Header collapses to hamburger below 1100px (Wyatt review note #1) | 2026-08-21 | 54db937, 10ab673 | .planning/quick/260821-rx2-responsive-header-hamburger-below-1100px/ |
+| 2 | Two mobile horizontal-overflow faults (/join/, /workbook/) closed | 2026-08-25 | pending | .planning/quick/260825-ier-mobile-horizontal-overflow-join-and-workbook/ |
 
 ## Session Continuity
 
