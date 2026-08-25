@@ -32,6 +32,13 @@
       </div>
     </section>
 
+    <section class="section section--paper">
+      <div class="wrap">
+        <h2>Your group</h2>
+        <div class="card" style="max-width:680px" data-render="group-card"></div>
+      </div>
+    </section>
+
     <section class="section">
       <div class="wrap">
         <h2>Your Forgiveness Group series</h2>
@@ -77,6 +84,7 @@
 <script type="module">
   import { onAuth, signOutUser, deleteAccount } from '../js/auth.js';
   import { syncProgress } from '../js/progress-sync.js';
+  import { memberGroup, joinGroup, leaveGroup, CODE_SHAPE } from '../js/groups.js';
   import { SERIES } from '../js/data.js';
 
   const TOTAL_LESSONS = 12;
@@ -115,7 +123,57 @@
     document.querySelector('[data-render="email"]').textContent = `Signed in as ${u.email}`;
     const p = await syncProgress(u.id);
     document.querySelector('[data-render="progress-card"]').innerHTML = progressCard(p);
+    renderGroup(await memberGroup(u.id), u.id);
   });
+
+  /* The group card has two states and one owner. No group: a code box.
+     In a group: which series, and the way back to the videos. */
+  const slot = () => document.querySelector('[data-render="group-card"]');
+
+  function renderGroup(g, userId) {
+    const el = slot();
+    if (!el) return;
+    if (g) {
+      el.innerHTML = `<p class="kicker" style="margin-bottom:0.3rem">You’re following a group</p>
+        <h3>${g.series.name}</h3>
+        <p class="small muted">${g.groupName ? g.groupName + ' · ' : ''}Code <span class="groupcode">${g.code}</span></p>
+        <p class="small">Your group meets and discusses; you do the lessons on your own.
+          The session videos are below — rewatch any of them whenever you like.</p>
+        <button class="btn" id="leaveGroupBtn" style="color:var(--plum)">Leave this group</button>`;
+      const leave = document.getElementById('leaveGroupBtn');
+      leave.addEventListener('click', async () => {
+        if (!confirm('Stop following this group? Your workbook progress is not affected.')) return;
+        await leaveGroup(userId);
+        renderGroup(null, userId);
+      });
+      return;
+    }
+    el.innerHTML = `<p class="kicker" style="margin-bottom:0.3rem">Already meeting with a group?</p>
+      <h3>Enter your group code</h3>
+      <p class="small">Your leader has it. It keeps your place in the workbook and lets you
+        rewatch the session videos in your own time. If you’re not in a group, you can ignore this —
+        nothing here is required.</p>
+      <form class="form" id="codeForm" style="max-width:340px">
+        <label>Group code
+          <input name="code" placeholder="${CODE_SHAPE}" autocomplete="off" spellcheck="false" required>
+        </label>
+        <button class="btn btn--primary" type="submit">Join my group</button>
+        <div class="form-msg" hidden role="status"></div>
+      </form>`;
+    const form = document.getElementById('codeForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = form.querySelector('.form-msg');
+      const found = await joinGroup(userId, new FormData(form).get('code'));
+      if (!found) {
+        msg.className = 'form-msg form-msg--err';
+        msg.textContent = `That code isn’t one of ours. They look like ${CODE_SHAPE} — check it with your leader.`;
+        msg.hidden = false;
+        return;
+      }
+      renderGroup(await memberGroup(userId), userId);
+    });
+  }
 
   document.getElementById('signOutBtn').addEventListener('click', async () => {
     await signOutUser();

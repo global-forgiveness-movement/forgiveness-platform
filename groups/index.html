@@ -20,7 +20,7 @@
         <p>A Forgiveness Group is six to twelve people working through the REACH workbook on their own and meeting to talk about the experience. You don’t need to be a therapist or an expert to lead one — we provide the videos, the guidance, and the materials.</p>
         <p style="display:flex;gap:0.7rem;flex-wrap:wrap">
           <a class="btn btn--plum" href="#lead">I want to lead a group</a>
-          <a class="btn btn--outline" href="#what">I want to join a group</a>
+          <a class="btn btn--outline" href="../my-path/">I’m already in a group</a>
         </p>
       </div>
       <figure class="video" data-video="groupFilm"></figure>
@@ -100,6 +100,7 @@
   import { SERIES } from '../js/data.js';
   import { getCollection } from '../js/content.js';
   import { submitGroupForm } from '../js/metrics.js';
+  import { registerGroup } from '../js/groups.js';
   import { MODE } from '../js/store.js';
 
   getCollection('events').then((events) => {
@@ -126,12 +127,19 @@
     e.preventDefault();
     const msg = form.querySelector('.form-msg');
     try {
-      await submitGroupForm(Object.fromEntries(new FormData(form)));
+      const fields = Object.fromEntries(new FormData(form));
+      await submitGroupForm(fields);
+      const { code, series } = await registerGroup(fields);
       form.reset();
       msg.className = 'form-msg form-msg--ok';
-      msg.textContent = MODE === 'demo'
-        ? 'Sent — thank you! (Preview note: the backend isn’t connected yet, so this submission is stored in this browser only.)'
-        : 'Sent — thank you! We’ll be in touch as new resources appear.';
+      msg.innerHTML = `Sent — thank you.<br><br>
+        <b>Your group code is <span class="groupcode">${code}</span></b><br>
+        Share it with your group. When they enter it on My Path, their workbook
+        progress is saved and they can rewatch the ${series.name} videos in their
+        own time. Write it down — this is the only time we show it to you.` +
+        (MODE === 'demo'
+          ? '<br><br><span class="small muted">Preview note: the backend isn’t connected yet, so this group lives in this browser only.</span>'
+          : '');
     } catch (err) {
       msg.className = 'form-msg form-msg--err';
       msg.textContent = 'That didn’t send. Please try again, or email us via the Contact page.';

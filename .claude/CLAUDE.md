@@ -59,14 +59,21 @@ the way out always visible. "There's no hurry" is design language here.
 
 ## Client work — what's different from a solo project
 
-- **Three feedback sources, later corrects earlier:** scope plan Draft 3 (`/plan/`, password
-  `reach`) → Kate's CSV (17 Aug) → Kate's email. The email's big correction: **videos exist to
-  facilitate groups, not to guide individuals — the homepage has exactly two doors, "Do it solo"
-  and "Start a group", and "start the series" is banned copy.**
+- **Four feedback sources, later corrects earlier:** scope plan Draft 3 (`/plan/`, password
+  `reach`) → Kate's CSV (17 Aug) → Kate's email → **the 25 Aug call** (rulings in
+  `.planning/qa/2026-08-25-CALL-RULINGS.md`). Kate's email established that **videos exist to
+  facilitate groups, not to guide individuals**, and that **"start the series" is banned copy** —
+  both still stand. Its "exactly two doors" ruling was **superseded on 25 Aug: there are now
+  THREE** — "Do it solo", "Start a group", and "I'm already in a group". The third is for someone
+  already meeting in person who wants to track progress and rewatch videos; a leader issues them
+  a code. **There is deliberately no "find a group to join" directory** — Kate's call.
+- **No Harvard in site chrome or marketing copy** (Richard, 25 Aug): the site speaks for the
+  Human Flourishing Program, not the university. Factual attribution stays — workbook authorship
+  credits, the conference venue, and outbound links to `hfh.fas.harvard.edu`.
+- **Testimonials never show names** — a vague descriptor only ("Pastor who ran it with his
+  church"). Kate, 25 Aug, replacing the earlier permission-gated plan.
 - **The Forgiveness Group model is the clients' own design** (workbook done solo, group meets to
   discuss). Don't describe it as Worthington's group protocol.
-- **Testimonials are permission-gated**: names render only when their `permissionConfirmed` flag
-  is true. Kate is collecting permissions.
 - **When a client ruling and a design instinct collide, surface it, don't settle it** — that's
   Wyatt's conversation with Kate, carried by him.
 
