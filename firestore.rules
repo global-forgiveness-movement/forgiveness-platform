@@ -1,0 +1,111 @@
+rules_version = '2';
+
+/* Firestore security rules for the GFM platform.
+
+   NOT deployed by anything in this repo — GitHub Pages serves static files
+   only. Paste these into the Firebase console (Firestore → Rules) when the
+   project is created, or deploy with `firebase deploy --only firestore:rules`.
+
+   The shape follows what js/store.js actually reads and writes. Every
+   collection the site touches is listed; anything not listed is denied by the
+   final catch-all, which is the behaviour we want — a new collection should
+   fail loudly rather than inherit someone else's permissions.
+
+   Two privacy rules drive most of this:
+   - The group registration form collects names and email addresses. It is
+     write-only from the public: anyone may submit one, nobody may read them
+     back except an editor.
+   - A person's workbook progress and group membership belong to them alone.
+     Nothing in here lets one signed-in user read another's.
+*/
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    /* Editors are seeded by hand in the console: settings/editors with an
+       `emails` array. Kept out of client write reach entirely. */
+    function isEditor() {
+      return signedIn()
+        && request.auth.token.email != null
+        && request.auth.token.email in get(/databases/$(database)/documents/settings/editors).data.emails;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    /* ---- published content: the world reads, editors write ---- */
+    match /content/{doc} {
+      allow read: if true;
+      allow write: if isEditor();
+    }
+
+    match /pages/{page} {
+      allow read: if true;
+      allow write: if isEditor();
+    }
+
+    /* Edit history can name editors and hold superseded copy — editors only. */
+    match /contentHistory/{entry} {
+      allow read, write: if isEditor();
+    }
+
+    /* ---- anonymous download counting ---- */
+    /* A counter document per edition+language. Anyone may push it up by one;
+       nobody may set it to an arbitrary number, and it can never be deleted. */
+    match /downloads/{tag} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['count'])
+                    && request.resource.data.count == 1;
+      allow update: if request.resource.data.keys().hasOnly(['count'])
+                    && request.resource.data.count == resource.data.count + 1;
+      allow delete: if false;
+    }
+
+    /* ---- group registrations: write-only from the public ---- */
+    /* These hold a leader's name and email. Submitting one is open; reading
+       them back is not. */
+    match /groups/{entry} {
+      allow create: if true;
+      allow read, update, delete: if isEditor();
+    }
+
+    /* ---- group codes: readable so a member can resolve one ---- */
+    /* Holds no personal data — the series and the group's location label only.
+       Immutable once written, so a code cannot be repointed at another series. */
+    match /groupCodes/{code} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if isEditor();
+    }
+
+    /* ---- a person's own records ---- */
+    /* Progress is position and completion only. What anyone writes in the
+       workbook never reaches Firestore at all — see js/progress-sync.js,
+       which does not read the answers field. */
+    match /progress/{uid} {
+      allow read, write: if isOwner(uid);
+    }
+
+    match /members/{uid} {
+      allow read, write: if isOwner(uid);
+    }
+
+    /* ---- settings ---- */
+    /* Readable by signed-in users because isEditor() has to check it.
+       Never writable from a client: seed and edit it in the console. */
+    match /settings/{doc} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    /* Anything not named above. */
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
