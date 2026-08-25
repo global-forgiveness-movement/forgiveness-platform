@@ -8,7 +8,7 @@ import { getVideos, getPages } from './content.js';
 import { recordDownload } from './metrics.js';
 import { ensureGate, leaf } from './gate.js';
 
-export const STAMP = 'GFM-V1 · 2026-08-21h';
+export const STAMP = 'GFM-V1 · 2026-08-25b';
 
 /* Resolve everything relative to the site root (js/ → root), so pages work
    at any depth and on any host (github.io project path or a custom domain). */
@@ -39,7 +39,7 @@ function buildHeader() {
     <a class="site-brand" href="${href('')}">
       ${leaf('#1b7f72')}
       <span class="t"><b>Global Forgiveness Movement</b>
-      <span>Human Flourishing Program at Harvard</span></span>
+      <span>Human Flourishing Program</span></span>
     </a>
     <nav class="site-nav" id="site-menu" aria-label="Main">${nav}</nav>
     <div class="site-auth" data-auth-slot>
@@ -93,9 +93,9 @@ function buildFooter() {
   return el('footer', { class: 'site-foot' }, `
     <div class="cols">${cols}</div>
     <div class="legal">
-      <p>An initiative of the <a href="https://hfh.fas.harvard.edu/">Human Flourishing Program</a> at Harvard University.</p>
+      <p>An initiative of the <a href="https://hfh.fas.harvard.edu/">Human Flourishing Program</a>.</p>
       <p>The REACH workbooks are self-guided learning, not therapy, and not a replacement for professional mental-health support.</p>
-      <p>© 2026 President and Fellows of Harvard College · <a href="${href('privacy/')}">Privacy</a> · <a href="${href('accessibility/')}">Accessibility</a> · <span class="stamp">${STAMP}</span></p>
+      <p>© 2026 Human Flourishing Program · <a href="${href('privacy/')}">Privacy</a> · <a href="${href('accessibility/')}">Accessibility</a> · <span class="stamp">${STAMP}</span></p>
     </div>`);
 }
 

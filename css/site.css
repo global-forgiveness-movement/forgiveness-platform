@@ -134,6 +134,11 @@ button.btn { font-size: 1rem; }
 
 /* ------------------------------------------------ cards & grids */
 .grid { display: grid; gap: 1.1rem; }
+/* Grid items default to min-width:auto, so a card whose content has a wide
+   min-content width refuses to shrink and drags the whole track past the
+   viewport (the sign-up page did exactly this at 390px). One rule here
+   rather than a fix per card. */
+.grid > * { min-width: 0; }
 @media (min-width: 720px) {
   .grid--2 { grid-template-columns: 1fr 1fr; }
   .grid--3 { grid-template-columns: repeat(3, 1fr); }
@@ -275,6 +280,10 @@ figure.video { margin: 0; }
 .gate-err { color: var(--plum); font-size: 0.88rem; min-height: 1.4em; margin-top: 0.6rem; }
 
 /* ------------------------------------------------ misc */
+.groupcode { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 1.15em;
+  letter-spacing: 0.06em; background: rgba(27, 127, 114, 0.12); color: var(--teal-deep);
+  padding: 0.15em 0.45em; border-radius: 5px; white-space: nowrap; }
+
 .notice { background: rgba(231, 181, 74, 0.18); border: 1px solid rgba(231, 181, 74, 0.5); border-radius: var(--radius); padding: 0.85rem 1.1rem; font-size: 0.92rem; max-width: var(--measure); }
 .crumbs { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.6rem; }
 .crumbs a { color: inherit; }

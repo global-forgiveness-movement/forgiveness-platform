@@ -144,9 +144,14 @@ export const TESTIMONIALS = [
   },
 ];
 
-/* Workbook downloads. TODO(wyatt): replace `url` values with the direct PDF
-   links (or new branded copies) — currently they land on the HFP page that
-   hosts the PDFs. Download clicks are still counted per edition + language. */
+/* Workbook downloads.
+   Kate, 25 Aug: every edition can be downloaded from the Discover Forgiveness
+   site today, but none of them have been designed yet and several people are
+   producing different pieces, so the final files are not settled.
+   TODO(wyatt): confirm the direct per-edition, per-language URLs and set them
+   here. Left pointing at the programme page deliberately — an unverified deep
+   link that 404s is worse than a landing page that works.
+   Download clicks are counted per edition + language either way. */
 const HFH = 'https://hfh.fas.harvard.edu/global-forgiveness-movement';
 export const LANGUAGES = [
   ['en', 'English'],
@@ -258,10 +263,15 @@ export const PUBLICATIONS = [
 ];
 
 export const PEOPLE = [
-  { initials: 'TV', name: 'Tyler J. VanderWeele', role: 'Director, Human Flourishing Program', line: 'Led the Harvard side of the international trial and directs the program’s research on flourishing.' },
+  { initials: 'TV', name: 'Tyler J. VanderWeele', role: 'Director, Human Flourishing Program', line: 'Led the program’s side of the international trial and directs its research on flourishing.' },
   { initials: 'RC', name: 'Richard G. Cowden', role: 'Research Scientist', line: 'Co-authored the international trial, led development of the RECEIVE workbook, and co-adapted the current REACH workbooks.' },
   { initials: 'KJ', name: 'Kate Jackson-Meyer', role: 'Research Associate', line: 'Leads the Global Forgiveness Movement. Her scholarship examines forgiveness and restoration in contexts of moral conflict and tragedy.' },
   { initials: 'EW', name: 'Everett L. Worthington Jr.', role: 'Affiliate · Originator of the REACH model', line: 'Developed the REACH Forgiveness model and the workbooks on which this work is built.' },
+  /* Added on Kate's ruling (25 Aug). Surnames and one-sentence descriptions are
+     hers to send — `line` stays empty until they arrive rather than us inventing
+     one, and the renderer simply omits the sentence while it is blank. */
+  { initials: 'C', name: 'Cooper', role: 'Forgiveness Group leader', line: '' },
+  { initials: 'Y', name: 'Yuna', role: 'Forgiveness Group leader', line: '' },
 ];
 
 export const REACH_STEPS = [

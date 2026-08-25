@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>About — Global Forgiveness Movement</title>
-  <meta name="description" content="Who is behind the Global Forgiveness Movement, and how it connects to Harvard's Human Flourishing Program.">
+  <meta name="description" content="Who is behind the Global Forgiveness Movement, and how it connects to the Human Flourishing Program.">
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z' fill='%231b7f72' transform='rotate(40 12 12)'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="../css/site.css">
@@ -16,7 +16,7 @@
     <div class="wrap">
       <p class="kicker">About the movement</p>
       <h1>Using evidence-based interventions to make the world a more loving and forgiving place</h1>
-      <p>The Global Forgiveness Movement is an initiative of the Human Flourishing Program at Harvard University. We take one of the most widely tested models of forgiveness in psychology, put it into free workbooks, and help people and communities everywhere actually work through it.</p>
+      <p>The Global Forgiveness Movement is an initiative of the Human Flourishing Program. We take one of the most widely tested models of forgiveness in psychology, put it into free workbooks, and help people and communities everywhere actually work through it.</p>
     </div>
   </section>
 
@@ -47,7 +47,7 @@
     <div class="wrap grid grid--2" style="align-items:center">
       <div>
         <h2>Part of the Human Flourishing Program</h2>
-        <p>Since 2016, the Human Flourishing Program at Harvard University has studied what it means to live well and worked to translate that knowledge into efforts that strengthen people, communities, and institutions.</p>
+        <p>Since 2016, the Human Flourishing Program has studied what it means to live well and worked to translate that knowledge into efforts that strengthen people, communities, and institutions.</p>
         <a class="btn btn--outline" href="https://hfh.fas.harvard.edu/" target="_blank" rel="noopener">Visit the Human Flourishing Program</a>
       </div>
       <div class="card card--tint">
@@ -64,7 +64,7 @@
   import { getCollection } from '../js/content.js';
   getCollection('people').then((people) => {
     document.querySelector('[data-render="people"]').innerHTML = people
-      .map((p) => `<div class="person"><div class="por">${p.initials}</div><b>${p.name}</b><span>${p.role}</span><p class="small muted" style="margin-top:0.4rem">${p.line}</p></div>`).join('');
+      .map((p) => `<div class="person"><div class="por">${p.initials}</div><b>${p.name}</b><span>${p.role}</span>${p.line ? `<p class="small muted" style="margin-top:0.4rem">${p.line}</p>` : ''}</div>`).join('');
   });
 </script>
 <script type="module" src="../js/site.js"></script>
