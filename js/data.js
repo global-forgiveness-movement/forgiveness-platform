@@ -267,11 +267,11 @@ export const PEOPLE = [
   { initials: 'RC', name: 'Richard G. Cowden', role: 'Research Scientist', line: 'Co-authored the international trial, led development of the RECEIVE workbook, and co-adapted the current REACH workbooks.' },
   { initials: 'KJ', name: 'Kate Jackson-Meyer', role: 'Research Associate', line: 'Leads the Global Forgiveness Movement. Her scholarship examines forgiveness and restoration in contexts of moral conflict and tragedy.' },
   { initials: 'EW', name: 'Everett L. Worthington Jr.', role: 'Affiliate · Originator of the REACH model', line: 'Developed the REACH Forgiveness model and the workbooks on which this work is built.' },
-  /* Added on Kate's ruling (25 Aug). Surnames and one-sentence descriptions are
-     hers to send — `line` stays empty until they arrive rather than us inventing
-     one, and the renderer simply omits the sentence while it is blank. */
+  /* Cooper added on Kate's 25 Aug ruling; his full bio arrives with the About-bios
+     task (Kate's 26 Aug email) — the renderer omits the sentence while `line` is blank.
+     The second leader entry was removed per that email's seven-person bios list
+     (restoreable if Kate says otherwise — see the commit citing 2026-08-26-KATE-EMAIL.md). */
   { initials: 'C', name: 'Cooper', role: 'Forgiveness Group leader', line: '' },
-  { initials: 'Y', name: 'Yuna', role: 'Forgiveness Group leader', line: '' },
 ];
 
 export const REACH_STEPS = [
