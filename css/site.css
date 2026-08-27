@@ -1,27 +1,28 @@
 /* Global Forgiveness Movement — platform design system.
-   Palette & type shared with the interactive workbook (sampled from the printed workbook).
-   Mobile-first. One file; every page uses it. */
+   Palette & type shared with the interactive workbook. Hexes are the official GFM
+   Brand Cheat Sheet palette (adopted 2026-08-27); sage/lavender/slate are
+   site-derived accents. Mobile-first. One file; every page uses it. */
 
 @import url('fonts.css');
 
 :root {
-  --cream: #f4efe3;
+  --cream: #f5f1e2;
   --cream-soft: #efe9d8;
   --paper: #faf7ee;
   --white: #fffdf7;
-  --teal: #1b7f72;
-  --teal-deep: #0f6659;
-  --teal-bright: #17907f;
-  --navy: #123b53;
-  --navy-deep: #0e2f43;
-  --plum: #7e3a67;
-  --plum-soft: #8e4a77;
-  --mustard: #e7b54a;
+  --teal: #00887a;
+  --teal-deep: #006d62;
+  --teal-bright: #009a8a;
+  --navy: #003d57;
+  --navy-deep: #003146;
+  --plum: #770061;
+  --plum-soft: #871071;
+  --mustard: #fab812;
   --sage: #8fbcad;
   --lavender: #c6a3c8;
   --slate: #5b7e96;
   --ink: #24333e;
-  --line: rgba(18, 59, 83, 0.14);
+  --line: rgba(0, 61, 87, 0.14);
   --muted: rgba(36, 51, 62, 0.66);
 
   --font-head: 'Poppins', 'Avenir Next', 'Trebuchet MS', sans-serif;
@@ -30,7 +31,7 @@
 
   --radius: 18px;
   --radius-soft: 26px;
-  --shadow: 0 10px 30px rgba(18, 59, 83, 0.10);
+  --shadow: 0 10px 30px rgba(0, 61, 87, 0.10);
   --pad: clamp(1.1rem, 4vw, 2rem);
   --measure: 68ch;
 }
@@ -92,7 +93,7 @@ input, select, textarea { font-family: inherit; font-size: 1rem; color: var(--in
   font-family: var(--font-head); font-weight: 500; font-size: 0.92rem;
   padding: 0.45rem 0.75rem; border-radius: 999px;
 }
-.site-nav a:hover { background: rgba(27, 127, 114, 0.10); }
+.site-nav a:hover { background: rgba(0, 136, 122, 0.10); }
 .site-nav a[aria-current="page"] { background: var(--teal); color: #fff; }
 .site-auth { display: flex; align-items: center; gap: 0.5rem; }
 .site-auth a { text-decoration: none; font-family: var(--font-head); font-weight: 500; font-size: 0.92rem; }
@@ -129,7 +130,7 @@ main { flex: 1; width: 100%; }
 .btn--primary:hover { background: var(--teal-bright); }
 .btn--outline { border-color: var(--teal); color: var(--teal-deep); background: transparent; }
 .btn--plum { background: var(--plum); color: #fff; }
-.btn--quiet { color: var(--teal-deep); background: rgba(27, 127, 114, 0.10); }
+.btn--quiet { color: var(--teal-deep); background: rgba(0, 136, 122, 0.10); }
 button.btn { font-size: 1rem; }
 
 /* ------------------------------------------------ cards & grids */
@@ -146,7 +147,7 @@ button.btn { font-size: 1rem; }
 }
 .card {
   background: var(--white); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 1.4rem; box-shadow: 0 4px 16px rgba(18, 59, 83, 0.05);
+  padding: 1.4rem; box-shadow: 0 4px 16px rgba(0, 61, 87, 0.05);
 }
 .card h3 { margin-top: 0.2rem; }
 .card .kicker { margin-bottom: 0.35rem; }
@@ -222,7 +223,7 @@ figure.video { margin: 0; }
 .form-note { font-size: 0.85rem; color: var(--muted); }
 .form-msg { border-radius: 12px; padding: 0.7rem 0.9rem; font-size: 0.92rem; }
 .form-msg--ok { background: rgba(143, 188, 173, 0.25); color: var(--teal-deep); }
-.form-msg--err { background: rgba(126, 58, 103, 0.12); color: var(--plum); }
+.form-msg--err { background: rgba(119, 0, 97, 0.12); color: var(--plum); }
 
 /* ------------------------------------------------ tables & session lists */
 .sessions { display: grid; gap: 0.6rem; padding: 0; margin: 0; counter-reset: session; }
@@ -238,7 +239,7 @@ figure.video { margin: 0; }
 /* ------------------------------------------------ downloads */
 .dl-row { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
 .pill { display: inline-block; font-family: var(--font-head); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.25rem 0.7rem; border-radius: 999px; background: var(--cream-soft); color: var(--teal-deep); }
-.pill--plum { background: rgba(126, 58, 103, 0.12); color: var(--plum); }
+.pill--plum { background: rgba(119, 0, 97, 0.12); color: var(--plum); }
 
 /* ------------------------------------------------ people */
 .person { text-align: center; }
@@ -281,10 +282,10 @@ figure.video { margin: 0; }
 
 /* ------------------------------------------------ misc */
 .groupcode { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 1.15em;
-  letter-spacing: 0.06em; background: rgba(27, 127, 114, 0.12); color: var(--teal-deep);
+  letter-spacing: 0.06em; background: rgba(0, 136, 122, 0.12); color: var(--teal-deep);
   padding: 0.15em 0.45em; border-radius: 5px; white-space: nowrap; }
 
-.notice { background: rgba(231, 181, 74, 0.18); border: 1px solid rgba(231, 181, 74, 0.5); border-radius: var(--radius); padding: 0.85rem 1.1rem; font-size: 0.92rem; max-width: var(--measure); }
+.notice { background: rgba(250, 184, 18, 0.18); border: 1px solid rgba(250, 184, 18, 0.5); border-radius: var(--radius); padding: 0.85rem 1.1rem; font-size: 0.92rem; max-width: var(--measure); }
 .crumbs { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.6rem; }
 .crumbs a { color: inherit; }
 hr.leafline { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }

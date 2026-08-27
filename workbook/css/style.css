@@ -1,23 +1,24 @@
 /* Your Path to REACH Forgiveness — design system
-   Palette & type sampled from the printed workbook. Mobile-first. */
+   Hexes are the official GFM Brand Cheat Sheet palette (adopted 2026-08-27);
+   sage/lavender/slate are site-derived accents. Mobile-first. */
 
 :root {
-  --cream: #f4efe3;
+  --cream: #f5f1e2;
   --cream-soft: #efe9d8;
   --paper: #faf7ee;
-  --teal: #1b7f72;
-  --teal-deep: #0f6659;
-  --teal-bright: #17907f;
-  --navy: #123b53;
-  --navy-deep: #0e2f43;
-  --plum: #7e3a67;
-  --plum-soft: #8e4a77;
-  --mustard: #e7b54a;
+  --teal: #00887a;
+  --teal-deep: #006d62;
+  --teal-bright: #009a8a;
+  --navy: #003d57;
+  --navy-deep: #003146;
+  --plum: #770061;
+  --plum-soft: #871071;
+  --mustard: #fab812;
   --sage: #8fbcad;
   --lavender: #c6a3c8;
   --slate: #5b7e96;
   --ink: #24333e;
-  --line: rgba(18, 59, 83, 0.14);
+  --line: rgba(0, 61, 87, 0.14);
 
   --font-head: 'Poppins', 'Avenir Next', 'Trebuchet MS', sans-serif;
   --font-body: 'Nunito Sans', 'Avenir', 'Segoe UI', sans-serif;
@@ -25,7 +26,7 @@
 
   --radius: 18px;
   --radius-soft: 26px;
-  --shadow: 0 10px 30px rgba(18, 59, 83, 0.10);
+  --shadow: 0 10px 30px rgba(0, 61, 87, 0.10);
   --pad: clamp(1.1rem, 4vw, 2rem);
 }
 
@@ -106,7 +107,7 @@ textarea, input[type='text'], input[type='number'] {
   border-bottom: 1px solid var(--line);
 }
 .drawer a:last-child { border-bottom: 0; }
-.drawer a:hover { background: rgba(27, 127, 114, 0.08); }
+.drawer a:hover { background: rgba(0, 136, 122, 0.08); }
 
 main { flex: 1; width: 100%; max-width: 680px; margin: 0 auto; padding: 0.5rem var(--pad) 3rem; }
 
@@ -201,7 +202,7 @@ main { flex: 1; width: 100%; max-width: 680px; margin: 0 auto; padding: 0.5rem v
 .step--dark .ex-num { color: var(--cream); }
 .ex-title {
   color: var(--teal); font-size: clamp(1.35rem, 5vw, 1.8rem); margin: 0;
-  padding-bottom: 0.5rem; border-bottom: 2px solid rgba(126, 58, 103, 0.35);
+  padding-bottom: 0.5rem; border-bottom: 2px solid rgba(119, 0, 97, 0.35);
 }
 .ex-sub { display: block; font-weight: 500; font-style: italic; color: var(--teal-bright); font-size: 0.75em; }
 
@@ -310,7 +311,7 @@ main { flex: 1; width: 100%; max-width: 680px; margin: 0 auto; padding: 0.5rem v
 textarea:focus, input:focus { outline: none; }
 textarea:focus-visible, input:focus-visible {
   border-color: var(--teal) !important;
-  box-shadow: 0 0 0 3px rgba(27, 127, 114, 0.22);
+  box-shadow: 0 0 0 3px rgba(0, 136, 122, 0.22);
 }
 .field--short textarea { max-width: 320px; border-radius: 999px; padding: 0.6rem 1.1rem; resize: none; }
 .field-label { display: block; font-weight: 700; font-size: 0.92rem; margin: 0 0 0.35rem; color: var(--navy); }
@@ -321,14 +322,14 @@ textarea:focus-visible, input:focus-visible {
 .compare {
   font-size: 0.88rem; background: rgba(198, 163, 200, 0.22);
   border-radius: var(--radius); padding: 0.6rem 0.9rem;
-  border: 1px solid rgba(126, 58, 103, 0.25);
+  border: 1px solid rgba(119, 0, 97, 0.25);
 }
 .scale { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: 0.4rem; }
 .scale-btn {
   --size: 52px;
   width: var(--size); height: var(--size);
   border-radius: 46% 54% 52% 48% / 55% 48% 52% 45%;
-  border: 1.5px solid rgba(18, 59, 83, 0.12);
+  border: 1.5px solid rgba(0, 61, 87, 0.12);
   background: var(--cream-soft);
   display: grid; place-content: center;
   font-family: var(--font-head); font-weight: 700; font-size: 1.1rem;
@@ -358,7 +359,7 @@ textarea:focus-visible, input:focus-visible {
 }
 .choice:hover { transform: translateY(-1px); border-color: var(--sage); }
 .choice .checkleaf { opacity: 0; transition: opacity 0.25s; margin-left: auto; }
-.choice.sel { border-color: var(--teal); background: rgba(27, 127, 114, 0.09); }
+.choice.sel { border-color: var(--teal); background: rgba(0, 136, 122, 0.09); }
 .choice.sel .checkleaf { opacity: 1; }
 .choices--pills .choice { border-radius: 999px; padding: 0.55rem 1.2rem; font-family: var(--font-head); font-weight: 600; }
 .choices--pills .choice .checkleaf { display: none; }
@@ -400,7 +401,7 @@ textarea:focus-visible, input:focus-visible {
 .step--dark .blank { background: var(--cream); color: var(--ink); }
 .blank-hint { font-weight: 800; color: var(--plum); }
 .blank-hint.script { font-family: var(--font-script); font-size: 1.5rem; font-weight: 400; color: var(--navy); }
-.blank input { border: 0; background: transparent; border-bottom: 1.5px dashed rgba(126, 58, 103, 0.5); padding: 0.15rem 0.2rem; min-width: 0; }
+.blank input { border: 0; background: transparent; border-bottom: 1.5px dashed rgba(119, 0, 97, 0.5); padding: 0.15rem 0.2rem; min-width: 0; }
 .blank .blank-check { opacity: 0; transition: opacity 0.3s; }
 .blank.ok .blank-check { opacity: 1; }
 .blank.ok input { border-bottom-color: var(--teal); }
@@ -429,7 +430,7 @@ textarea:focus-visible, input:focus-visible {
 .step--dark .timer-label { color: var(--cream); }
 .timer-face { position: relative; width: 150px; margin: 0 auto; }
 .timer-face svg { transform: rotate(-90deg); }
-.t-track { fill: none; stroke: rgba(18, 59, 83, 0.12); stroke-width: 7; }
+.t-track { fill: none; stroke: rgba(0, 61, 87, 0.12); stroke-width: 7; }
 .step--dark .t-track { stroke: rgba(255, 255, 255, 0.2); }
 .t-fill {
   fill: none; stroke: var(--teal); stroke-width: 7; stroke-linecap: round;
@@ -454,7 +455,7 @@ textarea:focus-visible, input:focus-visible {
   padding: 0.75rem 1rem;
   position: relative;
 }
-.bubble--me { justify-self: end; background: rgba(27, 127, 114, 0.12); border: 1px solid rgba(27, 127, 114, 0.3); border-bottom-right-radius: 6px; }
+.bubble--me { justify-self: end; background: rgba(0, 136, 122, 0.12); border: 1px solid rgba(0, 136, 122, 0.3); border-bottom-right-radius: 6px; }
 .bubble--them { justify-self: start; background: var(--paper); border: 1px solid var(--line); border-bottom-left-radius: 6px; }
 .bubble .who {
   display: block; font-family: var(--font-head); font-weight: 700;
@@ -473,7 +474,7 @@ textarea:focus-visible, input:focus-visible {
 }
 .percent-input, .hoursmin input {
   width: 4.2rem; text-align: center;
-  border: 0; border-bottom: 2px dashed rgba(126, 58, 103, 0.5);
+  border: 0; border-bottom: 2px dashed rgba(119, 0, 97, 0.5);
   background: transparent;
   font-family: var(--font-head); font-weight: 700; font-size: 1.05rem; color: var(--plum);
 }
@@ -671,7 +672,7 @@ textarea:focus-visible, input:focus-visible {
 .step-count { font-size: 0.78rem; color: rgba(36, 51, 62, 0.5); }
 .step--dark .step-count { color: rgba(242, 244, 240, 0.5); }
 .dots { display: flex; gap: 6px; margin: 0.6rem 0 0.8rem; flex-wrap: wrap; }
-.dot { width: 9px; height: 9px; border-radius: 50%; background: rgba(18, 59, 83, 0.15); transition: background 0.2s, transform 0.2s; }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: rgba(0, 61, 87, 0.15); transition: background 0.2s, transform 0.2s; }
 .dot.past { background: var(--sage); }
 .dot.cur { background: var(--teal); transform: scale(1.35); }
 .step--dark .dot { background: rgba(255, 255, 255, 0.2); }

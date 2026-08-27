@@ -8,7 +8,7 @@ import { getVideos, getPages } from './content.js';
 import { recordDownload } from './metrics.js';
 import { ensureGate, leaf } from './gate.js';
 
-export const STAMP = 'GFM-V1 · 2026-08-25b';
+export const STAMP = 'GFM-V1 · 2026-08-27a';
 
 /* Resolve everything relative to the site root (js/ → root), so pages work
    at any depth and on any host (github.io project path or a custom domain). */
@@ -37,7 +37,7 @@ function buildHeader() {
   }).join('');
   const head = el('header', { class: 'site-head' }, `
     <a class="site-brand" href="${href('')}">
-      ${leaf('#1b7f72')}
+      ${leaf('#00887a')}
       <span class="t"><b>Global Forgiveness Movement</b>
       <span>Human Flourishing Program</span></span>
     </a>

@@ -116,9 +116,11 @@ definition in `~/.claude/agents/`, as the GSD workflows' own fallback prescribes
   the platform yet). The `/plan/` scope doc keeps its own separate password `reach`, which Kate
   has. When Wyatt is ready to show her the site, change `GATE_HASH` in `js/gate.js` and bump its
   `GATE_KEY`.
-- **Brand:** the workbook's identity — cream `#F4EFE3`, teal `#1B7F72`, ink navy `#123B53`, plum
-  `#7E3A67`, mustard `#E7B54A`, sage `#8FBCAD`; Poppins / Nunito Sans / Sacramento, self-hosted.
-  True up against the GFM Brand Cheat Sheet when Wyatt adds it to the repo.
+- **Brand:** the official GFM palette — cream `#F5F1E2`, teal `#00887A`, ink navy `#003D57`,
+  plum `#770061`, mustard `#FAB812`, plus sage `#8FBCAD` as our derived accent (not in the
+  official palette); Poppins / Nunito Sans / Sacramento, self-hosted. Official hexes adopted
+  2026-08-27 from `.planning/brand/Forgiveness_Brand_Cheat_Sheet.pdf` (fonts remain the free
+  stand-ins pending licensing).
 - **Backend:** Firebase (Auth + Firestore) behind `js/firebase-config.js`; with no config
   committed the site runs in a labeled local demo mode. Progress-only workbook sync — **what
   people write never leaves their device.**
