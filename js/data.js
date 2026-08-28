@@ -262,16 +262,75 @@ export const PUBLICATIONS = [
   },
 ];
 
+/* The About-page roster, sourced per Kate's 26 Aug email
+   (.planning/qa/2026-08-26-KATE-EMAIL.md). Bios are verbatim from each
+   person's own public page (HFP team pages; Ev's site; Cooper's page),
+   trimmed to the bio proper — never paraphrased. `photo` is set only when
+   the file exists in assets/people/; without it the initials circle shows.
+   `bio` paragraphs are separated by blank lines (\n\n). */
 export const PEOPLE = [
-  { initials: 'TV', name: 'Tyler J. VanderWeele', role: 'Director, Human Flourishing Program', line: 'Led the program’s side of the international trial and directs its research on flourishing.' },
-  { initials: 'RC', name: 'Richard G. Cowden', role: 'Research Scientist', line: 'Co-authored the international trial, led development of the RECEIVE workbook, and co-adapted the current REACH workbooks.' },
-  { initials: 'KJ', name: 'Kate Jackson-Meyer', role: 'Research Associate', line: 'Leads the Global Forgiveness Movement. Her scholarship examines forgiveness and restoration in contexts of moral conflict and tragedy.' },
-  { initials: 'EW', name: 'Everett L. Worthington Jr.', role: 'Affiliate · Originator of the REACH model', line: 'Developed the REACH Forgiveness model and the workbooks on which this work is built.' },
-  /* Cooper added on Kate's 25 Aug ruling; his full bio arrives with the About-bios
-     task (Kate's 26 Aug email) — the renderer omits the sentence while `line` is blank.
-     The second leader entry was removed per that email's seven-person bios list
-     (restoreable if Kate says otherwise — see the commit citing 2026-08-26-KATE-EMAIL.md). */
-  { initials: 'C', name: 'Cooper', role: 'Forgiveness Group leader', line: '' },
+  {
+    slug: 'tyler-vanderweele',
+    initials: 'TV',
+    name: 'Tyler J. VanderWeele',
+    role: 'Director, Human Flourishing Program',
+    line: 'Led the program’s side of the international trial and directs its research on flourishing.',
+    bio: 'Tyler J. VanderWeele, Ph.D., is the John L. Loeb and Frances Lehman Loeb Professor of Epidemiology in the Departments of Epidemiology and Biostatistics at the Harvard T.H. Chan School of Public Health, and Director of the Human Flourishing Program and Co-Director of the Initiative on Health, Spirituality, and Religion at Harvard University.\n\nHe holds degrees from the University of Oxford, University of Pennsylvania, and Harvard University in mathematics, philosophy, theology, finance, and biostatistics. His methodological research is focused on theory and methods for distinguishing between association and causation in the biomedical and social sciences and, more recently, on psychosocial measurement theory. His empirical research spans psychiatric and social epidemiology; the science of happiness and flourishing; and the study of religion and health.\n\nHe is the recipient of the 2017 Presidents’ Award from the Committee of Presidents of Statistical Societies (COPSS). Dr. VanderWeele has published over 500 papers in peer-reviewed journals; is author of the books Explanation in Causal Inference (2015), Modern Epidemiology (2021), Measuring Well-Being (2021), Handbook of Religion and Health (2023), and A Theology of Health (2024); and writes a regular blog, posting on topics related to human flourishing.',
+    link: 'https://hfh.fas.harvard.edu/team/tyler-vanderweele',
+  },
+  {
+    slug: 'isaiah-baldissera',
+    initials: 'IB',
+    name: 'Isaiah Baldissera',
+    role: 'Communications Manager',
+    line: '',
+    bio: 'Isaiah Baldissera, Ed.M., leads communications and external affairs at the Human Flourishing Program. His background is in digital design, product development, and UI/UX. Prior to his current position, he helped build the Harvard Project on Workforce, a joint initiative between Harvard Business School, the Harvard Kennedy School, and the Harvard Graduate School of Education. Isaiah holds a master’s degree in Education Technology from Harvard University and a bachelors degree in Economics and Business Administration from Simon Fraser University.',
+    link: 'https://hfh.fas.harvard.edu/team/ib',
+  },
+  {
+    slug: 'reece-brown',
+    initials: 'RB',
+    name: 'Reece Brown',
+    role: 'Associate Director of Impact',
+    line: '',
+    bio: 'Reece Brown is the Associate Director of Impact and works to advance the program’s initiatives to drive stakeholder transformation and public engagement. He focuses on the application and dissemination of the program’s research across sectors including business, education, religion, and public policy. His career began in investment analysis before joining Arthur Brooks at the Harvard Kennedy School and Harvard Business School. Reece launched the Leadership & Happiness Laboratory with Professor Brooks where he led research and social impact initiatives around the world. Reece holds a BA in Economics from Gordon College and a Master’s of Applied Positive Psychology from the University of Pennsylvania.',
+    link: 'https://hfh.fas.harvard.edu/team/reece-brown',
+  },
+  {
+    slug: 'richard-cowden',
+    initials: 'RC',
+    name: 'Richard G. Cowden',
+    role: 'Research Scientist',
+    line: 'Co-authored the international trial, led development of the RECEIVE workbook, and co-adapted the current REACH workbooks.',
+    bio: 'Richard G. Cowden, Ph.D., is a social-personality psychologist and Research Scientist with the Human Flourishing Program at Harvard University and the Department of Epidemiology at the Harvard T.H. Chan School of Public Health. He is interested in a wide range of psychological, social, and religious/spiritual dynamics that shape adaptive functioning, personal growth, and well-being. Much of his current research agenda focuses on topics related to adversity (e.g., suffering), character strengths and virtues (e.g., forgiveness), and religion/spirituality (e.g., religious/spiritual struggles), and their implications for health and well-being in diverse cultures and contexts. He has written and contributed to numerous scholarly articles, book chapters, and books that address various aspects of human flourishing in a wide range of populations. Through interdisciplinary engagement, he is also involved in developing and disseminating interventions designed to promote human flourishing across various cultural contexts.',
+    link: 'https://hfh.fas.harvard.edu/team/richard-cowden',
+  },
+  {
+    slug: 'cooper-harris',
+    initials: 'CH',
+    name: 'Cooper Harris',
+    role: 'Graduate Assistant',
+    line: '',
+    bio: 'Cooper Harris is currently pursuing his Master’s of Education in counseling with a focus on sport/performance psychology at Boston University. Harris graduated from the University of Rochester in 2025 with a Bachelor of Arts in psychology and religion. He was the president of the club baseball team, a member of the Medallion Program, worked with the Mindful University Project, and served as a Jewish learning fellow. Harris is also a student delegate for the Association of Applied Sport Psychology and was a psychology honors research student at the University of Rochester.',
+  },
+  {
+    slug: 'kate-jackson-meyer',
+    initials: 'KJ',
+    name: 'Kate Jackson-Meyer',
+    role: 'Research Associate',
+    line: 'Leads the Global Forgiveness Movement. Her scholarship examines forgiveness and restoration in contexts of moral conflict and tragedy.',
+    bio: 'Kate Jackson-Meyer, Ph.D., is a Research Associate at the Human Flourishing Program at Harvard University and an Affiliate of the Harvard Medical School Center for Bioethics. Her research focuses on the role of forgiveness and restoration in supporting individual and communal flourishing, particularly in contexts of moral conflict and tragedy. Her work has been published in numerous outlets, including The American Journal of Bioethics and The Journal of Moral Theology. She is the author of Tragic Dilemmas in Christian Ethics (Georgetown University Press, 2022) and she serves on the editorial board of the Journal of the Society of Christian Ethics. She earned a Ph.D. in theological ethics from Boston College, an M.A.R. in ethics from Yale Divinity School, and a B.A. in biology and religion from the University of Southern California.',
+    link: 'https://hfh.fas.harvard.edu/team/kate-jackson-meyer',
+  },
+  {
+    slug: 'everett-worthington',
+    initials: 'EW',
+    name: 'Everett L. Worthington Jr.',
+    role: 'Affiliate · Originator of the REACH model',
+    line: 'Developed the REACH Forgiveness model and the workbooks on which this work is built.',
+    bio: 'Everett Worthington is Commonwealth Professor Emeritus since his retirement from Virginia Commonwealth University on October 1, 2017. He is still affiliated with the Department of Psychology. His research and writing focus on forgiveness and other virtues, religion and spirituality, and issues related to marriage and family. His mission is to help individuals (every heart), couples and families (every home), and even communities and countries (every homeland) forgive.\n\nEverett was counseling couples professionally in the mid-1980s when he first became interested in the concept of forgiveness, and he began studying the topic scientifically in 1990. Since then, he has been a leader in the field of forgiveness research. From 1998 to 2005, he directed A Campaign for Forgiveness Research, a nonprofit organization that, during that time, awarded more than $6 million to studies on forgiving. He has also worked to help nurture researchers in other countries.\n\nAfter the murder of his mother in 1996, Everett began thinking about how the practice of forgiveness relates to justice, faith, and virtue—a main theme of his recent work. While he forgave the murderer, as did his brother and sister, the emotional fallout was devastating, and in 2005, his brother committed suicide. In addition to studying forgiveness of others, Everett drew on his own feelings of guilt and self-condemnation, and added the study of self-forgiveness to his interests.',
+    link: 'https://www.evworthington-forgiveness.com/about',
+  },
 ];
 
 export const REACH_STEPS = [

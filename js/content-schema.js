@@ -51,10 +51,13 @@ export const COLLECTIONS = {
     label: 'People',
     help: 'The team on the About page.',
     fields: [
-      { key: 'initials', label: 'Initials (shown in the circle)', type: 'text' },
+      { key: 'initials', label: 'Initials (the fallback circle when there is no photo)', type: 'text' },
       { key: 'name', label: 'Name', type: 'text' },
       { key: 'role', label: 'Title', type: 'text' },
       { key: 'line', label: 'One-line description', type: 'textarea' },
+      { key: 'bio', label: 'Full bio (click-to-expand)', type: 'textarea', help: 'Blank line between paragraphs' },
+      { key: 'photo', label: 'Photo path', type: 'text', help: 'e.g. assets/people/kate-jackson-meyer.jpg — leave empty to show initials' },
+      { key: 'link', label: 'Full-profile link (optional)', type: 'url' },
     ],
   },
   stats: {
