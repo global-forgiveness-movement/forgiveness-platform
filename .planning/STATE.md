@@ -106,13 +106,18 @@ on 2026-08-21.
   `main`/root; curl returns 200; six key live files hashed byte-identical to the repo; and the
   site was rendered and screenshotted (desktop 1280 + mobile 390) — gate unlocks with `reach1`,
   footer stamp current, homepage two-doors + nameless testimonials correct, groups page correct.
-- **Network allowlist** (environment "Default", Custom access, updated 2026-08-21): sessions
-  reach `global-forgiveness-movement.github.io`, `www.gstatic.com`, `*.youtube.com`,
-  `*.ytimg.com`, `*.youtube-nocookie.com` (added later on 2026-08-21), plus trusted defaults.
-  The embed URL itself verified 2026-08-21: curl returns 200 with a full YouTube player page.
-  The iframe *rendering* as a player is still unverified — headless Chrome can't reach that
-  host through the proxy (same TLS passthrough quirk as github.io below) — so it's one
-  real-browser glance, covered by Wyatt's review pass.
+- **Network allowlist ledger** (environment "Default", Custom access; each line's purpose so
+  cleanup stays one glance — updated 2026-08-28):
+  - KEEP: `global-forgiveness-movement.github.io` (live-site QA), `www.gstatic.com` (Firebase
+    SDK QA once the project exists), `*.youtube.com` + `*.ytimg.com` + `*.youtube-nocookie.com`
+    (embed QA until the Vimeo swap), plus the trusted defaults checkbox.
+  - TRIM-ELIGIBLE (one-time fetch scaffolding, sources now committed to the repo 2026-08-28):
+    `hfh.fas.harvard.edu`, `*.discoverforgiveness.org`, `www.evworthington-forgiveness.com`,
+    `www.ecgulls.com`, `cdn.prod.website-files.com`, `static.wixstatic.com`,
+    `images.squarespace-cdn.com`, `d2o2figo6ddd0g.cloudfront.net` (stale before it was ever
+    used — ecgulls moved to prestosports).
+  - PENDING: `cdn.prestosports.com` — needed ONCE for Cooper Harris's photo, then trim it too.
+    (YouTube embeds verified live in Wyatt's real browser 2026-08-27.)
 - **Container QA how-to (hard-won):** headless Chromium cannot reach github.io through the
   egress proxy even when curl can (TLS passthrough quirk) — QA by serving the repo locally
   (`python3 -m http.server` from the repo root; byte-identity with live makes it equivalent).
