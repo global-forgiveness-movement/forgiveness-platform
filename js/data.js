@@ -271,6 +271,7 @@ export const PUBLICATIONS = [
 export const PEOPLE = [
   {
     slug: 'tyler-vanderweele',
+    photo: 'assets/people/tyler-vanderweele.jpg',
     initials: 'TV',
     name: 'Tyler J. VanderWeele',
     role: 'Director, Human Flourishing Program',
@@ -280,6 +281,7 @@ export const PEOPLE = [
   },
   {
     slug: 'isaiah-baldissera',
+    photo: 'assets/people/isaiah-baldissera.jpg',
     initials: 'IB',
     name: 'Isaiah Baldissera',
     role: 'Communications Manager',
@@ -289,6 +291,7 @@ export const PEOPLE = [
   },
   {
     slug: 'reece-brown',
+    photo: 'assets/people/reece-brown.jpg',
     initials: 'RB',
     name: 'Reece Brown',
     role: 'Associate Director of Impact',
@@ -298,6 +301,7 @@ export const PEOPLE = [
   },
   {
     slug: 'richard-cowden',
+    photo: 'assets/people/richard-cowden.jpg',
     initials: 'RC',
     name: 'Richard G. Cowden',
     role: 'Research Scientist',
@@ -315,6 +319,7 @@ export const PEOPLE = [
   },
   {
     slug: 'kate-jackson-meyer',
+    photo: 'assets/people/kate-jackson-meyer.jpg',
     initials: 'KJ',
     name: 'Kate Jackson-Meyer',
     role: 'Research Associate',
@@ -324,6 +329,7 @@ export const PEOPLE = [
   },
   {
     slug: 'everett-worthington',
+    photo: 'assets/people/everett-worthington.jpg',
     initials: 'EW',
     name: 'Everett L. Worthington Jr.',
     role: 'Affiliate · Originator of the REACH model',
