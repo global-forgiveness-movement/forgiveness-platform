@@ -88,6 +88,7 @@ on 2026-08-21.
 | 1 | Header collapses to hamburger below 1100px (Wyatt review note #1) | 2026-08-21 | 54db937, 10ab673 | .planning/quick/260821-rx2-responsive-header-hamburger-below-1100px/ |
 | 2 | Two mobile horizontal-overflow faults (/join/, /workbook/) closed | 2026-08-25 | pending | .planning/quick/260825-ier-mobile-horizontal-overflow-join-and-workbook/ |
 | 3 | Official brand hexes site-wide + Yuna removed (Kate 26 Aug email) | 2026-08-27 | 4147770, 0f0e1c9 | .planning/quick/260827-vfk-brand-hexes-official-and-remove-yuna/ |
+| 4 | About: seven-person roster, bios expand in place (Kate 26 Aug email; photos await host allowlist) | 2026-08-28 | 1e1a7b3, 32dd8a5 | .planning/quick/260828-h02-about-page-seven-bios-expand-in-place/ |
 
 ## Session Continuity
 
