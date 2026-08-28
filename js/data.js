@@ -145,12 +145,14 @@ export const TESTIMONIALS = [
 ];
 
 /* Workbook downloads.
-   Kate, 25 Aug: every edition can be downloaded from the Discover Forgiveness
-   site today, but none of them have been designed yet and several people are
-   producing different pieces, so the final files are not settled.
-   TODO(wyatt): confirm the direct per-edition, per-language URLs and set them
-   here. Left pointing at the programme page deliberately — an unverified deep
-   link that 404s is worse than a landing page that works.
+   The five REACH translations (es, zh, uk, id, pt) are hosted in this repo
+   under assets/workbooks/ — Kate's 26 Aug email §2, with Ev's permission;
+   Wyatt ruled 27 Aug: host in-repo, ship the Word files as-is, no conversion.
+   Being ours, those links are verified by construction, which resolves the
+   25 Aug ruling-1 deep-link concern ("an unverified deep link that 404s is
+   worse than a landing page that works") for those five.
+   TODO(wyatt): still open — the English direct link and direct URLs for the
+   other three editions; they fall back to the programme page below.
    Download clicks are counted per edition + language either way. */
 const HFH = 'https://hfh.fas.harvard.edu/global-forgiveness-movement';
 export const LANGUAGES = [
@@ -171,6 +173,15 @@ export const WORKBOOKS = [
     pills: ['2–3 hours', 'Secular', '6 languages'],
     languages: true,
     url: HFH,
+    /* Hosted translations, keyed by language code. 'en' is deliberately
+       absent — no English file was delivered; its button falls back to url. */
+    files: {
+      es: { path: 'assets/workbooks/REACH-Forgiveness-Workbook-Spanish.docx', format: 'Word', size: '4.3 MB' },
+      zh: { path: 'assets/workbooks/REACH-Forgiveness-Workbook-Chinese.docx', format: 'Word', size: '2.3 MB' },
+      uk: { path: 'assets/workbooks/REACH-Forgiveness-Workbook-Ukrainian.docx', format: 'Word', size: '1.2 MB' },
+      id: { path: 'assets/workbooks/REACH-Forgiveness-Workbook-Indonesian.docx', format: 'Word', size: '0.9 MB' },
+      pt: { path: 'assets/workbooks/REACH-Forgiveness-Workbook-Portuguese.docx', format: 'Word', size: '0.9 MB' },
+    },
   },
   {
     id: 'church',
@@ -199,6 +210,9 @@ export const WORKBOOKS = [
     languages: false,
     url: HFH,
   },
+  /* Muslim-adapted edition: Kate is sending the final version (her 26 Aug
+     email §2). When it arrives, its entry goes here — same shape as above,
+     with a files map if we host it. No placeholder card until then. */
 ];
 
 /* The two Forgiveness Group series — session breakdowns exactly as Kate's

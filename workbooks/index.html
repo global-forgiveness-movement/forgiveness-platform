@@ -113,12 +113,37 @@
   document.querySelector('[data-render="languages"]').innerHTML =
     LANGUAGES.map(([, name]) => `<span class="pill">${name}</span>`).join('');
 
-  /* Language choice rides along in the counted download tag. */
+  /* ONE path sets the download button for every edition and language: href,
+     download-vs-new-tab attributes, visible label, and the counted tag all
+     come from the same data. A hosted file downloads directly; a language
+     with no hosted file falls back to the edition's landing page. */
+  const applyLang = (id, code) => {
+    const w = WORKBOOKS.find((x) => x.id === id);
+    const btn = document.querySelector(`#${id} [data-download]`);
+    if (!w || !btn) return;
+    const file = w.files?.[code];
+    if (file) {
+      btn.href = `../${file.path}`;
+      btn.setAttribute('download', '');
+      btn.removeAttribute('target');
+      btn.removeAttribute('rel');
+      btn.textContent = `Download (${file.format}, ${file.size})`;
+    } else {
+      btn.href = w.url;
+      btn.removeAttribute('download');
+      btn.setAttribute('target', '_blank');
+      btn.setAttribute('rel', 'noopener');
+      btn.textContent = 'Download PDF';
+    }
+    btn.dataset.download = `${id}:${code}`;
+  };
+
+  WORKBOOKS.forEach((w) => applyLang(w.id, 'en'));
+
   document.addEventListener('change', (e) => {
     const sel = e.target.closest('[data-lang-for]');
     if (!sel) return;
-    const btn = document.querySelector(`#${sel.dataset.langFor} [data-download]`);
-    btn.dataset.download = `${sel.dataset.langFor}:${sel.value}`;
+    applyLang(sel.dataset.langFor, sel.value);
   });
 </script>
 <script type="module" src="../js/site.js"></script>
