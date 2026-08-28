@@ -242,13 +242,26 @@ figure.video { margin: 0; }
 .pill--plum { background: rgba(119, 0, 97, 0.12); color: var(--plum); }
 
 /* ------------------------------------------------ people */
-.person { text-align: center; }
-.person .por { width: 92px; height: 92px; border-radius: 50%; margin: 0 auto 0.7rem; display: grid; place-content: center; background: var(--sage); color: var(--navy); font-family: var(--font-head); font-weight: 700; font-size: 1.6rem; }
-.person:nth-child(2) .por { background: var(--lavender); }
-.person:nth-child(3) .por { background: var(--mustard); }
-.person:nth-child(4) .por { background: var(--slate); color: #fff; }
-.person b { font-family: var(--font-head); display: block; color: var(--navy); }
-.person span { font-size: 0.85rem; color: var(--muted); }
+.people { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 1.1rem; }
+.person { flex: 0 1 230px; min-width: 0; text-align: center; }
+.person summary { cursor: pointer; list-style: none; }
+.person summary::-webkit-details-marker { display: none; }
+.person .por { width: 112px; height: 112px; border-radius: 50%; margin: 0 auto 0.7rem; display: grid; place-content: center; background: var(--sage); color: var(--navy); font-family: var(--font-head); font-weight: 700; font-size: 1.6rem; }
+img.por { object-fit: cover; object-position: center top; }
+.person:nth-child(4n+2) .por { background: var(--lavender); }
+.person:nth-child(4n+3) .por { background: var(--mustard); }
+.person:nth-child(4n) .por { background: var(--slate); color: #fff; }
+.pn { font-family: var(--font-head); display: block; color: var(--navy); font-weight: 700; }
+.pr { font-size: 0.85rem; color: var(--muted); display: block; }
+.pl { font-size: 0.85rem; color: var(--muted); display: block; margin-top: 0.4rem; }
+.pm { display: inline-block; font-family: var(--font-head); font-size: 0.8rem; font-weight: 600; color: var(--teal-deep); margin-top: 0.5rem; }
+.pm::after { content: ' ▾'; display: inline-block; transition: transform 0.2s ease; }
+details[open] .pm::after { transform: rotate(180deg); }
+.pbio { text-align: left; font-size: 0.9rem; margin-top: 0.8rem; }
+.pbio p { margin: 0 0 0.6rem; }
+.pbio a { font-size: 0.85rem; }
+details[open] .pbio { animation: pbio-in 0.25s ease; }
+@keyframes pbio-in { from { opacity: 0; } to { opacity: 1; } }
 
 /* ------------------------------------------------ footer */
 .site-foot { background: var(--navy); color: rgba(242, 244, 240, 0.85); margin-top: 3rem; }

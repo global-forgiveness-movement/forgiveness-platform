@@ -31,7 +31,7 @@
   <section class="section section--paper">
     <div class="wrap">
       <h2 class="center">The people behind this</h2>
-      <div class="grid grid--4" data-render="people" style="margin-top:1.6rem"></div>
+      <div class="people" data-render="people" style="margin-top:1.6rem"></div>
       <p class="small muted center" style="margin-top:1.2rem"><a href="https://hfh.fas.harvard.edu/team" target="_blank" rel="noopener">See the full program team and research collaborators →</a></p>
     </div>
   </section>
@@ -63,8 +63,20 @@
 <script type="module">
   import { getCollection } from '../js/content.js';
   getCollection('people').then((people) => {
-    document.querySelector('[data-render="people"]').innerHTML = people
-      .map((p) => `<div class="person"><div class="por">${p.initials}</div><b>${p.name}</b><span>${p.role}</span>${p.line ? `<p class="small muted" style="margin-top:0.4rem">${p.line}</p>` : ''}</div>`).join('');
+    document.querySelector('[data-render=people]').innerHTML = people
+      .map((p) => `<details class="person" name="person-bio">
+        <summary>
+          ${p.photo ? `<img class="por" src="../${p.photo}" alt="${p.name}, ${p.role}">` : `<span class="por">${p.initials}</span>`}
+          <span class="pn">${p.name}</span>
+          <span class="pr">${p.role}</span>
+          ${p.line ? `<span class="pl">${p.line}</span>` : ''}
+          <span class="pm">Bio</span>
+        </summary>
+        <div class="pbio">
+          ${p.bio.split('\n\n').map((par) => `<p>${par}</p>`).join('')}
+          ${p.link ? `<p><a href="${p.link}" target="_blank" rel="noopener">Full profile →</a></p>` : ''}
+        </div>
+      </details>`).join('');
   });
 </script>
 <script type="module" src="../js/site.js"></script>
