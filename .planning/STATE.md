@@ -68,7 +68,9 @@ on 2026-08-21.
 - Wyatt to drop the GFM Brand Cheat Sheet into the repo for a color/type true-up pass
 - Testimonial permission flags flip to true as Kate confirms names (js/data.js)
 - Vimeo swap-in when final video files arrive (target 9 Oct) — one line per slot in js/data.js
-- Direct PDF URLs for the four workbooks (js/data.js TODO) — currently land on the HFP page
+- Direct download URLs (js/data.js TODO) — PARTIALLY closed 2026-08-28: the five translated
+  REACH workbooks (es/zh/uk/id/pt) are hosted in-repo with direct downloads; still open:
+  the English REACH link and the other three editions, which land on the HFP page
 - Contact inbox: confirm with Kate which email receives site contact (contact/index.html TODO)
 - Community of Practice registration link (js/data.js TODO)
 - At Firebase go-live, security rules must also cover the CMS: content/* and pages/* world-readable,
@@ -89,6 +91,7 @@ on 2026-08-21.
 | 2 | Two mobile horizontal-overflow faults (/join/, /workbook/) closed | 2026-08-25 | pending | .planning/quick/260825-ier-mobile-horizontal-overflow-join-and-workbook/ |
 | 3 | Official brand hexes site-wide + Yuna removed (Kate 26 Aug email) | 2026-08-27 | 4147770, 0f0e1c9 | .planning/quick/260827-vfk-brand-hexes-official-and-remove-yuna/ |
 | 4 | About: seven-person roster, bios expand in place (Kate 26 Aug email; photos await host allowlist) | 2026-08-28 | 1e1a7b3, 32dd8a5 | .planning/quick/260828-h02-about-page-seven-bios-expand-in-place/ |
+| 5 | Five translated REACH workbooks hosted in-repo, per-language direct downloads (Kate 26 Aug email §2; Wyatt ruling 27 Aug) | 2026-08-28 | 31534de, ac2ea93 | .planning/quick/260828-hif-host-five-translated-workbooks-in-repo/ |
 
 ## Session Continuity
 
