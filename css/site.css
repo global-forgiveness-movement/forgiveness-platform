@@ -103,11 +103,17 @@ input, select, textarea { font-family: inherit; font-size: 1rem; color: var(--in
 main { flex: 1; width: 100%; }
 .wrap { max-width: 1060px; margin: 0 auto; padding: 0 var(--pad); }
 .section { padding: clamp(2.2rem, 6vw, 3.8rem) 0; }
+/* Anchored sections land with a little air above the heading. */
+.section[id] { scroll-margin-top: 1rem; }
 .section + .section { border-top: 1px solid var(--line); }
 .section--paper { background: var(--paper); }
 .section--navy { background: var(--navy); color: #f2f4f0; }
 .section--navy h1, .section--navy h2, .section--navy h3 { color: #fff; }
-.section--navy a { color: var(--sage); }
+/* The navy link tint is for prose links only — a .btn keeps its own colors.
+   Without :not(.btn) this rule's specificity (0,1,1) beats .btn--primary's
+   (0,1,0) and paints button labels sage on teal (the "greyed-out" look
+   Wyatt flagged 1 Sep). */
+.section--navy a:not(.btn) { color: var(--sage); }
 .section--navy .muted { color: rgba(242, 244, 240, 0.7); }
 .kicker {
   font-family: var(--font-head); font-weight: 600; font-size: 0.78rem;
@@ -204,6 +210,9 @@ button.btn { font-size: 1rem; }
 .video iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; }
 .video figcaption { padding: 0.55rem 0.9rem; font-size: 0.8rem; color: rgba(242, 244, 240, 0.75); }
 figure.video { margin: 0; }
+/* A slot waiting for its iframe holds the iframe's 16:9 space, so hydration
+   never moves the page under the visitor (it broke anchor landings). */
+figure.video:empty { aspect-ratio: 16 / 9; }
 
 /* ------------------------------------------------ quotes */
 .quote { background: var(--white); border-left: 4px solid var(--sage); border-radius: 0 var(--radius) var(--radius) 0; padding: 1.2rem 1.4rem; margin: 0; }

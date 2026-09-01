@@ -8,7 +8,7 @@ import { getVideos, getPages } from './content.js';
 import { recordDownload } from './metrics.js';
 import { ensureGate, leaf } from './gate.js';
 
-export const STAMP = 'GFM-V1 · 2026-09-01b';
+export const STAMP = 'GFM-V1 · 2026-09-01c';
 
 /* Resolve everything relative to the site root (js/ → root), so pages work
    at any depth and on any host (github.io project path or a custom domain). */
@@ -129,6 +129,25 @@ async function appendCustomNav() {
   });
 }
 
+/* Cold-loading a #fragment: the browser scrolls to it before this header,
+   the video slots, and async lists exist, so hydration above the target
+   pushes it away from where the visitor landed (measured ~560px on the
+   groups form at 900px). Video slots now reserve their space in CSS; this
+   one correction covers the rest, on every page: while the opening seconds
+   still grow the page, keep the named target aligned — unless the visitor
+   has started moving themselves. */
+function keepAnchorAligned() {
+  const target = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+  if (!target) return;
+  let userMoved = false;
+  ['wheel', 'touchstart', 'keydown'].forEach((ev) =>
+    addEventListener(ev, () => (userMoved = true), { passive: true, once: true }));
+  const align = () => userMoved || target.scrollIntoView({ behavior: 'instant' });
+  const settle = new ResizeObserver(align);
+  settle.observe(document.body);
+  setTimeout(() => settle.disconnect(), 3500);
+}
+
 /* Download counting: any <a data-download="edition:lang"> is counted
    anonymously (edition + language, nothing else) when clicked. */
 function watchDownloads() {
@@ -162,6 +181,7 @@ async function buildShell() {
   appendCustomNav();
   watchDownloads();
   document.documentElement.setAttribute('data-shell-ready', '');
+  keepAnchorAligned();
   /* Auth is optional dressing on every page; it must never block the shell. */
   try {
     const { mountAuth } = await import('./auth.js');

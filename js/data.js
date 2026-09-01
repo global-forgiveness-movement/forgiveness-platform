@@ -6,7 +6,10 @@
 /* The HFP's Global Forgiveness Movement page — ONE constant for every link to
    it (footer, events, workbook fallback). HFP migrated their site around
    2026-09: the old /global-forgiveness-movement path 404s with NO redirect;
-   /post/... is the page's current address. */
+   /post/... is the page's current address.
+   NOTE: contact/index.html and groups/index.html carry this URL verbatim as
+   static anchors (no render path reaches them) — on any future HFP move,
+   grep hfh.fas.harvard.edu across *.html too, not just this file. */
 const HFH = 'https://hfh.fas.harvard.edu/post/global-forgiveness-movement';
 
 export const NAV = [
