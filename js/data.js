@@ -345,6 +345,7 @@ export const PEOPLE = [
   },
   {
     slug: 'cooper-harris',
+    photo: 'assets/people/cooper-harris.jpg',
     initials: 'CH',
     name: 'Cooper Harris',
     role: 'Graduate Assistant',
