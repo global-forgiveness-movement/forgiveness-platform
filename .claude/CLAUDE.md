@@ -112,10 +112,10 @@ definition in `~/.claude/agents/`, as the GSD workflows' own fallback prescribes
   transferable to a successor — moved from his personal account 2026-08-21). Site serves at
   `global-forgiveness-movement.github.io/forgiveness-platform/` until the custom domain lands.
 - **Stack:** vanilla HTML/CSS/JS ES modules, no build, GitHub Pages from `main` root.
-- **Gate password:** `reach1` for the site (changed 2026-08-21 — Wyatt doesn't want Kate seeing
-  the platform yet). The `/plan/` scope doc keeps its own separate password `reach`, which Kate
-  has. When Wyatt is ready to show her the site, change `GATE_HASH` in `js/gate.js` and bump its
-  `GATE_KEY`.
+- **Gate password:** `reach1` for the site. **Kate and Richard now have it** (Wyatt, 1 Sep) —
+  the earlier "don't let Kate see it yet" hold is lifted; they are reviewing via the feedback
+  page. The `/plan/` scope doc keeps its own separate password `reach`. To rotate either, change
+  `GATE_HASH` in `js/gate.js` and bump its `GATE_KEY`.
 - **Brand:** the official GFM palette — cream `#F5F1E2`, teal `#00887A`, ink navy `#003D57`,
   plum `#770061`, mustard `#FAB812`, plus sage `#8FBCAD` as our derived accent (not in the
   official palette); Poppins / Nunito Sans / Sacramento, self-hosted. Official hexes adopted
