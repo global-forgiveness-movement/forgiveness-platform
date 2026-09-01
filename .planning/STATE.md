@@ -5,7 +5,7 @@ milestone_name: milestone
 current_phase: 5
 current_phase_name: all five phases built
 status: executing
-last_updated: "2026-09-01T12:22:06.293Z"
+last_updated: "2026-09-01T12:55:11.899Z"
 last_activity: 2026-08-21
 last_activity_desc: All phases executed in one session; browser-QA'd with
 progress:
@@ -105,6 +105,7 @@ on 2026-08-21.
 | 5 | Five translated REACH workbooks hosted in-repo, per-language direct downloads (Kate 26 Aug email §2; Wyatt ruling 27 Aug) | 2026-08-28 | 31534de, ac2ea93 | .planning/quick/260828-hif-host-five-translated-workbooks-in-repo/ |
 | 6 | Firebase go-live: config committed, workbook CSP opened, live Auth+rules verified | 2026-09-01 | 3426fcb | — |
 | 7 | All four English-edition workbook PDFs hosted in-repo; moved HFP page URL fixed (old path 404s) | 2026-09-01 | 6030e8e | .planning/quick/260901-bqz-host-all-four-remaining-workbook-pdfs-in/ |
+| 8 | Staff batch (Kate 1 Sep + Wyatt rulings): three HFP staff w/ verbatim bios, short lines for all ten, external links open new tabs, 2.5s store-patience fix, noscript privacy line | 2026-09-01 | 4520af7 | — |
 
 ## Session Continuity
 
