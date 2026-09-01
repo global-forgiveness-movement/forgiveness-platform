@@ -101,7 +101,6 @@
 <script type="module">
   import { SERIES } from '../js/data.js';
   import { getCollection } from '../js/content.js';
-  import { submitGroupForm } from '../js/metrics.js';
   import { registerGroup } from '../js/groups.js';
   import { MODE } from '../js/store.js';
 
@@ -130,7 +129,9 @@
     const msg = form.querySelector('.form-msg');
     try {
       const fields = Object.fromEntries(new FormData(form));
-      await submitGroupForm(fields);
+      /* ONE write. registerGroup stores the submission and its code together;
+         an older submitGroupForm() call here wrote a second, codeless copy of
+         every leader into the same collection until 1 Sep. */
       const { code, series } = await registerGroup(fields);
       form.reset();
       msg.className = 'form-msg form-msg--ok';

@@ -86,9 +86,11 @@ on 2026-08-21.
   HFP's old URL 404s with NO redirect — if they migrate again, our HFH constant
   (top of js/data.js) is the one place to fix
 
-- Contact inbox: ruled 1 Sep — send to Kate's address for now; waiting on the address itself
-  from Wyatt (contact/index.html TODO). Revisit when the domain lands and they have real
-  addresses on it
+- Contact inbox — CLOSED 2026-09-01 (quick task #11): the page carries a form, not an
+  address. Messages land in Firestore and Kate reads them in /admin → Messages, alongside
+  group registrations. **Action outstanding: paste the updated firestore.rules into the
+  console** (the `contact` collection is denied by the catch-all until that happens).
+  Revisit notification-by-email when the domain lands
 - Community of Practice registration link — ruled 1 Sep: the programme-page link is fine for
   now; no change needed (js/data.js TODO stays as a marker only)
 - At Firebase go-live, security rules must also cover the CMS: content/* and pages/* world-readable,
@@ -143,6 +145,7 @@ notes nobody has read. Small fixes are fine.
 | 8 | Staff batch (Kate 1 Sep + Wyatt rulings): three HFP staff w/ verbatim bios, short lines for all ten, external links open new tabs, 2.5s store-patience fix, noscript privacy line | 2026-09-01 | 4520af7 | — |
 | 9 | Wyatt 1 Sep review batch: seven fixes (dead links, tablet anchor, workbooks restructure+reword, workbook platform bar, My Path flash, navy buttons) | 2026-09-01 | ae23805 | — |
 | 10 | My Path empty cards root-caused and fixed (unguarded store read aborted render); workbook second leaf removed | 2026-09-01 | c98808e | — |
+| 11 | Contact form saves to Firestore (no address on the page) + one Messages inbox in /admin; duplicate `groups` write retired | 2026-09-01 | pending | .planning/quick/260901-mq7-contact-form-firestore-and-messages-inbox/ |
 
 ## Session Continuity
 

@@ -21,7 +21,11 @@
     .adm-mini { border: 1px solid var(--line); background: var(--cream-soft); border-radius: 999px;
       padding: 0.25rem 0.75rem; font-size: 0.8rem; font-family: var(--font-head); }
     .adm-sub { border-left: 3px solid var(--sage); padding-left: 0.9rem; margin: 0.6rem 0; }
-    .adm-block-head { display: flex; align-items: center; gap: 0.6rem; }
+    /* Wraps rather than overflowing: at 390px a message row carries a pill, a
+       name, a date, an address and a reply link, which measured 81px wider than
+       the screen in one line. Every header row here gets the same resilience. */
+    .adm-block-head { display: flex; align-items: center; gap: 0.6rem 0.6rem; flex-wrap: wrap; }
+    .adm-block-head .adm-email { overflow-wrap: anywhere; min-width: 0; }
     .adm-block-head b { font-family: var(--font-head); color: var(--navy); }
     .adm-save { position: sticky; bottom: 0; background: var(--cream); padding: 0.8rem 0; }
   </style>
@@ -64,6 +68,7 @@
     listHistory, restoreHistory, isEditor, slugify,
   } from '../js/content.js';
   import { esc } from '../js/blocks.js';
+  import { listInbox, SUBMISSIONS } from '../js/inbox.js';
 
   const $ = (sel, el = document) => el.querySelector(sel);
   const show = (name) => document.querySelectorAll('[data-view]').forEach((v) => (v.hidden = v.dataset.view !== name));
@@ -116,10 +121,11 @@
   const findListField = (key) => activeListFields.find((f) => f.key === key);
 
   /* ---------------------------------------------- tabs */
-  const TABS = [...Object.keys(COLLECTIONS), 'pages', 'history'];
+  const TABS = [...Object.keys(COLLECTIONS), 'pages', 'messages', 'history'];
+  const TAB_LABELS = { pages: 'Pages', messages: 'Messages', history: 'History' };
   function renderTabs(active) {
     $('[data-tabs]').innerHTML = TABS.map((t) => {
-      const label = t === 'pages' ? 'Pages' : t === 'history' ? 'History' : COLLECTIONS[t].label;
+      const label = TAB_LABELS[t] || COLLECTIONS[t].label;
       return `<button role="tab" aria-selected="${t === active}" data-tab="${t}">${label}</button>`;
     }).join('');
   }
@@ -130,6 +136,7 @@
   function openTab(name) {
     renderTabs(name);
     if (name === 'pages') return renderPagesTab();
+    if (name === 'messages') return renderMessagesTab();
     if (name === 'history') return renderHistoryTab();
     renderCollectionTab(name);
   }
@@ -235,6 +242,46 @@
     if (e.target.matches('[data-moveup]') && item.previousElementSibling) item.previousElementSibling.before(item);
     if (e.target.matches('[data-movedown]') && item.nextElementSibling) item.nextElementSibling.after(item);
   });
+
+  /* ---------------------------------------------- messages */
+  /* Read-only. Everything people send us — contact messages and group
+     registrations alike — arrives through js/inbox.js already merged and
+     tagged, so there are no per-kind branches here: the row draws whatever
+     that kind's `detail()` returns. A third kind is a row in SUBMISSIONS,
+     not another screen. */
+  function messageRow(r) {
+    const spec = SUBMISSIONS[r.kind];
+    const when = r.submittedAt ? new Date(r.submittedAt).toLocaleString() : 'date unknown';
+    const detail = spec.detail(r)
+      .filter(([, value]) => value !== undefined && value !== null && String(value).trim() !== '')
+      .map(([label, value]) => `<p class="small" style="margin:0.35rem 0"><b>${esc(label)}:</b> ${esc(String(value))}</p>`)
+      .join('');
+    /* mailto is safe here and nowhere else — this page is editors-only. */
+    const email = r.email
+      ? `<a class="adm-mini" href="mailto:${esc(r.email)}?subject=${encodeURIComponent('Global Forgiveness Movement')}">reply</a>`
+      : '';
+    return `<div class="adm-item">
+      <div class="adm-block-head">
+        <span class="pill">${esc(spec.label)}</span>
+        <b>${esc(r.name || 'No name given')}</b>
+        <span class="muted small">${esc(when)}</span>
+        <span class="spacer" style="flex:1"></span>
+        ${r.email ? `<span class="muted small adm-email">${esc(r.email)}</span>` : ''}
+        ${email}
+      </div>
+      <div style="margin-top:0.5rem">${detail || '<p class="small muted" style="margin:0.35rem 0">No further detail.</p>'}</div>
+    </div>`;
+  }
+
+  async function renderMessagesTab() {
+    $('[data-panel]').innerHTML = '<p class="muted small">Loading…</p>';
+    const rows = await listInbox();
+    $('[data-panel]').innerHTML = `
+      <p class="muted small" style="max-width:62ch">Everything people have sent through the site, newest first — messages from the Contact page and leaders registering a Forgiveness Group. Nobody but an editor can read these, and nothing here is published.</p>
+      ${rows.length
+        ? rows.map(messageRow).join('')
+        : '<p class="muted">Nothing yet. Messages from the Contact page and new group registrations will appear here.</p>'}`;
+  }
 
   /* ---------------------------------------------- history */
   async function renderHistoryTab() {

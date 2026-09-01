@@ -14,19 +14,65 @@
   <section class="section section--paper">
     <div class="wrap">
       <h1>Contact</h1>
-      <p>Questions about the movement, the workbooks, or running a Forgiveness Group — we’d love to hear from you.</p>
-      <!-- TODO(wyatt): confirm with Kate which inbox receives site contact, then set it here (one place). -->
-      <div class="card" style="max-width:560px">
-        <h3>Email us</h3>
-        <p class="small">The Global Forgiveness Movement team at the Human Flourishing Program reads every message.</p>
-        <!-- Static copy of the HFH constant (top of ../js/data.js) — no render path
-             reaches this page's anchors. On any future HFP move: grep hfh.fas.harvard.edu. -->
-        <a class="btn btn--primary" href="https://hfh.fas.harvard.edu/post/global-forgiveness-movement" target="_blank" rel="noopener">Contact via the program page</a>
-      </div>
-      <p class="small muted" style="margin-top:1.2rem">Planning to run a group? The <a href="../groups/#tell-us">group form</a> is the fastest way to tell us.</p>
+      <p style="max-width:60ch">Questions about the movement, the workbooks, or running a Forgiveness Group — we’d love to hear from you. Write to us here and the team reads it.</p>
+
+      <!-- No email address appears on this page by design (Wyatt's ruling, 1 Sep).
+           The form writes to the `contact` collection, which firestore.rules makes
+           write-only from the public and readable by editors in /admin. So there is
+           nothing here for a crawler to harvest once the gate comes down. -->
+      <form class="form" id="contactForm" style="max-width:560px">
+        <label>Your name <input name="name" required autocomplete="name"></label>
+        <label>Email <input name="email" type="email" required autocomplete="email">
+          <span class="form-note">So we can write back. We use it for nothing else.</span>
+        </label>
+        <label>What’s this about?
+          <select name="subject">
+            <option>A question about the workbooks</option>
+            <option>Running a Forgiveness Group</option>
+            <option>Research or collaboration</option>
+            <option>Something about this website</option>
+            <option>Something else</option>
+          </select>
+        </label>
+        <label>Your message <textarea name="message" rows="5" required></textarea></label>
+        <button class="btn btn--primary" type="submit">Send</button>
+        <div class="form-msg" hidden role="status"></div>
+      </form>
+
+      <p class="small muted" style="margin-top:1.4rem;max-width:60ch">Planning to run a group? The <a href="../groups/#tell-us">group form</a> is the fastest way to tell us — it gives you a group code straight away.</p>
+      <!-- NEW COPY, 1 Sep — flagged for Wyatt's approval. Wording matched to the line the
+           workbook already carries (workbook/js/app.js), so the site says this one way. -->
+      <p class="small muted" style="max-width:60ch">This is not a crisis service, and messages are not monitored around the clock. If you are in crisis or thinking about harming yourself, please reach out now: in the US, call or text <b>988</b>; elsewhere, contact your local emergency services or a trusted crisis line.</p>
     </div>
   </section>
 </main>
+
+<script type="module">
+  import { sendMessage } from '../js/inbox.js';
+  import { MODE } from '../js/store.js';
+
+  const form = document.getElementById('contactForm');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = form.querySelector('.form-msg');
+    const button = form.querySelector('button[type="submit"]');
+    button.disabled = true;
+    try {
+      await sendMessage(Object.fromEntries(new FormData(form)));
+      form.reset();
+      msg.className = 'form-msg form-msg--ok';
+      msg.innerHTML = 'Sent — thank you. We read everything, and we’ll reply to the address you gave us.' +
+        (MODE === 'demo'
+          ? '<br><br><span class="small muted">Preview note: the backend isn’t connected yet, so this message stays in this browser.</span>'
+          : '');
+    } catch (err) {
+      msg.className = 'form-msg form-msg--err';
+      msg.textContent = 'That didn’t send. Please try again in a moment.';
+    }
+    button.disabled = false;
+    msg.hidden = false;
+  });
+</script>
 <script type="module" src="../js/site.js"></script>
 </body>
 </html>

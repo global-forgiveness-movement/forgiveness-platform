@@ -12,9 +12,9 @@ rules_version = '2';
    fail loudly rather than inherit someone else's permissions.
 
    Two privacy rules drive most of this:
-   - The group registration form collects names and email addresses. It is
-     write-only from the public: anyone may submit one, nobody may read them
-     back except an editor.
+   - The two public forms — contact messages and group registrations — collect
+     names and email addresses. Both are write-only from the public: anyone may
+     submit one, nobody may read them back except an editor.
    - A person's workbook progress and group membership belong to them alone.
      Nothing in here lets one signed-in user read another's.
 */
@@ -64,6 +64,15 @@ service cloud.firestore {
       allow update: if request.resource.data.keys().hasOnly(['count'])
                     && request.resource.data.count == resource.data.count + 1;
       allow delete: if false;
+    }
+
+    /* ---- contact messages: write-only from the public ---- */
+    /* The contact page carries no email address at all; it writes here instead,
+       and /admin is the only way to read it. Same shape as groups below: anyone
+       may send one, only an editor may look. */
+    match /contact/{entry} {
+      allow create: if true;
+      allow read, update, delete: if isEditor();
     }
 
     /* ---- group registrations: write-only from the public ---- */
