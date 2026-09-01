@@ -5,7 +5,7 @@ milestone_name: milestone
 current_phase: 5
 current_phase_name: all five phases built
 status: executing
-last_updated: "2026-09-01T12:55:11.899Z"
+last_updated: "2026-09-01T13:25:21.023Z"
 last_activity: 2026-08-21
 last_activity_desc: All phases executed in one session; browser-QA'd with
 progress:
@@ -106,6 +106,7 @@ on 2026-08-21.
 | 6 | Firebase go-live: config committed, workbook CSP opened, live Auth+rules verified | 2026-09-01 | 3426fcb | — |
 | 7 | All four English-edition workbook PDFs hosted in-repo; moved HFP page URL fixed (old path 404s) | 2026-09-01 | 6030e8e | .planning/quick/260901-bqz-host-all-four-remaining-workbook-pdfs-in/ |
 | 8 | Staff batch (Kate 1 Sep + Wyatt rulings): three HFP staff w/ verbatim bios, short lines for all ten, external links open new tabs, 2.5s store-patience fix, noscript privacy line | 2026-09-01 | 4520af7 | — |
+| 9 | Wyatt 1 Sep review batch: seven fixes (dead links, tablet anchor, workbooks restructure+reword, workbook platform bar, My Path flash, navy buttons) | 2026-09-01 | ae23805 | — |
 
 ## Session Continuity
 
