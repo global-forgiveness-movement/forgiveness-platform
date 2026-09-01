@@ -75,9 +75,11 @@ on 2026-08-21.
 - Wyatt to drop the GFM Brand Cheat Sheet into the repo for a color/type true-up pass
 - Testimonial permission flags flip to true as Kate confirms names (js/data.js)
 - Vimeo swap-in when final video files arrive (target 9 Oct) — one line per slot in js/data.js
-- Direct download URLs (js/data.js TODO) — PARTIALLY closed 2026-08-28: the five translated
-  REACH workbooks (es/zh/uk/id/pt) are hosted in-repo with direct downloads; still open:
-  the English REACH link and the other three editions, which land on the HFP page
+- Direct download URLs (js/data.js TODO) — CLOSED 2026-09-01 (quick task #7): all nine files
+  hosted in-repo (5 translations + 4 English-edition PDFs pulled from the HFP page after its
+  move to /post/global-forgiveness-movement broke the fallback links). Note for the record:
+  HFP's old URL 404s with NO redirect — if they migrate again, our HFH constant
+  (top of js/data.js) is the one place to fix
 
 - Contact inbox: confirm with Kate which email receives site contact (contact/index.html TODO)
 - Community of Practice registration link (js/data.js TODO)
@@ -102,6 +104,7 @@ on 2026-08-21.
 | 4 | About: seven-person roster, bios expand in place (Kate 26 Aug email; photos await host allowlist) | 2026-08-28 | 1e1a7b3, 32dd8a5 | .planning/quick/260828-h02-about-page-seven-bios-expand-in-place/ |
 | 5 | Five translated REACH workbooks hosted in-repo, per-language direct downloads (Kate 26 Aug email §2; Wyatt ruling 27 Aug) | 2026-08-28 | 31534de, ac2ea93 | .planning/quick/260828-hif-host-five-translated-workbooks-in-repo/ |
 | 6 | Firebase go-live: config committed, workbook CSP opened, live Auth+rules verified | 2026-09-01 | 3426fcb | — |
+| 7 | All four English-edition workbook PDFs hosted in-repo; moved HFP page URL fixed (old path 404s) | 2026-09-01 | 6030e8e | .planning/quick/260901-bqz-host-all-four-remaining-workbook-pdfs-in/ |
 
 ## Session Continuity
 
