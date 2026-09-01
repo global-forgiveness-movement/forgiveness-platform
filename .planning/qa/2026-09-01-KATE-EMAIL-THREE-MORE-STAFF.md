@@ -41,3 +41,35 @@ Three people, each identified only by their HFP team-page URL:
 
 **Nothing client-facing shipped from this session.** When the three entries land they are NEW
 copy on a client-facing page and need Wyatt's read before they go to `main`.
+
+## Handoff — what the next session does (Wyatt's ruling: fresh session, re-fetch)
+
+The allowlist applies when a container starts, so a new session can reach the pages this one
+could not. Everything except the bio text is already decided and proven; this is a content
+drop, not a design task.
+
+1. **Fetch all three pages** — `https://hfh.fas.harvard.edu/team/{suzanne-ouyang,
+   sophie-frushell,ying-chen}`. Take the displayed title and the bio **verbatim**, trimmed to
+   the bio proper, never paraphrased — the standing convention for this roster, set by the
+   comment above `PEOPLE` in `js/data.js`. If a fetch still 403s, stop and say so; do not
+   reconstruct bio text from search summaries.
+2. **Insert three entries into `PEOPLE` in `js/data.js`**, in this order, immediately before
+   the `everett-worthington` entry: `suzanne-ouyang` (SO), `sophie-frushell` (SF),
+   `ying-chen` (YC). Fields: `slug`, `initials`, `name`, `role`, `line: ''`, `bio`, `link`.
+   Omit `photo` entirely unless the file exists — an absent `photo` gives the initials circle,
+   and a wrong path gives a broken image.
+3. **Photos, same visit:** save each headshot to `assets/people/<slug>.jpg`, verify with
+   `file` (JPEG/PNG, >5 KB), then add the `photo` field. Cooper Harris is still on an initials
+   circle too — worth grabbing while the host is reachable.
+4. **Bump `STAMP` in `js/site.js`** (currently `GFM-V1 · 2026-08-28c`) — this one does change
+   what is served.
+5. **Look at it rendered** before handing over — desktop and mobile. Gate bypass for a headless
+   pass: `localStorage.setItem('gfm.gate.v2','open')` in an init script.
+
+**Already settled, do not re-litigate:** the position (after Kate, before Everett), initials
+circles as the acceptable interim, and the ten-card layout — verified 1 Sep at 1280px and
+390px, wrapping 4 + 4 + 2 centred with expand-in-place working from the new middle slots.
+
+**One thing worth telling Wyatt:** until the photos land, the middle row reads as three
+initials circles against one photo (Cooper, Suzanne, Sophie beside Kate). It is not broken,
+but it is the strongest argument for doing step 3 in the same pass.
