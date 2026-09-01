@@ -81,7 +81,12 @@ on 2026-08-21.
 
 ### Blockers
 
-(None.)
+- **Kate's 1 Sep About-page additions (Suzanne Ouyang, Sophie Frushell, Ying Chen) are blocked
+  on the bio text only.** `hfh.fas.harvard.edu` answers CONNECT 403 in this container — it was
+  trimmed from the allowlist after 28 Aug. Wayback and a text proxy are denied too. Everything
+  else about the three cards is settled (see
+  `.planning/qa/2026-09-01-KATE-EMAIL-THREE-MORE-STAFF.md`). Unblocks by Wyatt pasting the
+  bios, or by re-adding the host and starting a NEW session.
 
 ### Quick Tasks Completed
 
@@ -111,13 +116,15 @@ on 2026-08-21.
   - KEEP: `global-forgiveness-movement.github.io` (live-site QA), `www.gstatic.com` (Firebase
     SDK QA once the project exists), `*.youtube.com` + `*.ytimg.com` + `*.youtube-nocookie.com`
     (embed QA until the Vimeo swap), plus the trusted defaults checkbox.
+  - NEEDED AGAIN (2026-09-01, Kate's three-more-staff ask — measured denied this session):
+    `hfh.fas.harvard.edu` for the three new bios, `cdn.prestosports.com` for Cooper Harris's
+    photo. Both were trimmed after 28 Aug; both now answer CONNECT 403, which is what blocks
+    the About-page additions. A policy change only reaches a NEW container.
   - TRIM-ELIGIBLE (one-time fetch scaffolding, sources now committed to the repo 2026-08-28):
-    `hfh.fas.harvard.edu`, `*.discoverforgiveness.org`, `www.evworthington-forgiveness.com`,
-    `www.ecgulls.com`, `cdn.prod.website-files.com`, `static.wixstatic.com`,
-    `images.squarespace-cdn.com`, `d2o2figo6ddd0g.cloudfront.net` (stale before it was ever
-    used — ecgulls moved to prestosports).
-  - PENDING: `cdn.prestosports.com` — needed ONCE for Cooper Harris's photo, then trim it too.
-    (YouTube embeds verified live in Wyatt's real browser 2026-08-27.)
+    `*.discoverforgiveness.org`, `www.evworthington-forgiveness.com`, `www.ecgulls.com`,
+    `cdn.prod.website-files.com`, `static.wixstatic.com`, `images.squarespace-cdn.com`,
+    `d2o2figo6ddd0g.cloudfront.net` (stale before it was ever used — ecgulls moved to
+    prestosports). (YouTube embeds verified live in Wyatt's real browser 2026-08-27.)
 - **Container QA how-to (hard-won):** headless Chromium cannot reach github.io through the
   egress proxy even when curl can (TLS passthrough quirk) — QA by serving the repo locally
   (`python3 -m http.server` from the repo root; byte-identity with live makes it equivalent).

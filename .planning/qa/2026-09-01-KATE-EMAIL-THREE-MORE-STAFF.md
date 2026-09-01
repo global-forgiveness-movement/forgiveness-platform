@@ -73,3 +73,44 @@ circles as the acceptable interim, and the ten-card layout — verified 1 Sep at
 **One thing worth telling Wyatt:** until the photos land, the middle row reads as three
 initials circles against one photo (Cooper, Suzanne, Sophie beside Kate). It is not broken,
 but it is the strongest argument for doing step 3 in the same pass.
+
+---
+
+## Second session, 1 Sep — the fresh container did NOT unblock it
+
+The handoff above predicted that a new container would pick up the widened allowlist. It did
+not. Measured at the start of this session, not assumed:
+
+| Host | Result |
+|---|---|
+| `hfh.fas.harvard.edu` | CONNECT 403 — policy denial (curl **and** the WebFetch tool, which reports `EGRESS_BLOCKED`) |
+| `www.hsph.harvard.edu` | CONNECT 403 |
+| `web.archive.org` | tunnel opens, then resets / 502 — four attempts, no snapshot retrieved |
+| `r.jina.ai` (text proxy) | CONNECT 403 |
+| `cdn.prestosports.com` | CONNECT 403 — Cooper Harris's photo is blocked too |
+| `www.ecgulls.com` | CONNECT 403 |
+| `www.youtube.com` | 200 — so the allowlist **is** being enforced; these hosts are simply not on it |
+
+**The likely cause is in our own record.** The network ledger in `.planning/STATE.md` (commit
+`15cc116`, 28 Aug) lists `hfh.fas.harvard.edu` under **TRIM-ELIGIBLE**, and `cdn.prestosports.com`
+as PENDING-then-trim. Both now read as denied, which is what a completed trim looks like. Kate's
+1 Sep ask needs `hfh.fas.harvard.edu` back; the ledger has been corrected accordingly.
+
+No Google Drive copy of the three bios exists either (searched 1 Sep).
+
+**Nothing was invented.** Per the standing convention above the `PEOPLE` array, no entry was
+written to `js/data.js` from a search summary, a reconstruction, or a model's own knowledge.
+The three cards are a content drop waiting on one input: the source text.
+
+### The two ways forward — Wyatt's call
+
+1. **Paste the three bios** (name as displayed, role/title, bio paragraphs) into the session.
+   Fastest, and the text is then provably the source's.
+2. **Re-add `hfh.fas.harvard.edu` to the environment allowlist** (plus `cdn.prestosports.com`
+   if the headshots should land in the same pass) and start a fresh session. The container
+   reads the policy at start, so the retry has to be a new session — this one cannot see a
+   mid-session change.
+
+Everything else is ready: position (after Kate, before Everett), slugs `suzanne-ouyang` /
+`sophie-frushell` / `ying-chen`, initials SO / SF / YC, `photo` omitted so the initials circle
+shows, and the ten-card layout already proven at 1280px and 390px.
