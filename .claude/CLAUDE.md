@@ -119,8 +119,10 @@ definition in `~/.claude/agents/`, as the GSD workflows' own fallback prescribes
 - **Brand:** the official GFM palette — cream `#F5F1E2`, teal `#00887A`, ink navy `#003D57`,
   plum `#770061`, mustard `#FAB812`, plus sage `#8FBCAD` as our derived accent (not in the
   official palette); Poppins / Nunito Sans / Sacramento, self-hosted. Official hexes adopted
-  2026-08-27 from `.planning/brand/Forgiveness_Brand_Cheat_Sheet.pdf` (fonts remain the free
-  stand-ins pending licensing).
+  2026-08-27 from `.planning/brand/Forgiveness_Brand_Cheat_Sheet.pdf`. **The free fonts are the
+  final answer** — the clients ruled on 1 Sep not to license Brandon Grotesque / Handsome Pro,
+  so stop treating the stand-ins as temporary. They also accepted the 4.37:1 white-on-teal
+  contrast as it stands; don't re-raise either without new information.
 - **Backend:** Firebase (Auth + Firestore) behind `js/firebase-config.js`; with no config
   committed the site runs in a labeled local demo mode. Progress-only workbook sync — **what
   people write never leaves their device.**
