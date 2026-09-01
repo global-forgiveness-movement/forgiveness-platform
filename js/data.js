@@ -3,6 +3,12 @@
    "over 4,500 participants", "5 relatively high-conflict countries",
    never "start the series" — it's always about starting a group. */
 
+/* The HFP's Global Forgiveness Movement page — ONE constant for every link to
+   it (footer, events, workbook fallback). HFP migrated their site around
+   2026-09: the old /global-forgiveness-movement path 404s with NO redirect;
+   /post/... is the page's current address. */
+const HFH = 'https://hfh.fas.harvard.edu/post/global-forgiveness-movement';
+
 export const NAV = [
   ['', 'Home'],
   ['workbooks/', 'Workbooks'],
@@ -16,7 +22,7 @@ export const FOOTER_COLS = [
     title: 'Get involved',
     links: [
       ['groups/', 'Start a Forgiveness Group'],
-      ['https://hfh.fas.harvard.edu/global-forgiveness-movement', 'Community of Practice'], // TODO(wyatt): swap for the Zoom registration link Kate uses
+      [HFH, 'Community of Practice'], // TODO(wyatt): swap for the Zoom registration link Kate uses
       ['contact/', 'Contact'],
     ],
   },
@@ -88,19 +94,19 @@ export const EVENTS = [
     title: 'Forgiveness Community of Practice',
     date: '4 September · 12pm ET · Zoom',
     detail: 'Everett Worthington, a pioneer of the psychology research on forgiveness',
-    href: 'https://hfh.fas.harvard.edu/global-forgiveness-movement',
+    href: HFH,
   },
   {
     title: 'Forgiveness Community of Practice',
     date: '2 October · 12pm ET · Zoom',
     detail: 'Monthly gathering for everyone spreading forgiveness',
-    href: 'https://hfh.fas.harvard.edu/global-forgiveness-movement',
+    href: HFH,
   },
   {
     title: 'Christianity & Public Health Conference',
     date: '24 October · Cambridge, MA',
     detail: 'In person at Harvard',
-    href: 'https://hfh.fas.harvard.edu/events',
+    href: 'https://hfh.fas.harvard.edu/post/events',
   },
 ];
 
@@ -145,16 +151,18 @@ export const TESTIMONIALS = [
 ];
 
 /* Workbook downloads.
-   The five REACH translations (es, zh, uk, id, pt) are hosted in this repo
-   under assets/workbooks/ — Kate's 26 Aug email §2, with Ev's permission;
-   Wyatt ruled 27 Aug: host in-repo, ship the Word files as-is, no conversion.
-   Being ours, those links are verified by construction, which resolves the
-   25 Aug ruling-1 deep-link concern ("an unverified deep link that 404s is
-   worse than a landing page that works") for those five.
-   TODO(wyatt): still open — the English direct link and direct URLs for the
-   other three editions; they fall back to the programme page below.
+   All nine files are hosted in this repo under assets/workbooks/: the five
+   REACH translations (es, zh, uk, id, pt — Kate's 26 Aug email §2, with Ev's
+   permission; Wyatt ruled 27 Aug: host in-repo, ship as-is, no conversion)
+   and, since 2026-09-01, the four English-edition PDFs, taken byte-identical
+   from the HFP programme page. Being ours, every link is verified by
+   construction — which fully resolves the 25 Aug ruling-1 deep-link concern
+   ("an unverified deep link that 404s is worse than a landing page that
+   works") for this section.
+   The HFH page (constant at the top of this file) remains only as the
+   never-taken fallback in applyLang — its 2026-09 move is what broke the
+   four edition downloads and prompted hosting them here.
    Download clicks are counted per edition + language either way. */
-const HFH = 'https://hfh.fas.harvard.edu/global-forgiveness-movement';
 export const LANGUAGES = [
   ['en', 'English'],
   ['es', 'Español'],
@@ -173,9 +181,9 @@ export const WORKBOOKS = [
     pills: ['2–3 hours', 'Secular', '6 languages'],
     languages: true,
     url: HFH,
-    /* Hosted translations, keyed by language code. 'en' is deliberately
-       absent — no English file was delivered; its button falls back to url. */
+    /* Hosted files, keyed by language code. */
     files: {
+      en: { path: 'assets/workbooks/REACH-Forgiveness-Workbook-English.pdf', format: 'PDF', size: '2.7 MB' },
       es: { path: 'assets/workbooks/REACH-Forgiveness-Workbook-Spanish.docx', format: 'Word', size: '4.3 MB' },
       zh: { path: 'assets/workbooks/REACH-Forgiveness-Workbook-Chinese.docx', format: 'Word', size: '2.3 MB' },
       uk: { path: 'assets/workbooks/REACH-Forgiveness-Workbook-Ukrainian.docx', format: 'Word', size: '1.2 MB' },
@@ -191,6 +199,9 @@ export const WORKBOOKS = [
     pills: ['6 sections', 'Christian', 'Group-ready'],
     languages: false,
     url: HFH,
+    files: {
+      en: { path: 'assets/workbooks/REACH-Workbook-Adapted-for-Churches.pdf', format: 'PDF', size: '3.1 MB' },
+    },
   },
   {
     id: 'receive',
@@ -200,6 +211,9 @@ export const WORKBOOKS = [
     pills: ['7 steps', 'Christian'],
     languages: false,
     url: HFH,
+    files: {
+      en: { path: 'assets/workbooks/RECEIVE-Divine-Forgiveness-Workbook.pdf', format: 'PDF', size: '2.9 MB' },
+    },
   },
   {
     id: 'activity',
@@ -209,6 +223,9 @@ export const WORKBOOKS = [
     pills: ['Campaign-scale'],
     languages: false,
     url: HFH,
+    files: {
+      en: { path: 'assets/workbooks/Community-Wide-Forgiveness-Activity-Book.pdf', format: 'PDF', size: '2.3 MB' },
+    },
   },
   /* Muslim-adapted edition: Kate is sending the final version (her 26 Aug
      email §2). When it arrives, its entry goes here — same shape as above,
