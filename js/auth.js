@@ -9,15 +9,33 @@ export const AUTH_MODE = MODE; // 'firebase' | 'demo'
 
 const listeners = new Set();
 let user = null; // normalized: { id, name, email }
+let resolved = false; // true once the backend has answered (or the wait ran out)
 
 export const currentUser = () => user;
+
+/* Tri-state on purpose: before the backend's first answer the state is
+   UNKNOWN, not signed out. Listeners hear nothing until announce() —
+   broadcasting an early null used to paint every signed-in page signed-out
+   for the SDK's whole load time (the My Path flash, Wyatt 1 Sep). */
 export function onAuth(cb) {
   listeners.add(cb);
-  cb(user);
+  if (resolved) cb(user);
   return () => listeners.delete(cb);
 }
+
+/* One bit, no identity: "this device's last answer was signed-in". Lets the
+   header hold back the sign-in links it would otherwise flash at a
+   returning member. Written only here; js/site.js buildHeader() reads the
+   same key for the header's very first paint. */
+const HINT = 'gfm.auth.hint.v1';
+const wasSignedIn = () => {
+  try { return localStorage.getItem(HINT) === '1'; } catch { return false; }
+};
+
 function announce(next) {
+  resolved = true;
   user = next;
+  try { next ? localStorage.setItem(HINT, '1') : localStorage.removeItem(HINT); } catch {}
   listeners.forEach((cb) => cb(user));
 }
 
@@ -139,13 +157,24 @@ export const signOutUser = () => impl.signOut();
 export const resetPassword = (e) => impl.resetPassword(e);
 export const deleteAccount = () => impl.deleteAccount();
 
-const ready = impl.init();
+const ready = impl.init().catch((err) => {
+  console.warn('auth backend unavailable:', err);
+  if (!resolved) announce(null);
+});
+/* Bound the unknown state: if no answer lands (offline, blocked CDN), the
+   page must still resolve to signed-out rather than wait forever. 2.5s
+   matches the store's patience. */
+setTimeout(() => { if (!resolved) announce(null); }, 2500);
 
 /* Header widget — the same slot on every page. */
 export function mountAuth(slot) {
   if (!slot) return;
   const root = new URL('..', import.meta.url);
   const href = (p) => new URL(p, root).pathname;
+  /* A device whose last answer was signed-in gets a calm blank slot until
+     the real answer, not sign-in links about to swap. A signed-out visitor
+     keeps the static links untouched, immediately. */
+  if (wasSignedIn()) slot.innerHTML = '';
   onAuth((u) => {
     slot.innerHTML = u
       ? `<a class="btn btn--quiet" href="${href('my-path/')}">My Path · ${u.name.split(' ')[0]}</a>`

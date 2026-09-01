@@ -35,6 +35,14 @@ function buildHeader() {
     const current = path === here ? ' aria-current="page"' : '';
     return `<a href="${href(path)}"${current}>${label}</a>`;
   }).join('');
+  /* The static auth links are the pre-answer placeholder. A device whose
+     last auth answer was signed-in (one-bit hint written by js/auth.js)
+     gets a blank slot instead — sign-in links here would paint and then
+     swap once the backend answers. */
+  let hintSignedIn = false;
+  try { hintSignedIn = localStorage.getItem('gfm.auth.hint.v1') === '1'; } catch {}
+  const authLinks = hintSignedIn ? '' : `<a class="signin" href="${href('join/')}">Sign in</a>
+         <a class="btn btn--outline" href="${href('join/')}">Create account</a>`;
   const head = el('header', { class: 'site-head' }, `
     <a class="site-brand" href="${href('')}">
       ${leaf('#00887a')}
@@ -42,10 +50,7 @@ function buildHeader() {
       <span>Human Flourishing Program</span></span>
     </a>
     <nav class="site-nav" id="site-menu" aria-label="Main">${nav}</nav>
-    <div class="site-auth" data-auth-slot>
-      <a class="signin" href="${href('join/')}">Sign in</a>
-         <a class="btn btn--outline" href="${href('join/')}">Create account</a>
-    </div>
+    <div class="site-auth" data-auth-slot>${authLinks}</div>
     <button class="nav-toggle" type="button" aria-expanded="false"
       aria-controls="site-menu" aria-label="Menu">
       <svg viewBox="0 0 22 22" width="22" height="22" aria-hidden="true"

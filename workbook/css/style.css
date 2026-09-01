@@ -28,6 +28,7 @@
   --radius-soft: 26px;
   --shadow: 0 10px 30px rgba(0, 61, 87, 0.10);
   --pad: clamp(1.1rem, 4vw, 2rem);
+  --platform-bar-h: 44px;
 }
 
 * { box-sizing: border-box; }
@@ -63,7 +64,26 @@ textarea, input[type='text'], input[type='number'] {
    sideways scrollbar on a narrow screen. `clip` leaves overflow-y visible,
    so the branch keeps its upward overhang. */
 #app { overflow-x: clip; }
-.page { min-height: 100vh; display: flex; flex-direction: column; }
+/* Full-height screens leave room for the platform bar above the app, so a
+   dark page never opens a needless scrollbar. */
+.page { min-height: calc(100vh - var(--platform-bar-h, 0px)); display: flex; flex-direction: column; }
+
+/* The platform bar — the quiet way back to the site (see index.html's
+   comment: a deliberate exception to the one-shell rule, two static links
+   only). No shadow, no bold, nothing animated: it must not compete with the
+   workbook's own .top bar below it. */
+.platform-bar {
+  min-height: var(--platform-bar-h);
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 0 var(--pad);
+  background: var(--cream);
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-head); font-size: 0.85rem;
+}
+.platform-bar a { text-decoration: none; font-weight: 500; }
+.platform-brand { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--navy); }
+.platform-brand svg { width: 20px; height: 20px; flex: none; }
+.platform-mypath { color: var(--teal-deep); }
 .page--dark { background: var(--navy); color: #f2f4f0; }
 .page--dark a { color: var(--sage); }
 

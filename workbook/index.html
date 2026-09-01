@@ -16,6 +16,17 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- Platform bar — a deliberate small exception to the one-shell rule: the
+       workbook is a self-contained app with a stricter CSP and its own design,
+       so it does not load the site shell. This bar is two static links, NOT a
+       fork of the shell — changes to the shell do not need mirroring here. -->
+  <header class="platform-bar">
+    <a class="platform-brand" href="../">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z" fill="#00887a" transform="rotate(40 12 12)"/></svg>
+      Global Forgiveness Movement
+    </a>
+    <a class="platform-mypath" href="../my-path/">My Path</a>
+  </header>
   <div id="app">
     <noscript>
       <div style="max-width:600px;margin:15vh auto;padding:0 1.5rem;text-align:center;font-family:sans-serif">
