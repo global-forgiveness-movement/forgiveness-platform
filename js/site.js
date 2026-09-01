@@ -138,8 +138,24 @@ function watchDownloads() {
   });
 }
 
+/* Every link that leaves this site opens in a new tab — decided once, at click
+   time, so it holds for static markup, data-driven links, and pages Kate
+   creates in /admin alike (Wyatt's ruling, 1 Sep). Capture phase: attributes
+   are set before the browser acts on the click. */
+function externalLinksInNewTabs() {
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest?.('a[href]');
+    if (!a) return;
+    if (a.origin && a.origin !== location.origin) {
+      a.target = '_blank';
+      a.rel = 'noopener';
+    }
+  }, true);
+}
+
 async function buildShell() {
   const main = document.querySelector('main');
+  externalLinksInNewTabs();
   document.body.prepend(buildHeader());
   document.body.append(buildFooter());
   hydrateVideos();
