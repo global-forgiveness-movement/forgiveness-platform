@@ -76,6 +76,11 @@ input, select, textarea { font-family: inherit; font-size: 1rem; color: var(--in
 :focus-visible { outline: 3px solid var(--mustard); outline-offset: 2px; }
 
 /* ------------------------------------------------ header */
+/* A card that has not been filled yet draws nothing — no empty white box while
+   a backend answers. Cards are populated by script (My Path's progress and group
+   cards); this covers every one of them, now and later. */
+.card:empty { display: none; }
+
 .site-head {
   background: var(--paper);
   border-bottom: 1px solid var(--line);

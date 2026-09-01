@@ -3,7 +3,7 @@
    and the committed defaults from data.js otherwise. The site never knows
    which — and keeps working fully if the store is unreachable. */
 
-import { store } from './store.js';
+import { store, withPatience } from './store.js';
 import {
   TESTIMONIALS, VIDEOS, EVENTS, PUBLICATIONS, PEOPLE, GROUP_STATS,
 } from './data.js';
@@ -16,15 +16,6 @@ const DEFAULTS = {
   people: PEOPLE,
   stats: GROUP_STATS,
 };
-
-/* Never make a visitor wait on a store that isn't answering: the committed
-   defaults win after this many ms. Editors saving via /admin are unaffected
-   (writes don't race). */
-const STORE_PATIENCE_MS = 2500;
-const withPatience = (promise) => Promise.race([
-  promise,
-  new Promise((_, reject) => setTimeout(() => reject(new Error('store timeout')), STORE_PATIENCE_MS)),
-]);
 
 export async function getCollection(name) {
   try {

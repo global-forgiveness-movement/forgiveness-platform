@@ -8,6 +8,16 @@ import { firebaseConfig } from './firebase-config.js';
 
 export const MODE = firebaseConfig ? 'firebase' : 'demo';
 
+/* Never let a visitor wait on a backend that isn't answering. Any read can be
+   wrapped: it either answers in time or rejects, and the caller falls back to
+   what it already has. ONE definition — everything above this file imports it
+   rather than keeping its own timer. */
+export const STORE_PATIENCE_MS = 2500;
+export const withPatience = (promise, ms = STORE_PATIENCE_MS) => Promise.race([
+  promise,
+  new Promise((_, reject) => setTimeout(() => reject(new Error('store timeout')), ms)),
+]);
+
 /* ------------------------------------------------------------- demo */
 const LS = 'gfm.store.v1';
 const read = () => JSON.parse(localStorage.getItem(LS) || '{}');

@@ -4,7 +4,7 @@
    wrote stays in their browser, by construction: this module never reads the
    `answers` field at all. */
 
-import { store } from './store.js';
+import { store, withPatience } from './store.js';
 
 const KEY = 'reach-forgiveness.v1'; // the workbook's own localStorage key
 
@@ -43,7 +43,16 @@ const later = (a, b) => (!a ? b : !b ? a : a.lesson > b.lesson || (a.lesson === 
 /* Two-way merge: never lose progress from either side. */
 export async function syncProgress(uid) {
   const mine = readLocalProgress();
-  const theirs = (await store.get('progress', uid)) || {};
+  /* The backend is optional here. If it is slow or unreachable we sync nothing
+     and answer from this device — a person's own progress is still true, and
+     the caller must never be left with nothing to render. */
+  let theirs = {};
+  let reachable = true;
+  try {
+    theirs = (await withPatience(store.get('progress', uid))) || {};
+  } catch {
+    reachable = false;
+  }
   const merged = {
     progress: (theirs.updatedAt || '') > (mine.updatedAt || '') ? theirs.progress || mine.progress : mine.progress || theirs.progress,
     furthest: later(mine.furthest, theirs.furthest),
@@ -53,7 +62,9 @@ export async function syncProgress(uid) {
   };
   if (merged.progress || merged.furthest || merged.completed.length) {
     writeLocalPosition(merged);
-    await store.set('progress', uid, merged);
+    if (reachable) {
+      try { await store.set('progress', uid, merged); } catch { /* keep the local copy */ }
+    }
   }
   return merged;
 }

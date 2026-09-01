@@ -15,7 +15,7 @@
    (the group's name), never permission. */
 
 import { SERIES } from './data.js';
-import { store } from './store.js';
+import { store, withPatience } from './store.js';
 
 /* No 0/O/1/I/L/S/5/2/Z — these get read aloud and written on whiteboards. */
 const ALPHABET = 'ACDEFGHJKMNPQRTUVWXY34679';
@@ -94,7 +94,7 @@ export async function joinGroup(userId, raw) {
 
 export async function memberGroup(userId) {
   try {
-    const m = await store.get('members', userId);
+    const m = await withPatience(store.get('members', userId));
     if (!m?.seriesId) return null;
     return { ...m, series: SERIES[m.seriesId] };
   } catch {

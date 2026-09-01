@@ -518,7 +518,7 @@ function shell(inner, opts = {}) {
   app.appendChild(el(`
     <div class="page ${opts.dark ? 'page--dark' : ''} ${opts.cls || ''}">
       <header class="top">
-        <a class="brand" href="#/journey" aria-label="REACH Forgiveness home">${LEAF('brand-leaf')}<span>REACH <b>Forgiveness</b></span></a>
+        <a class="brand" href="#/journey" aria-label="REACH Forgiveness home"><span>REACH <b>Forgiveness</b></span></a>
         <button type="button" class="menu-btn" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
       </header>
       <nav class="drawer" hidden>
