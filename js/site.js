@@ -8,7 +8,7 @@ import { getVideos, getPages } from './content.js';
 import { recordDownload } from './metrics.js';
 import { ensureGate, leaf } from './gate.js';
 
-export const STAMP = 'GFM-V1 · 2026-08-28c';
+export const STAMP = 'GFM-V1 · 2026-08-28d';
 
 /* Resolve everything relative to the site root (js/ → root), so pages work
    at any depth and on any host (github.io project path or a custom domain). */

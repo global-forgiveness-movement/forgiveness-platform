@@ -3,13 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- No network requests are made after this page loads. All data stays on your device.
-       style-src allows inline styles for the shared pre-launch gate; connect-src stays 'none'
-       so nothing can be transmitted. When the Firebase backend goes live, progress-only sync
-       (never answers — see ../js/progress-sync.js) additionally needs:
-       script-src https://www.gstatic.com, and connect-src https://firestore.googleapis.com
-       https://identitytoolkit.googleapis.com https://securetoken.googleapis.com -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self'; connect-src 'none'; form-action 'none'; base-uri 'self'">
+  <!-- Answers never leave this device: progress-only sync (see ../js/progress-sync.js reads
+       position/completed and never the answers field). The CSP below is the whole network
+       surface: Firebase SDK from www.gstatic.com, and connections only to the three Google
+       endpoints sync and sign-in need. Everything else stays blocked — a new endpoint means
+       editing this header, deliberately. style-src allows inline styles for the shared gate. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'self' https://www.gstatic.com; connect-src https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; form-action 'none'; base-uri 'self'">
   <title>Your Path to REACH Forgiveness — an interactive workbook</title>
   <meta name="description" content="A free, private, interactive version of the evidence-based REACH Forgiveness workbook by Everett L. Worthington, Jr., adapted by Harvard's Human Flourishing Program. Everything you write stays on your device.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z' fill='%2300887a' transform='rotate(40 12 12)'/%3E%3C/svg%3E">
