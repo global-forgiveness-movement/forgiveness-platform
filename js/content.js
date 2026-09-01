@@ -17,9 +17,18 @@ const DEFAULTS = {
   stats: GROUP_STATS,
 };
 
+/* Never make a visitor wait on a store that isn't answering: the committed
+   defaults win after this many ms. Editors saving via /admin are unaffected
+   (writes don't race). */
+const STORE_PATIENCE_MS = 2500;
+const withPatience = (promise) => Promise.race([
+  promise,
+  new Promise((_, reject) => setTimeout(() => reject(new Error('store timeout')), STORE_PATIENCE_MS)),
+]);
+
 export async function getCollection(name) {
   try {
-    const doc = await store.get('content', name);
+    const doc = await withPatience(store.get('content', name));
     if (doc?.items?.length) return doc.items;
   } catch { /* fall through to defaults */ }
   return DEFAULTS[name] ?? [];
@@ -37,7 +46,7 @@ export const slugify = (s) =>
 
 export async function getPages() {
   try {
-    return (await store.list('pages')).filter((p) => p.published !== false);
+    return (await withPatience(store.list('pages'))).filter((p) => p.published !== false);
   } catch {
     return [];
   }
@@ -45,7 +54,7 @@ export async function getPages() {
 
 export async function getPage(slug) {
   try {
-    const page = await store.get('pages', slug);
+    const page = await withPatience(store.get('pages', slug));
     return page && page.published !== false ? { slug, ...page } : null;
   } catch {
     return null;
