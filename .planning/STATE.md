@@ -90,6 +90,30 @@ on 2026-08-21.
 - SEO note for launch: editor-created pages are served as 404-status; commit a stub file for any
   Kate page that should be indexed (automatable with an Action later)
 
+### Client review round — opened 2026-09-01
+
+Wyatt walked Kate and Richard through the platform on the 1 Sep call. **They loved it.**
+Both now have the site and the gate password; they are working through a ten-step review
+page and **assembling their feedback over the next two weeks (due ~15 Sep)**, after which
+there is another build round.
+
+Nothing on the site should be restructured before that feedback lands — it would be
+rework against notes we have not read yet. Small fixes and the items below are fine.
+
+What the clients owe, agreed on the call:
+- The Vimeo account, with the existing films uploaded (every video slot is a placeholder
+  until then; Kate's since the 25 Aug call)
+- The platform's own web address, and who registers/owns it — the temporary GitHub
+  address retires once it is chosen. DNS checked 1 Sep: globalforgivenessmovement.org
+  and .com, globalforgiveness.org, reachforgiveness.org and forgivenessgroups.org had no
+  DNS record (likely free); forgivenessmovement.org is in use
+- Which email the contact page should reach; the Community of Practice registration link;
+  when the Muslim-adapted workbook is final
+
+Raised for their decision, not ours: licensing Brandon Grotesque / Handsome Pro versus
+keeping the free stand-ins, and the 4.37:1 white-on-teal contrast in their official brand
+(just under the 4.5:1 AA line for normal text; their hex shipped unaltered).
+
 ### Blockers
 
 (None.)
