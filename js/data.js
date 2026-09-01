@@ -363,6 +363,7 @@ export const PEOPLE = [
   },
   {
     slug: 'suzanne-ouyang',
+    photo: 'assets/people/suzanne-ouyang.jpg',
     initials: 'SO',
     name: 'Suzanne Ouyang',
     role: 'Associate Director of Special Projects',
@@ -372,6 +373,7 @@ export const PEOPLE = [
   },
   {
     slug: 'sophie-frushell',
+    photo: 'assets/people/sophie-frushell.jpg',
     initials: 'SF',
     name: 'Sophie Frushell',
     role: 'Program Administrator',
@@ -381,6 +383,7 @@ export const PEOPLE = [
   },
   {
     slug: 'ying-chen',
+    photo: 'assets/people/ying-chen.jpg',
     initials: 'YC',
     name: 'Ying Chen',
     role: 'Research Scientist',
