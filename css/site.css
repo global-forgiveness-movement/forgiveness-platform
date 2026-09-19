@@ -102,7 +102,15 @@ input, select, textarea { font-family: inherit; font-size: 1rem; color: var(--in
 .site-nav a[aria-current="page"] { background: var(--teal); color: #fff; }
 .site-auth { display: flex; align-items: center; gap: 0.5rem; }
 .site-auth a { text-decoration: none; font-family: var(--font-head); font-weight: 500; font-size: 0.92rem; }
-.site-auth .signin { color: var(--teal-deep); padding: 0.45rem 0.4rem; }
+.site-auth .signin,
+.site-auth .signout { color: var(--teal-deep); padding: 0.45rem 0.4rem; }
+/* The header sign-out is a button for the right semantics, and must not read
+   as one — it sits beside a text link and matches it. */
+.site-auth .signout {
+  background: none; border: 0; cursor: pointer;
+  font-family: var(--font-head); font-weight: 500; font-size: 0.92rem;
+}
+.site-auth .signout:hover { text-decoration: underline; }
 
 /* ------------------------------------------------ layout */
 main { flex: 1; width: 100%; }
@@ -164,14 +172,14 @@ button.btn { font-size: 1rem; }
 .card .kicker { margin-bottom: 0.35rem; }
 .card--tint { background: var(--cream-soft); }
 
-/* The two doors */
+/* The three doors */
 .door {
   display: flex; flex-direction: column; gap: 0.4rem;
   background: var(--white); border: 2px solid var(--line); border-radius: var(--radius-soft);
   padding: 1.8rem 1.6rem;
 }
 .door:hover { border-color: var(--teal); }
-.door .script { font-size: 1.9rem; color: var(--plum); line-height: 1; }
+.door .kicker { margin: 0 0 0.2rem; }
 .door h3 { font-size: 1.35rem; margin: 0; }
 .door p { margin: 0 0 0.8rem; }
 .door .btn { align-self: flex-start; margin-top: auto; }
@@ -350,11 +358,14 @@ hr.leafline { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
     border-top: 1px solid var(--line); padding-top: 0.55rem; margin-top: 0.15rem;
   }
   .site-nav a { padding: 0.65rem 0.75rem; }
-  .site-auth .signin { display: none; order: 11; flex-basis: 100%; padding: 0.65rem 0.75rem; }
+  .site-auth .signin,
+  .site-auth .signout { display: none; order: 11; flex-basis: 100%; padding: 0.65rem 0.75rem; text-align: left; }
   .site-head[data-menu-open] .site-nav { display: flex; }
-  .site-head[data-menu-open] .site-auth .signin { display: block; }
+  .site-head[data-menu-open] .site-auth .signin,
+  .site-head[data-menu-open] .site-auth .signout { display: block; }
   .site-head[data-menu-open] .site-nav,
-  .site-head[data-menu-open] .site-auth .signin { animation: menu-in 180ms ease-out; }
+  .site-head[data-menu-open] .site-auth .signin,
+  .site-head[data-menu-open] .site-auth .signout { animation: menu-in 180ms ease-out; }
 }
 
 @keyframes menu-in {

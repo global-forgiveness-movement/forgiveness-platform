@@ -176,10 +176,20 @@ export function mountAuth(slot) {
      keeps the static links untouched, immediately. */
   if (wasSignedIn()) slot.innerHTML = '';
   onAuth((u) => {
+    /* Sign out lives in the header beside My Path, on every page — it used to
+       exist only at the foot of My Path, which Richard could not find
+       (Kate's 18 Sep email §7). One control, one place, always in view. */
     slot.innerHTML = u
-      ? `<a class="btn btn--quiet" href="${href('my-path/')}">My Path · ${u.name.split(' ')[0]}</a>`
+      ? `<a class="btn btn--quiet" href="${href('my-path/')}">My Path · ${u.name.split(' ')[0]}</a>
+         <button class="signout" type="button" data-signout>Sign out</button>`
       : `<a class="signin" href="${href('join/')}">Sign in</a>
          <a class="btn btn--outline" href="${href('join/')}">Create account</a>`;
+  });
+  /* Delegated, so it survives every re-render of the slot above. */
+  slot.addEventListener('click', async (e) => {
+    if (!e.target.closest('[data-signout]')) return;
+    await signOutUser();
+    location.href = href('');
   });
   return ready;
 }

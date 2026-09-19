@@ -277,7 +277,7 @@
     $('[data-panel]').innerHTML = '<p class="muted small">Loading…</p>';
     const rows = await listInbox();
     $('[data-panel]').innerHTML = `
-      <p class="muted small" style="max-width:62ch">Everything people have sent through the site, newest first — messages from the Contact page and leaders registering a Forgiveness Group. Nobody but an editor can read these, and nothing here is published.</p>
+      <p class="muted small" style="max-width:62ch">Everything people have sent through the site, newest first — messages from the Contact page and facilitators registering a Forgiveness Group. Nobody but an editor can read these, and nothing here is published.</p>
       ${rows.length
         ? rows.map(messageRow).join('')
         : '<p class="muted">Nothing yet. Messages from the Contact page and new group registrations will appear here.</p>'}`;

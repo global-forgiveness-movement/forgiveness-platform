@@ -42,7 +42,8 @@
     <section class="section">
       <div class="wrap">
         <h2>Your Forgiveness Group series</h2>
-        <p class="muted" style="max-width:62ch">These are the videos a leader plays at each group meeting. The films are in production and land here this fall — the structure below is what to expect. Thinking of leading? <a href="../groups/">Everything about running a group →</a></p>
+        <p style="max-width:62ch"><b>You do the workbook lessons on your own, before each meeting.</b> The meeting itself is for discussing them — the sessions below are loosely structured around the lessons already completed, not a time to work through them together.</p>
+        <p class="muted" style="max-width:62ch">These are the videos your facilitator plays at each group meeting. The films are in production and land here this fall — the structure below is what to expect. Thinking of facilitating one? <a href="../groups/">Everything about facilitating a group →</a></p>
         <div class="grid grid--2" data-render="series" style="margin-top:1.2rem"></div>
       </div>
     </section>
@@ -57,8 +58,8 @@
             <a class="btn btn--outline" href="../workbooks/">Get the PDF</a>
           </div>
           <div class="card">
-            <h3 style="font-size:1rem">Leader materials</h3>
-            <p class="small muted">The leader guide and session film arrive with the video series this fall.</p>
+            <h3 style="font-size:1rem">Facilitator materials</h3>
+            <p class="small muted">The facilitator guide and session film arrive with the video series this fall.</p>
             <span class="pill pill--plum">Coming soon</span>
           </div>
         </div>
@@ -120,7 +121,7 @@
     document.querySelectorAll('[data-when="out"]').forEach((n) => (n.hidden = !!u));
     if (!u) return;
     document.querySelector('[data-render="firstname"]').textContent = `, ${u.name.split(' ')[0]}`;
-    document.querySelector('[data-render="email"]').textContent = `Signed in as ${u.email}`;
+    document.querySelector('[data-render="email"]').textContent = `Signed in as ${u.name}`;
     const p = await syncProgress(u.id);
     document.querySelector('[data-render="progress-card"]').innerHTML = progressCard(p);
     renderGroup(await memberGroup(u.id), u.id);
@@ -134,15 +135,22 @@
     const el = slot();
     if (!el) return;
     if (g) {
-      el.innerHTML = `<p class="kicker" style="margin-bottom:0.3rem">You’re following a group</p>
+      /* Same card, two readings — a facilitator's group and a member's are
+         the same record (js/groups.js), so this is one path, not a fork. */
+      const mine = !!g.facilitator;
+      el.innerHTML = `<p class="kicker" style="margin-bottom:0.3rem">${mine ? 'The group you facilitate' : 'You’re following a group'}</p>
         <h3>${g.series.name}</h3>
         <p class="small muted">${g.groupName ? g.groupName + ' · ' : ''}Code <span class="groupcode">${g.code}</span></p>
-        <p class="small">Your group meets and discusses; you do the lessons on your own.
-          The session videos are below — rewatch any of them whenever you like.</p>
-        <button class="btn" id="leaveGroupBtn" style="color:var(--plum)">Leave this group</button>`;
+        <p class="small">${mine
+          ? 'Share that code with everyone in your group — it is saved here, so you never have to remember it. They do the lessons on their own; your meetings are for discussing them.'
+          : 'Your group meets and discusses; you do the lessons on your own. The session videos are below — rewatch any of them whenever you like.'}</p>
+        <button class="btn" id="leaveGroupBtn" style="color:var(--plum)">${mine ? 'Remove this group from My Path' : 'Leave this group'}</button>`;
       const leave = document.getElementById('leaveGroupBtn');
       leave.addEventListener('click', async () => {
-        if (!confirm('Stop following this group? Your workbook progress is not affected.')) return;
+        const warn = mine
+          ? 'Remove this group from My Path? We keep your registration, but the code stops showing here — write it down first.'
+          : 'Stop following this group? Your workbook progress is not affected.';
+        if (!confirm(warn)) return;
         await leaveGroup(userId);
         renderGroup(null, userId);
       });
@@ -150,9 +158,11 @@
     }
     el.innerHTML = `<p class="kicker" style="margin-bottom:0.3rem">Already meeting with a group?</p>
       <h3>Enter your group code</h3>
-      <p class="small">Your leader has it. It keeps your place in the workbook and lets you
-        rewatch the session videos in your own time. If you’re not in a group, you can ignore this —
-        nothing here is required.</p>
+      <p class="small">Your facilitator has it. <b>Entering it does three things:</b> it shows you which
+        series your group is following, it lets you rewatch any session video in your own time, and it
+        keeps your place in the workbook. It does not tell your facilitator — or anyone else — anything
+        about your workbook or what you have written. You can leave the group here whenever you like.</p>
+      <p class="small muted">If you’re not in a group, you can ignore this — nothing here is required.</p>
       <form class="form" id="codeForm" style="max-width:340px">
         <label>Group code
           <input name="code" placeholder="${CODE_SHAPE}" autocomplete="off" spellcheck="false" required>
@@ -167,7 +177,7 @@
       const found = await joinGroup(userId, new FormData(form).get('code'));
       if (!found) {
         msg.className = 'form-msg form-msg--err';
-        msg.textContent = `That code isn’t one of ours. They look like ${CODE_SHAPE} — check it with your leader.`;
+        msg.textContent = `That code isn’t one of ours. They look like ${CODE_SHAPE} — check it with your facilitator.`;
         msg.hidden = false;
         return;
       }

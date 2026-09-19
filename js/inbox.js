@@ -1,6 +1,6 @@
 /* Things people send us — one module, one shape, one inbox.
 
-   Two kinds arrive: a message from the contact page, and a leader registering
+   Two kinds arrive: a message from the contact page, and a facilitator registering
    a Forgiveness Group. They are the same thing wearing different fields: a
    person, an email address, some words, a date. So they are described here as
    DATA rather than handled as two code paths — /admin renders the inbox with
