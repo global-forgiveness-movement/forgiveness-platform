@@ -76,7 +76,7 @@
 </main>
 
 <script type="module">
-  import { WORKBOOKS, LANGUAGES } from '../js/data.js';
+  import { WORKBOOKS, LANGUAGES, downloadFor } from '../js/data.js';
 
   const langSelect = (id) => `
     <label class="visually-hidden" for="lang-${id}">Language</label>
@@ -108,24 +108,21 @@
      come from the same data. A hosted file downloads directly; a language
      with no hosted file falls back to the edition's landing page. */
   const applyLang = (id, code) => {
-    const w = WORKBOOKS.find((x) => x.id === id);
     const btn = document.querySelector(`#${id} [data-download]`);
-    if (!w || !btn) return;
-    const file = w.files?.[code];
-    if (file) {
-      btn.href = `../${file.path}`;
+    const dl = downloadFor(id, code, '../');
+    if (!btn || !dl) return;
+    btn.href = dl.href;
+    btn.textContent = dl.label;
+    btn.dataset.download = dl.tag;
+    if (dl.direct) {
       btn.setAttribute('download', '');
       btn.removeAttribute('target');
       btn.removeAttribute('rel');
-      btn.textContent = `Download (${file.format}, ${file.size})`;
     } else {
-      btn.href = w.url;
       btn.removeAttribute('download');
       btn.setAttribute('target', '_blank');
       btn.setAttribute('rel', 'noopener');
-      btn.textContent = 'Download PDF';
     }
-    btn.dataset.download = `${id}:${code}`;
   };
 
   WORKBOOKS.forEach((w) => applyLang(w.id, 'en'));

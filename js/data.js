@@ -247,6 +247,20 @@ export const WORKBOOKS = [
      with a files map if we host it. No placeholder card until then. */
 ];
 
+/* ONE place that turns (edition, language) into everything a download button
+   needs: the href, the visible label, whether it downloads in place or opens
+   the landing page, and the tag we count. The home page and /workbooks/ both
+   render their buttons from this, so a new hosted file is one data edit.
+   `prefix` is how far the calling page sits from the site root. */
+export function downloadFor(id, code = 'en', prefix = '') {
+  const w = WORKBOOKS.find((x) => x.id === id);
+  if (!w) return null;
+  const file = w.files?.[code];
+  return file
+    ? { href: `${prefix}${file.path}`, label: `Download (${file.format}, ${file.size})`, direct: true, tag: `${id}:${code}` }
+    : { href: w.url, label: 'Download PDF', direct: false, tag: `${id}:${code}` };
+}
+
 /* The two Forgiveness Group series — session breakdowns exactly as Kate's
    email gives them. Sessions are video-guided group meetings; participants do
    the workbook lessons on their own before each meeting. */

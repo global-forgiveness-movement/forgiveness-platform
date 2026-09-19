@@ -25,7 +25,10 @@
           <p class="kicker">On your own</p>
           <h3>Do it solo</h3>
           <p>Download the REACH Forgiveness Workbook and work through it at your own pace. Free, no account, nothing to sign up for — and it will stay that way.</p>
-          <a class="btn btn--primary" href="workbooks/">Get the workbook</a>
+          <p class="door-actions">
+            <a class="btn btn--primary" data-render="workbook-download" href="workbooks/">Get the workbook</a>
+            <a class="small" href="workbooks/">Other languages and editions →</a>
+          </p>
         </div>
         <div class="door">
           <p class="kicker">With others</p>
@@ -83,13 +86,23 @@
 </main>
 
 <script type="module">
-  import { TRIAL, REACH_STEPS } from './js/data.js';
+  import { TRIAL, REACH_STEPS, downloadFor } from './js/data.js';
   import { getCollection } from './js/content.js';
 
   getCollection('stats').then((stats) => {
     document.querySelector('[data-render="group-stats"]').innerHTML = stats
       .map((s) => `<div class="stat"><b>${s.number}</b><span>${s.label}</span></div>`).join('');
   });
+
+  /* The first door hands over the file itself — same resolver /workbooks/ uses. */
+  const dl = downloadFor('reach', 'en');
+  const dlBtn = document.querySelector('[data-render="workbook-download"]');
+  if (dl && dlBtn) {
+    dlBtn.href = dl.href;
+    dlBtn.textContent = dl.label;
+    dlBtn.dataset.download = dl.tag;
+    if (dl.direct) dlBtn.setAttribute('download', '');
+  }
 
   document.querySelector('[data-render="participants"]').textContent = TRIAL.participants;
   document.querySelector('[data-render="countries"]').textContent = TRIAL.countries;

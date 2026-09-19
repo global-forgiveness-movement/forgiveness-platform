@@ -183,6 +183,8 @@ button.btn { font-size: 1rem; }
 .door h3 { font-size: 1.35rem; margin: 0; }
 .door p { margin: 0 0 0.8rem; }
 .door .btn { align-self: flex-start; margin-top: auto; }
+.door-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; margin: auto 0 0; }
+.door-actions .btn { margin-top: 0; }
 
 /* Home hero: the three doors ARE the hero's call to action, so the lede stays
    narrow above them and the doors get the full width. The video no longer
