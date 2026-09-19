@@ -1412,6 +1412,24 @@ export const LESSONS = [
   },
 ];
 
+/* A step whose whole job is to say hello is a click standing between someone
+   and the work — and it lands right after four pages of site to get here.
+   So any "Welcome to Lesson N" step is folded into the step that follows it:
+   the lesson opens with its welcome AND its first exercise on one screen.
+
+   Done here, once, rather than by hand in each lesson, so the authored text
+   is untouched — it moves, it does not change — and a future lesson written
+   to the same pattern is folded automatically. */
+for (const lesson of LESSONS) {
+  const i = lesson.steps.findIndex((s) => /^Welcome to Lesson\b/.test(s.name || ''));
+  if (i !== -1 && lesson.steps[i + 1]) {
+    const welcome = lesson.steps[i];
+    const next = lesson.steps[i + 1];
+    next.blocks = [...welcome.blocks, { t: 'rule' }, ...next.blocks];
+    lesson.steps.splice(i, 1);
+  }
+}
+
 export const RESOURCES = {
   title: 'Resources for Psychological Support',
   intro: `This workbook is not a substitute for certified mental health counseling. We recommend that you seek professional psychological support if you believe that you would benefit from working with a certified mental health professional.`,
