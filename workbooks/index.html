@@ -100,8 +100,18 @@
     WORKBOOKS.filter((w) => ['reach', 'church'].includes(w.id)).map(card).join('');
   document.querySelector('[data-render="workbooks-more"]').innerHTML =
     WORKBOOKS.filter((w) => ['receive', 'activity'].includes(w.id)).map(card).join('');
+  /* These looked exactly like buttons and were inert spans — a Spanish speaker
+     pressed one, nothing happened, and the reasonable conclusion was that the
+     site is broken. Every language here has a hosted file, so they ARE links
+     now, resolved through the same downloadFor() the buttons use. A language
+     that ever loses its file degrades to the edition's landing page rather
+     than to a dead pill. */
   document.querySelector('[data-render="languages"]').innerHTML =
-    LANGUAGES.map(([, name]) => `<span class="pill">${name}</span>`).join('');
+    LANGUAGES.map(([code, name]) => {
+      const dl = downloadFor('reach', code, '../');
+      const attrs = dl.direct ? ' download' : ' target="_blank" rel="noopener"';
+      return `<a class="pill pill--link" href="${dl.href}" data-download="${dl.tag}"${attrs}>${name}</a>`;
+    }).join('');
 
   /* ONE path sets the download button for every edition and language: href,
      download-vs-new-tab attributes, visible label, and the counted tag all
