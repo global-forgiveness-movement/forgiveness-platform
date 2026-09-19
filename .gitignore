@@ -29,3 +29,7 @@ npm-debug.log*
 # Local scratch — keep working copies out of the published repo
 *.local.html
 /drafts/
+
+# Local preview server (not part of the site — GitHub Pages serves the root)
+.claude/serve.mjs
+.claude/launch.json

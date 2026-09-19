@@ -1,6 +1,0 @@
-{
-  "version": "0.0.1",
-  "configurations": [
-    { "name": "gfm-site", "runtimeExecutable": "node", "runtimeArgs": [".claude/serve.mjs"], "port": 8765 }
-  ]
-}
