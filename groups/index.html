@@ -98,8 +98,8 @@
 
   <section class="section" id="tell-us">
     <div class="wrap">
-      <h2>Tell us about your group</h2>
-      <p class="muted" style="max-width:62ch">If you’re planning to run the material, let us know. It helps us support you, send you new resources as they appear, and understand where this work is taking root — and it is how you get your group code.</p>
+      <h2>Create your group</h2>
+      <p class="muted" style="max-width:62ch">Pick your series and we’ll issue your group code straight away — that is the only answer we need. Anything else you’d like to tell us is optional, and it helps us support you, send you new resources as they appear, and understand where this work is taking root.</p>
 
       <!-- Kate, 18 Sep §3: "Tell us about your group needs to be within the
            login." Wyatt's ruling 18 Sep: sign in, THEN the form. Defensible
@@ -117,19 +117,26 @@
         <p class="small muted" style="margin:0.9rem 0 0">Not ready for an account? The workbook itself never needs one — <a href="../workbooks/">download it here</a> and come back when you are.</p>
       </div>
 
+      <!-- Wyatt's ruling 19 Sep (audit idea 14): the series is the only answer
+           the code actually needs — it is encoded IN the code (js/groups.js).
+           Your name and email are already in your account. So one question
+           issues the group; everything else Kate asked for is still asked, but
+           it is optional and does not stand between a facilitator and a code. -->
       <form class="form" id="groupForm" data-when="in" hidden>
-        <label>Your name <input name="name" required autocomplete="name"></label>
-        <label>Email <input name="email" type="email" required autocomplete="email"></label>
-        <label>Where is your group? (city, country) <input name="location" required></label>
-        <label>How many people do you expect? <input name="size" type="number" min="2" max="99" required></label>
         <label>Which series will you use?
           <select name="series">
             <option value="secular">3-session series · REACH Forgiveness Workbook</option>
             <option value="church">6-session series · church edition</option>
           </select>
         </label>
-        <label>Anything you’d like us to know? <textarea name="notes" rows="3"></textarea></label>
-        <button class="btn btn--primary" type="submit">Send</button>
+        <button class="btn btn--primary" type="submit">Create my group</button>
+        <details class="group-extra">
+          <summary>Tell us more — optional</summary>
+          <p class="small muted">None of this is required. It helps us support you and understand where this work is taking root.</p>
+          <label>Where is your group? (city, country) <input name="location"></label>
+          <label>How many people do you expect? <input name="size" type="number" min="2" max="99"></label>
+          <label>Anything you’d like us to know? <textarea name="notes" rows="3"></textarea></label>
+        </details>
         <div class="form-msg" hidden role="status"></div>
       </form>
     </div>
@@ -179,11 +186,13 @@
     e.preventDefault();
     const msg = form.querySelector('.form-msg');
     try {
-      const fields = Object.fromEntries(new FormData(form));
+      const u = currentUser();
+      /* Name and email come from the account, not from six fields retyped. */
+      const fields = { ...Object.fromEntries(new FormData(form)), name: u?.name || '', email: u?.email || '' };
       /* ONE write. registerGroup stores the submission and its code together;
          an older submitGroupForm() call here wrote a second, codeless copy of
          every facilitator into the same collection until 1 Sep. */
-      const { code, series } = await registerGroup(fields, currentUser()?.id);
+      const { code, series } = await registerGroup(fields, u?.id);
       form.reset();
       msg.className = 'form-msg form-msg--ok';
       msg.innerHTML = `Sent — thank you.<br><br>

@@ -273,6 +273,11 @@ figure.video:empty { aspect-ratio: 16 / 9; }
 .dl-row { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
 .pill { display: inline-block; font-family: var(--font-head); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.25rem 0.7rem; border-radius: 999px; background: var(--cream-soft); color: var(--teal-deep); }
 .pill--plum { background: rgba(119, 0, 97, 0.12); color: var(--plum); }
+/* Optional extras on the group form — present, asked, but never in the way. */
+.group-extra { margin-top: 0.4rem; border-top: 1px solid var(--line); padding-top: 0.8rem; }
+.group-extra > summary { cursor: pointer; font-family: var(--font-head); font-size: 0.9rem; font-weight: 600; color: var(--teal-deep); }
+.group-extra > summary:hover { color: var(--plum); }
+.group-extra[open] > summary { margin-bottom: 0.6rem; }
 /* A pill that really is a control. Looks the same at rest — it always looked
    pressable; now it is — and answers the pointer. */
 a.pill--link { text-decoration: none; border: 1px solid transparent; transition: border-color 0.15s, background 0.15s; }
