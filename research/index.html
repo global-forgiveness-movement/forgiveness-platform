@@ -65,11 +65,32 @@
     </div>
   </section>
 
+  <section class="section">
+    <div class="wrap center">
+      <h2>The workbook they used is the one on this site</h2>
+      <p style="max-width:56ch;margin:0 auto 1.4rem">Free, about two to three hours, no account needed.</p>
+      <p class="dl-row" style="justify-content:center">
+        <a class="btn btn--primary" data-render="workbook-download" href="../workbooks/">Get the workbook</a>
+        <a class="btn btn--outline" href="../groups/">Run it with a group</a>
+      </p>
+    </div>
+  </section>
+
 </main>
 
 <script type="module">
-  import { TRIAL } from '../js/data.js';
+  import { TRIAL, downloadFor } from '../js/data.js';
   import { getCollection } from '../js/content.js';
+
+  /* Same resolver the home page and /workbooks/ use — one source for the file. */
+  const dl = downloadFor('reach', 'en', '../');
+  const dlBtn = document.querySelector('[data-render="workbook-download"]');
+  if (dl && dlBtn) {
+    dlBtn.href = dl.href;
+    dlBtn.textContent = dl.label;
+    dlBtn.dataset.download = dl.tag;
+    if (dl.direct) dlBtn.setAttribute('download', '');
+  }
 
   document.querySelector('[data-render="effects"]').innerHTML = TRIAL.effects
     .map((e) => `<div class="effect"><b>${e.change}</b><span>${e.measure}</span><span class="muted">${e.unit} · ${e.ci}</span></div>`).join('');
