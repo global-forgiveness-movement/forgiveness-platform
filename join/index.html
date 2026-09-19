@@ -17,6 +17,9 @@
       <div>
         <p class="kicker">Free account</p>
         <h1>Create an account so we can save your place</h1>
+        <!-- If they came from the My Path code box, say so — the code they
+             typed is waiting, and this is the step that connects it. -->
+        <p class="form-msg form-msg--ok" data-render="held-code" hidden></p>
         <p>The interactive workbook runs over many sittings. With an account you can stop halfway through a lesson and pick up in the same place later, on any device.</p>
         <div class="card card--tint" style="margin-bottom:1rem">
           <h3 style="font-size:1rem">What you get</h3>
@@ -62,6 +65,14 @@
 </main>
 
 <script type="module">
+  /* A group code entered before there was an account to attach it to. */
+  import { heldGroupCode } from '../js/groups.js';
+  const heldSlot = document.querySelector('[data-render="held-code"]');
+  const held = heldGroupCode();
+  if (heldSlot && held) {
+    heldSlot.innerHTML = `Your group code <b>${held.code}</b> is saved \u2014 the <b>${held.series.name}</b>. Create your account below and we\u2019ll connect you to your group.`;
+    heldSlot.hidden = false;
+  }
   import { signUp, signIn, signInGoogle, resetPassword, onAuth, AUTH_MODE } from '../js/auth.js';
 
   if (AUTH_MODE === 'demo') document.querySelector('[data-demo-note]').hidden = false;

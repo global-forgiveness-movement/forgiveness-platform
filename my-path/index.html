@@ -17,7 +17,22 @@
     <div class="wrap center">
       <h1>My Path</h1>
       <p style="margin:0 auto 1.4rem">Sign in to see your place in the workbook and your Forgiveness Group series.</p>
-      <p class="small muted" style="max-width:52ch;margin:0 auto 1.4rem">Been given a <b>group code</b>? The box for it is just inside. Entering it shows you which series your group is following and lets you rewatch any session video in your own time — it never tells your facilitator anything about your workbook.</p>
+
+      <!-- Wyatt, 19 Sep: a member needs an account either way, so the code goes
+           in FIRST and waits. Nothing is sent anywhere until there is an
+           account to attach it to — it is held in this browser only. -->
+      <div class="card" style="max-width:26rem;margin:0 auto 1.4rem;text-align:left">
+        <p class="kicker" style="margin-bottom:0.3rem">Been given a group code?</p>
+        <h3>Put it in now</h3>
+        <p class="small">Enter it here and we’ll hold on to it. You still need a free account to save your place — we’ll connect you to your group the moment you have one. Entering a code never tells your facilitator anything about your workbook.</p>
+        <form class="form" id="preCodeForm">
+          <label for="preCode">Group code</label>
+          <input id="preCode" name="code" placeholder="GFM-3-XXXX" autocomplete="off" spellcheck="false" required>
+          <button class="btn btn--outline" type="submit">Save my code</button>
+          <div class="form-msg" hidden role="status"></div>
+        </form>
+      </div>
+
       <a class="btn btn--primary" href="../join/">Sign in or create an account</a>
     </div>
   </section>
@@ -86,7 +101,7 @@
 <script type="module">
   import { onAuth, signOutUser, deleteAccount } from '../js/auth.js';
   import { syncProgress } from '../js/progress-sync.js';
-  import { memberGroup, joinGroup, leaveGroup, CODE_SHAPE } from '../js/groups.js';
+  import { memberGroup, joinGroup, leaveGroup, CODE_SHAPE, holdGroupCode, heldGroupCode, applyHeldGroupCode } from '../js/groups.js';
   import { SERIES } from '../js/data.js';
 
   const TOTAL_LESSONS = 12;
@@ -125,8 +140,36 @@
     document.querySelector('[data-render="email"]').textContent = `Signed in as ${u.name}`;
     const p = await syncProgress(u.id);
     document.querySelector('[data-render="progress-card"]').innerHTML = progressCard(p);
+    /* A code they typed before they had an account, attached now. */
+    await applyHeldGroupCode(u.id);
     renderGroup(await memberGroup(u.id), u.id);
   });
+
+  /* Signed out: the code is parsed here, in the browser, so someone gets a
+     real answer — which series they are joining — before any account exists. */
+  const preForm = document.getElementById('preCodeForm');
+  if (preForm) {
+    const preMsg = preForm.querySelector('.form-msg');
+    const already = heldGroupCode();
+    if (already) {
+      preForm.code.value = already.code;
+      preMsg.className = 'form-msg form-msg--ok';
+      preMsg.innerHTML = `Saved \u2014 that\u2019s the <b>${already.series.name}</b>. Create your account and we\u2019ll connect you.`;
+      preMsg.hidden = false;
+    }
+    preForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const held = holdGroupCode(preForm.code.value);
+      if (held) {
+        preMsg.className = 'form-msg form-msg--ok';
+        preMsg.innerHTML = `Saved \u2014 that\u2019s the <b>${held.series.name}</b>. Create your account and we\u2019ll connect you.`;
+      } else {
+        preMsg.className = 'form-msg form-msg--err';
+        preMsg.textContent = `That doesn\u2019t look like a group code. They look like ${CODE_SHAPE}. Ask your facilitator.`;
+      }
+      preMsg.hidden = false;
+    });
+  }
 
   /* The group card has two states and one owner. No group: a code box.
      In a group: which series, and the way back to the videos. */

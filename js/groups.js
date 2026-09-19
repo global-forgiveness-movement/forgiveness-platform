@@ -94,6 +94,49 @@ export async function lookupGroup(raw) {
   return { ...parsed, groupName: detail?.groupName || '', known: !!detail };
 }
 
+/* A code entered before there is an account to attach it to.
+
+   Wyatt, 19 Sep: "every member of a group has to create a login anyway — what
+   you can do is make this process SIMPLE by letting them put the code in
+   without creating an account, then save it and apply it after they've made
+   the account."
+
+   parseGroupCode is pure and offline, so a signed-out visitor gets a real
+   answer — which series they are joining — with no round trip and no account.
+   The code waits in THIS browser only. It is never sent anywhere until there
+   is a user to attach it to, and it is forgotten the moment it is applied. */
+const PENDING = 'gfm.pendingGroupCode.v1';
+
+export function holdGroupCode(raw) {
+  const parsed = parseGroupCode(raw);
+  if (!parsed) return null;
+  try { localStorage.setItem(PENDING, parsed.code); } catch { /* private window */ }
+  return parsed;
+}
+
+export function heldGroupCode() {
+  try { return parseGroupCode(localStorage.getItem(PENDING)); } catch { return null; }
+}
+
+export function forgetGroupCode() {
+  try { localStorage.removeItem(PENDING); } catch { /* nothing to forget */ }
+}
+
+/* Called the moment someone signs in. A failure leaves the code held, so the
+   next sign-in retries rather than losing it silently; a code that names no
+   real group is dropped, because retrying it forever would be worse. */
+export async function applyHeldGroupCode(userId) {
+  const held = heldGroupCode();
+  if (!held || !userId) return null;
+  try {
+    const joined = await joinGroup(userId, held.code);
+    if (joined) forgetGroupCode();
+    return joined;
+  } catch {
+    return null;
+  }
+}
+
 export async function joinGroup(userId, raw) {
   const found = await lookupGroup(raw);
   if (!found) return null;
