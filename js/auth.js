@@ -2,7 +2,7 @@
    demo otherwise. Every page gets the same API either way; the UI labels demo
    mode honestly wherever it appears. */
 
-import { store, MODE } from './store.js';
+import { store, MODE, withPatience } from './store.js';
 import { firebaseConfig } from './firebase-config.js';
 
 export const AUTH_MODE = MODE; // 'firebase' | 'demo'
@@ -86,6 +86,12 @@ const demo = {
     localStorage.removeItem(SESSION);
     announce(null);
   },
+  async setDisplayName(name) {
+    if (!user) return;
+    const rec = await store.get('demoUsers', user.id);
+    if (rec) await store.set('demoUsers', user.id, { ...rec, name });
+    announce({ ...user, name });
+  },
   async resetPassword() {
     throw new Error('Demo mode has no email — password reset arrives with the real backend.');
   },
@@ -110,19 +116,60 @@ async function fba() {
   fbAuth = { auth: a.getAuth(app), a };
   return fbAuth;
 }
-const fromFb = (u) => (u ? { id: u.uid, name: u.displayName || u.email.split('@')[0], email: u.email } : null);
+/* A person's NAME, or nothing — never the front half of their email address.
+   Kate, 18 Sep §7: "Show display name rather than email." A page with no name
+   to show says "Welcome back" and asks once (My Path), rather than greeting
+   someone as "kjacksonmeyer". */
+const fromFb = (u) => (u ? { id: u.uid, name: (u.displayName || '').trim(), email: u.email } : null);
+
+/* Firebase announces a new account the instant it exists — BEFORE signUp has
+   saved the name to it. /join/ redirects on that first announcement, so the
+   page used to leave mid-signup and the name was never stored (A36). While a
+   signup is in flight its announcement is held back; signUp announces once,
+   with the name, when the name is safely saved. */
+let signingUp = false;
 
 const firebase = {
   async init() {
     const { auth, a } = await fba();
-    a.onAuthStateChanged(auth, (u) => announce(fromFb(u)));
+    a.onAuthStateChanged(auth, async (u) => {
+      if (signingUp) return;
+      const next = fromFb(u);
+      /* Accounts made before this fix may have their name only in members/,
+         or nowhere. Recover it where it exists and write it back onto the
+         profile, so this lookup happens once per person, not every visit. */
+      if (next && !next.name) {
+        try {
+          const m = await withPatience(store.get('members', u.uid));
+          if (m?.name && !/@/.test(m.name)) {
+            next.name = m.name;
+            a.updateProfile(u, { displayName: m.name }).catch(() => {});
+          }
+        } catch { /* no name to recover — My Path will ask */ }
+      }
+      announce(next);
+    });
   },
   async signUp({ name, email, password, newsletter }) {
     const { auth, a } = await fba();
-    const cred = await a.createUserWithEmailAndPassword(auth, norm(email), password);
-    await a.updateProfile(cred.user, { displayName: name });
-    await store.set('members', cred.user.uid, { name, newsletter: !!newsletter, createdAt: new Date().toISOString() });
-    announce(fromFb(cred.user));
+    name = (name || '').trim();
+    signingUp = true;
+    let cred;
+    try {
+      cred = await a.createUserWithEmailAndPassword(auth, norm(email), password);
+      if (name) await a.updateProfile(cred.user, { displayName: name });
+      await store.set('members', cred.user.uid, { name, newsletter: !!newsletter, createdAt: new Date().toISOString() });
+    } finally {
+      signingUp = false;
+      if (cred) announce({ ...fromFb(cred.user), name });
+    }
+  },
+  async setDisplayName(name) {
+    const { auth, a } = await fba();
+    if (!auth.currentUser) return;
+    await a.updateProfile(auth.currentUser, { displayName: name });
+    await store.set('members', auth.currentUser.uid, { name });
+    announce({ ...fromFb(auth.currentUser), name });
   },
   async signIn({ email, password }) {
     const { auth, a } = await fba();
@@ -156,6 +203,10 @@ export const signInGoogle = () => impl.signInGoogle();
 export const signOutUser = () => impl.signOut();
 export const resetPassword = (e) => impl.resetPassword(e);
 export const deleteAccount = () => impl.deleteAccount();
+export const setDisplayName = (name) => impl.setDisplayName(String(name || '').trim());
+
+/* "Wyatt Roy" → "Wyatt"; no name → '' (callers then say nothing, not an email). */
+export const firstName = (u) => (u?.name || '').trim().split(/\s+/)[0] || '';
 
 const ready = impl.init().catch((err) => {
   console.warn('auth backend unavailable:', err);
@@ -180,7 +231,7 @@ export function mountAuth(slot) {
        exist only at the foot of My Path, which Richard could not find
        (Kate's 18 Sep email §7). One control, one place, always in view. */
     slot.innerHTML = u
-      ? `<a class="btn btn--quiet" href="${href('my-path/')}">My Path · ${u.name.split(' ')[0]}</a>
+      ? `<a class="btn btn--quiet" href="${href('my-path/')}">My Path${firstName(u) ? ` · ${firstName(u)}` : ''}</a>
          <button class="signout" type="button" data-signout>Sign out</button>`
       : `<a class="signin" href="${href('join/')}">Sign in</a>
          <a class="btn btn--outline" href="${href('join/')}">Create account</a>`;

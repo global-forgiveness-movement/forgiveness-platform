@@ -108,7 +108,7 @@
     const f = Object.fromEntries(new FormData(form));
     try {
       if (mode === 'signup') {
-        await signUp({ name: f.name || f.email.split('@')[0], email: f.email, password: f.password, newsletter: !!f.newsletter });
+        await signUp({ name: f.name, email: f.email, password: f.password, newsletter: !!f.newsletter });
       } else {
         await signIn({ email: f.email, password: f.password });
       }

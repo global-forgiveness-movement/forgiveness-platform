@@ -44,6 +44,15 @@
         <p class="kicker" data-copy="mypath.p.my-path">My Path</p>
         <h1>Welcome back<span data-render="firstname"></span></h1>
         <p class="muted" data-copy="mypath.p.there-s-no-hurry">There’s no hurry. Pick up whenever you’re ready.</p>
+        <!-- Only for an account we have no name for (A36). Asked once, kept on
+             the profile, never shown again. -->
+        <div class="card" style="max-width:680px;margin-bottom:1rem" data-render="name-ask" hidden>
+          <h3 style="font-size:1.05rem">What should we call you?</h3>
+          <form class="form" id="nameForm" style="max-width:340px">
+            <label>Your name <input name="name" autocomplete="name" required maxlength="80"></label>
+            <button class="btn btn--primary" type="submit">Save</button>
+          </form>
+        </div>
         <div class="card" style="max-width:680px" data-render="progress-card"></div>
       </div>
     </section>
@@ -99,7 +108,7 @@
 </main>
 
 <script type="module">
-  import { onAuth, signOutUser, deleteAccount } from '../js/auth.js';
+  import { onAuth, signOutUser, deleteAccount, setDisplayName, firstName } from '../js/auth.js';
   import { syncProgress } from '../js/progress-sync.js';
   import { memberGroup, joinGroup, leaveGroup, CODE_SHAPE, holdGroupCode, heldGroupCode, applyHeldGroupCode } from '../js/groups.js';
   import { SERIES } from '../js/data.js';
@@ -136,8 +145,10 @@
     document.querySelectorAll('[data-when="in"]').forEach((n) => (n.hidden = !u));
     document.querySelectorAll('[data-when="out"]').forEach((n) => (n.hidden = !!u));
     if (!u) return;
-    document.querySelector('[data-render="firstname"]').textContent = `, ${u.name.split(' ')[0]}`;
-    document.querySelector('[data-render="email"]').textContent = `Signed in as ${u.name}`;
+    const first = firstName(u);
+    document.querySelector('[data-render="firstname"]').textContent = first ? `, ${first}` : '';
+    document.querySelector('[data-render="email"]').textContent = `Signed in as ${u.name || u.email}`;
+    document.querySelector('[data-render="name-ask"]').hidden = !!u.name;
     const p = await syncProgress(u.id);
     document.querySelector('[data-render="progress-card"]').innerHTML = progressCard(p);
     /* A code they typed before they had an account, attached now. */
@@ -170,6 +181,15 @@
       preMsg.hidden = false;
     });
   }
+
+  /* One field, once: an account that reached us without a name. */
+  document.getElementById('nameForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    btn.disabled = true;
+    try { await setDisplayName(e.target.name.value); }
+    catch { btn.disabled = false; }
+  });
 
   /* The group card has two states and one owner. No group: a code box.
      In a group: which series, and the way back to the videos. */
