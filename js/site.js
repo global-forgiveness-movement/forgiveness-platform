@@ -8,7 +8,7 @@ import { getVideos, getPages } from './content.js';
 import { recordDownload } from './metrics.js';
 import { ensureGate, leaf } from './gate.js';
 
-export const STAMP = 'GFM-V1 · 2026-09-19b';
+export const STAMP = 'GFM-V1 · 2026-09-21a';
 
 /* Resolve everything relative to the site root (js/ → root), so pages work
    at any depth and on any host (github.io project path or a custom domain). */
@@ -184,6 +184,7 @@ async function buildShell() {
   document.body.append(buildFooter());
   hydrateVideos();
   appendCustomNav();
+  import('./copy.js').then((m) => m.mountCopy()).catch((err) => console.warn('page text unavailable:', err));
   watchDownloads();
   document.documentElement.setAttribute('data-shell-ready', '');
   keepAnchorAligned();

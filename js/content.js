@@ -76,6 +76,14 @@ export async function savePage(page, editor) {
   return slug;
 }
 
+/* Page text (js/copy.js): one document, every editable block keyed by its
+   data-copy name. Kept in history like everything else, so /admin can restore. */
+export async function saveCopy(slots, editor) {
+  const previous = await store.get('content', 'copy');
+  await keepHistory('copy', previous ?? { slots: {} }, editor);
+  await store.set('content', 'copy', { slots, updatedAt: new Date().toISOString() });
+}
+
 export async function listHistory() {
   const entries = await store.list('contentHistory');
   return entries.sort((a, b) => (b.savedAt || '').localeCompare(a.savedAt || ''));
@@ -85,6 +93,8 @@ export async function restoreHistory(entry, editor) {
   const snapshot = JSON.parse(entry.snapshot);
   if (entry.target.startsWith('page:')) {
     await savePage({ ...snapshot, slug: entry.target.slice(5) }, editor);
+  } else if (entry.target === 'copy') {
+    await saveCopy(snapshot.slots ?? {}, editor);
   } else {
     await saveCollection(entry.target, snapshot.items ?? [], editor);
   }

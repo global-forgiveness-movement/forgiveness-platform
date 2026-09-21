@@ -392,3 +392,16 @@ hr.leafline { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
   from { opacity: 0; transform: translateY(-6px); }
   to { opacity: 1; transform: none; }
 }
+
+/* ------------------------------------------------ editing page text (js/copy.js) */
+.copybar { position: fixed; right: 1rem; bottom: 1rem; z-index: 60; display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem;
+  max-width: min(36rem, calc(100vw - 2rem)); padding: 0.6rem 0.8rem; background: var(--navy-deep); color: #F2F4F0;
+  border-radius: var(--radius); box-shadow: var(--shadow); font-size: 0.85rem; }
+.copybar-msg { flex: 1 1 12rem; }
+.copybar-msg--err { color: var(--mustard); flex-basis: 100%; }
+.copybar-btn { font: 600 0.82rem var(--font-head); padding: 0.45rem 0.9rem; border-radius: 999px; cursor: pointer;
+  background: transparent; color: #F2F4F0; border: 1px solid rgba(242, 244, 240, 0.5); }
+.copybar-btn--primary { background: var(--teal); border-color: var(--teal); }
+.copybar-btn[disabled] { opacity: 0.45; cursor: default; }
+[data-copy-editing] [data-copy] { outline: 2px dashed rgba(0, 136, 122, 0.55); outline-offset: 3px; border-radius: 3px; cursor: text; }
+[data-copy-editing] [data-copy]:focus { outline: 2px solid var(--teal); background: rgba(250, 184, 18, 0.12); }

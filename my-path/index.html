@@ -15,15 +15,15 @@
   <!-- Signed out -->
   <section class="section section--paper" data-when="out" hidden>
     <div class="wrap center">
-      <h1>My Path</h1>
-      <p style="margin:0 auto 1.4rem">Sign in to see your place in the workbook and your Forgiveness Group series.</p>
+      <h1 data-copy="mypath.h1.my-path">My Path</h1>
+      <p style="margin:0 auto 1.4rem" data-copy="mypath.p.sign-in-to-see">Sign in to see your place in the workbook and your Forgiveness Group series.</p>
 
       <!-- Wyatt, 19 Sep: a member needs an account either way, so the code goes
            in FIRST and waits. Nothing is sent anywhere until there is an
            account to attach it to — it is held in this browser only. -->
       <div class="card" style="max-width:26rem;margin:0 auto 1.4rem;text-align:left">
-        <p class="kicker" style="margin-bottom:0.3rem">Been given a group code?</p>
-        <h3>Put it in now</h3>
+        <p class="kicker" style="margin-bottom:0.3rem" data-copy="mypath.p.been-given-a-group">Been given a group code?</p>
+        <h3 data-copy="mypath.h3.put-it-in-now">Put it in now</h3>
         <p class="small">Enter it here and we’ll hold on to it. You still need a free account to save your place — we’ll connect you to your group the moment you have one. Entering a code never tells your facilitator anything about your workbook.</p>
         <form class="form" id="preCodeForm">
           <label for="preCode">Group code</label>
@@ -33,7 +33,7 @@
         </form>
       </div>
 
-      <a class="btn btn--primary" href="../join/">Sign in or create an account</a>
+      <a class="btn btn--primary" href="../join/" data-copy="mypath.a.sign-in-or-create">Sign in or create an account</a>
     </div>
   </section>
 
@@ -41,41 +41,41 @@
   <div data-when="in" hidden>
     <section class="section section--paper">
       <div class="wrap">
-        <p class="kicker">My Path</p>
+        <p class="kicker" data-copy="mypath.p.my-path">My Path</p>
         <h1>Welcome back<span data-render="firstname"></span></h1>
-        <p class="muted">There’s no hurry. Pick up whenever you’re ready.</p>
+        <p class="muted" data-copy="mypath.p.there-s-no-hurry">There’s no hurry. Pick up whenever you’re ready.</p>
         <div class="card" style="max-width:680px" data-render="progress-card"></div>
       </div>
     </section>
 
     <section class="section section--paper">
       <div class="wrap">
-        <h2>Your group</h2>
+        <h2 data-copy="mypath.h2.your-group">Your group</h2>
         <div class="card" style="max-width:680px" data-render="group-card"></div>
       </div>
     </section>
 
     <section class="section">
       <div class="wrap">
-        <h2>Your Forgiveness Group series</h2>
-        <p style="max-width:62ch"><b>You do the workbook lessons on your own, before each meeting.</b> The meeting itself is for discussing them — the sessions below are loosely structured around the lessons already completed, not a time to work through them together.</p>
-        <p class="muted" style="max-width:62ch">These are the videos your facilitator plays at each group meeting. The films are in production and land here this fall — the structure below is what to expect. Thinking of facilitating one? <a href="../groups/">Everything about facilitating a group →</a></p>
+        <h2 data-copy="mypath.h2.your-forgiveness-group-series">Your Forgiveness Group series</h2>
+        <p style="max-width:62ch" data-copy="mypath.p.you-do-the-workbook"><b>You do the workbook lessons on your own, before each meeting.</b> The meeting itself is for discussing them — the sessions below are loosely structured around the lessons already completed, not a time to work through them together.</p>
+        <p class="muted" style="max-width:62ch" data-copy="mypath.p.these-are-the-videos">These are the videos your facilitator plays at each group meeting. The films are in production and land here this fall — the structure below is what to expect. Thinking of facilitating one? <a href="../groups/">Everything about facilitating a group →</a></p>
         <div class="grid grid--2" data-render="series" style="margin-top:1.2rem"></div>
       </div>
     </section>
 
     <section class="section section--paper">
       <div class="wrap">
-        <h2>Your materials</h2>
+        <h2 data-copy="mypath.h2.your-materials">Your materials</h2>
         <div class="grid grid--2">
           <div class="card">
-            <h3 style="font-size:1rem">REACH Forgiveness Workbook</h3>
-            <p class="small muted">Every edition and language, always free.</p>
-            <a class="btn btn--outline" href="../workbooks/">Get the PDF</a>
+            <h3 style="font-size:1rem" data-copy="mypath.h3.reach-forgiveness-workbook">REACH Forgiveness Workbook</h3>
+            <p class="small muted" data-copy="mypath.p.every-edition-and-language">Every edition and language, always free.</p>
+            <a class="btn btn--outline" href="../workbooks/" data-copy="mypath.a.get-the-pdf">Get the PDF</a>
           </div>
           <div class="card">
-            <h3 style="font-size:1rem">Facilitator materials</h3>
-            <p class="small muted">The facilitator guide and session film arrive with the video series this fall.</p>
+            <h3 style="font-size:1rem" data-copy="mypath.h3.facilitator-materials">Facilitator materials</h3>
+            <p class="small muted" data-copy="mypath.p.the-facilitator-guide-and">The facilitator guide and session film arrive with the video series this fall.</p>
             <span class="pill pill--plum">Coming soon</span>
           </div>
         </div>
@@ -84,13 +84,13 @@
 
     <section class="section">
       <div class="wrap">
-        <h2>Your account</h2>
+        <h2 data-copy="mypath.h2.your-account">Your account</h2>
         <p class="small muted" data-render="email"></p>
         <div class="dl-row">
           <button class="btn btn--outline" id="signOutBtn">Sign out</button>
           <button class="btn" id="deleteBtn" style="color:var(--plum)">Delete my account…</button>
         </div>
-        <p class="form-note" style="margin-top:0.6rem">Deleting removes your account and everything it stores, immediately. What’s saved on your own devices stays yours — the workbook has its own “erase everything” control.</p>
+        <p class="form-note" style="margin-top:0.6rem" data-copy="mypath.p.deleting-removes-your-account">Deleting removes your account and everything it stores, immediately. What’s saved on your own devices stays yours — the workbook has its own “erase everything” control.</p>
         <div class="form-msg" hidden role="status"></div>
       </div>
     </section>
