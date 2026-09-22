@@ -84,7 +84,10 @@ the way out always visible. "There's no hurry" is design language here.
 - `/plan/` is a client-facing document Kate has the link to. Don't edit or move it casually.
 - What's on `main` is what's live (GitHub Pages, no build step). Treat the diff as the thing to
   check, not the push. Bump the build stamp in `js/site.js` on every push so a stale page is
-  detectable at a glance — if Wyatt reports an old stamp, it is not on `main`; there is no cache.
+  detectable at a glance. **Pages serves JS and CSS with `cache-control: max-age=600`**, so a browser
+  can run the previous version for up to 10 minutes after a push (verified 2026-09-21). An old stamp
+  means one of two things: it isn't on `main`, or the browser is holding a cached copy. Check `main` first,
+  then have him hard-reload (⌥⌘R in Safari) before calling it a bug.
 - The interactive workbook at `/workbook/` is canonical here; the standalone `forgiveness` repo
   stays untouched. Never let the two drift silently — changes happen here.
 
