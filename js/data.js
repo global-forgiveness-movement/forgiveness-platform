@@ -262,7 +262,15 @@ export function downloadFor(id, code = 'en', prefix = '') {
 
 /* The two Forgiveness Group series — session breakdowns exactly as Kate's
    email gives them. Sessions are video-guided group meetings; participants do
-   the workbook lessons on their own before each meeting. */
+   the workbook lessons on their own before each meeting.
+
+   `before` is the part people do ALONE ahead of that meeting (Richard, 22 Sep:
+   make every part of the process visible). Sources: the lessons happen before
+   the meeting, never during it (Kate, 18 Sep §3); in order (guideline 8); each
+   REACH lesson takes 10–20 minutes (the workbook's own opening). The church
+   edition states no per-lesson time, so none is claimed for it. */
+const OWN_SECULAR = 'About 1–2 hours in all — each lesson takes 10 to 20 minutes. In order, whenever suits you.';
+const OWN_CHURCH = 'In order, whenever suits you.';
 export const SERIES = {
   secular: {
     id: 'secular',
@@ -270,10 +278,11 @@ export const SERIES = {
     workbook: 'REACH Forgiveness Workbook',
     framing: 'Secular — any setting, any faith or none',
     videoKey: 'secularTrailer',
+    prep: { title: 'Get the workbook', detail: 'Everyone has their own copy: free PDF or print.' },
     sessions: [
       { n: 1, title: 'Getting started', detail: 'Learning about forgiveness research and forgiveness groups' },
-      { n: 2, title: 'Lessons 1–6', detail: 'Education, guided exercise, and discussion questions' },
-      { n: 3, title: 'Lessons 7–12', detail: 'Education, guided exercise, and discussion questions' },
+      { n: 2, title: 'Lessons 1–6', detail: 'Education, guided exercise, and discussion questions', before: { title: 'Lessons 1–6', detail: OWN_SECULAR } },
+      { n: 3, title: 'Lessons 7–12', detail: 'Education, guided exercise, and discussion questions', before: { title: 'Lessons 7–12', detail: OWN_SECULAR } },
     ],
   },
   church: {
@@ -282,13 +291,14 @@ export const SERIES = {
     workbook: 'REACH Forgiveness Workbook, Adapted for Churches',
     framing: 'Christian — scripture, prayer, and lectio divina woven through',
     videoKey: 'churchTrailer',
+    prep: { title: 'Get the workbook', detail: 'Everyone has their own copy: free PDF or print.' },
     sessions: [
       { n: 1, title: 'Getting started', detail: 'Learning about forgiveness research and forgiveness groups' },
-      { n: 2, title: 'Lessons 1 & 2', detail: 'Scripture, education, guided exercise, and discussion questions' },
-      { n: 3, title: 'Lessons 3 & 4', detail: 'Scripture, education, guided exercise, and discussion questions' },
-      { n: 4, title: 'Lessons 5 & 6', detail: 'Scripture, education, guided exercise, and discussion questions' },
-      { n: 5, title: 'Lessons 7 & 8', detail: 'Scripture, education, guided exercise, and discussion questions' },
-      { n: 6, title: 'Lessons 9–12', detail: 'Scripture, education, guided exercise, and discussion questions' },
+      { n: 2, title: 'Lessons 1 & 2', detail: 'Scripture, education, guided exercise, and discussion questions', before: { title: 'Lessons 1 & 2', detail: OWN_CHURCH } },
+      { n: 3, title: 'Lessons 3 & 4', detail: 'Scripture, education, guided exercise, and discussion questions', before: { title: 'Lessons 3 & 4', detail: OWN_CHURCH } },
+      { n: 4, title: 'Lessons 5 & 6', detail: 'Scripture, education, guided exercise, and discussion questions', before: { title: 'Lessons 5 & 6', detail: OWN_CHURCH } },
+      { n: 5, title: 'Lessons 7 & 8', detail: 'Scripture, education, guided exercise, and discussion questions', before: { title: 'Lessons 7 & 8', detail: OWN_CHURCH } },
+      { n: 6, title: 'Lessons 9–12', detail: 'Scripture, education, guided exercise, and discussion questions', before: { title: 'Lessons 9–12', detail: OWN_CHURCH } },
     ],
   },
 };

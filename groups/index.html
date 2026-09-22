@@ -146,6 +146,7 @@
 
 <script type="module">
   import { SERIES, GROUP_GUIDELINES } from '../js/data.js';
+  import { seriesFlow, FLOW_LEGEND } from '../js/series.js';
   import { getCollection } from '../js/content.js';
   import { registerGroup } from '../js/groups.js';
   import { MODE } from '../js/store.js';
@@ -172,9 +173,8 @@
       <p class="kicker">${s.framing}</p>
       <h3>${s.name}</h3>
       <p class="small muted">Uses the ${s.workbook}. Sessions run 1–1.5 hours, guided by ~10 minutes of video.</p>
-      <ol class="sessions">
-        ${s.sessions.map((x) => `<li><span class="n">${x.n}</span><span><b>${x.title}</b><span>${x.detail}</span></span></li>`).join('')}
-      </ol>
+      ${FLOW_LEGEND}
+      ${seriesFlow(s)}
       <figure class="video" data-video="${s.videoKey}" style="margin-top:1rem"></figure>
     </div>`;
 

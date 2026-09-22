@@ -112,6 +112,7 @@
   import { syncProgress } from '../js/progress-sync.js';
   import { memberGroup, joinGroup, leaveGroup, CODE_SHAPE, holdGroupCode, heldGroupCode, applyHeldGroupCode } from '../js/groups.js';
   import { SERIES } from '../js/data.js';
+  import { seriesFlow, FLOW_LEGEND } from '../js/series.js';
 
   const TOTAL_LESSONS = 12;
 
@@ -120,9 +121,8 @@
       <div class="card">
         <p class="kicker">${s.framing}</p>
         <h3 style="font-size:1.05rem">${s.name}</h3>
-        <ol class="sessions">
-          ${s.sessions.map((x) => `<li><span class="n">${x.n}</span><span><b>${x.title}</b><span>${x.detail} · <i>video arrives this fall</i></span></span></li>`).join('')}
-        </ol>
+        ${FLOW_LEGEND}
+        ${seriesFlow(s, { meetingNote: 'video arrives this fall' })}
       </div>`).join('');
 
   function progressCard(p) {

@@ -440,3 +440,31 @@ hr.leafline { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
 .copybar-btn[disabled] { opacity: 0.45; cursor: default; }
 [data-copy-editing] [data-copy] { outline: 2px dashed rgba(0, 136, 122, 0.55); outline-offset: 3px; border-radius: 3px; cursor: text; }
 [data-copy-editing] [data-copy]:focus { outline: 2px solid var(--teal); background: rgba(250, 184, 18, 0.12); }
+
+/* ------------------------------------------------ series rhythm (js/series.js)
+   Together = a solid, filled card with a teal edge and a two-person mark.
+   On your own = an open, dashed card set in from the line, with a one-person
+   mark. Shape, fill, icon and word all differ, not just color. */
+.flow { list-style: none; padding: 0; margin: 0.9rem 0 0; display: grid; gap: 0.5rem; position: relative; }
+.flow::before { content: ""; position: absolute; left: 19px; top: 20px; bottom: 20px; width: 2px; background: var(--line); }
+.flow-step { position: relative; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 0.75rem; align-items: start; }
+.flow-icon { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; position: relative; z-index: 1; }
+.flow-icon svg, .flow-key svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+.flow-body { display: grid; gap: 0.1rem; padding: 0.7rem 0.95rem; border-radius: var(--radius); }
+.flow-body b { font-family: var(--font-head); font-weight: 600; color: var(--navy); }
+.flow-body > span:last-child { font-size: 0.9rem; color: var(--muted); }
+.flow-tag { font-family: var(--font-head); font-weight: 600; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+
+.flow-step--together .flow-icon { background: var(--teal); color: #fff; }
+.flow-step--together .flow-body { background: rgba(0, 136, 122, 0.10); border: 2px solid var(--teal); }
+.flow-step--together .flow-tag { color: var(--teal-deep); }
+
+.flow-step--own .flow-icon { background: var(--cream); color: var(--plum); border: 2px dashed var(--plum); }
+.flow-step--own .flow-body { background: transparent; border: 2px dashed rgba(119, 0, 97, 0.45); margin-left: 1.1rem; }
+.flow-step--own .flow-tag { color: var(--plum); }
+
+.flow-legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.1rem; margin: 0.6rem 0 0; font-size: 0.85rem; }
+.flow-key { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-head); font-weight: 600; }
+.flow-key svg { width: 18px; height: 18px; }
+.flow-key--together { color: var(--teal-deep); }
+.flow-key--own { color: var(--plum); }
