@@ -256,7 +256,7 @@ export function downloadFor(id, code = 'en', prefix = '') {
   if (!w) return null;
   const file = w.files?.[code];
   return file
-    ? { href: `${prefix}${file.path}`, label: `Download (${file.format}, ${file.size})`, direct: true, tag: `${id}:${code}` }
+    ? { href: `${prefix}${file.path}`, label: `Download (${file.format}, ${file.size})`, direct: true, tag: `${id}:${code}`, format: file.format, size: file.size }
     : { href: w.url, label: 'Download PDF', direct: false, tag: `${id}:${code}` };
 }
 

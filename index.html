@@ -22,33 +22,37 @@
           <p class="muted hero-aside" data-copy="home.p.there-is-no-wrong">There is no wrong door, and you can stop at any point. Start where you are.</p>
         </div>
       </div>
+      <!-- Wyatt, 21 Sep (option A): one question frames all three doors, and each
+           heading is the visitor's own answer. Supersedes two of the door names
+           from the 25 Aug call ("Do it solo", "Start a group"); the third is Kate's,
+           word for word. Every button starts with a verb; every card has the same
+           one line under its button. -->
+      <p class="doors-ask" data-copy="home.p.which-sounds-best">Which sounds best to you?</p>
       <div class="grid grid--3 doors">
         <div class="door">
-          <p class="kicker" data-copy="home.p.on-your-own">On your own</p>
-          <h3 data-copy="home.h3.do-it-solo">Do it solo</h3>
+          <h3 data-copy="home.h3.do-it-solo">I’ll do it solo</h3>
           <p class="door-actions">
-            <a class="btn btn--primary" data-render="workbook-download" href="workbooks/">Get the workbook</a>
-            <a class="small" href="workbooks/">Other languages and editions →</a>
+            <a class="btn btn--primary btn--down" data-render="workbook-download" href="workbooks/">Download the workbook</a>
+            <span class="door-meta"><span data-render="workbook-size">Free PDF</span> · <a href="workbooks/">other languages</a></span>
           </p>
-          <p data-copy="home.p.download-the-reach-forgiveness">Download the REACH Forgiveness Workbook and work through it at your own pace. Free, no account, nothing to sign up for — and it will stay that way.</p>
+          <p data-copy="home.p.download-the-reach-forgiveness">Work through the free workbook at your own pace. No account, ever.</p>
           <p class="small" data-copy="home.p.prefer-the-screen-the">Prefer the screen? The interactive workbook keeps your place across twelve lessons — <a href="join/">make a free account</a> and it remembers where you got to. You can also <a href="workbook/">open it without an account</a>.</p>
         </div>
         <div class="door">
-          <p class="kicker" data-copy="home.p.with-others">With others</p>
-          <h3 data-copy="home.h3.start-a-group">Start a group</h3>
+          <h3 data-copy="home.h3.start-a-group">I want to start a group</h3>
           <p class="door-actions">
-            <a class="btn btn--plum" href="groups/#tell-us" data-copy="home.a.create-your-group">Create your group</a>
-            <a class="small" href="groups/">How Forgiveness Groups work →</a>
+            <a class="btn btn--plum btn--go" href="groups/#tell-us" data-copy="home.a.create-your-group">Create your group</a>
+            <span class="door-meta"><a href="groups/">How Forgiveness Groups work</a></span>
           </p>
-          <p data-copy="home.p.run-the-workbook-with">Run the workbook with your church, class, or community. People do the lessons on their own and meet to talk about the experience — we provide the videos and show you how to facilitate it.</p>
+          <p data-copy="home.p.run-the-workbook-with">People do the lessons on their own, then meet to talk. We provide the videos.</p>
         </div>
         <div class="door">
-          <p class="kicker" data-copy="home.p.already-meeting">Already meeting</p>
           <h3 data-copy="home.h3.i-m-already-in">I’m already in a group</h3>
           <p class="door-actions">
-            <a class="btn btn--navy" href="my-path/" data-copy="home.a.enter-your-group-code">Enter your group code</a>
+            <a class="btn btn--navy btn--go" href="my-path/" data-copy="home.a.enter-your-group-code">Enter your group code</a>
+            <span class="door-meta" data-copy="home.span.no-code-ask-your">No code? Ask your facilitator.</span>
           </p>
-          <p data-copy="home.p.if-your-group-has">If your group has already started and your facilitator gave you a code, enter it to keep your place in the workbook and rewatch any session video in your own time.</p>
+          <p data-copy="home.p.if-your-group-has">Your facilitator gave you a code. It keeps your place and lets you rewatch the videos.</p>
         </div>
       </div>
     </div>
@@ -107,9 +111,11 @@
   const dlBtn = document.querySelector('[data-render="workbook-download"]');
   if (dl && dlBtn) {
     dlBtn.href = dl.href;
-    dlBtn.textContent = dl.label;
     dlBtn.dataset.download = dl.tag;
     if (dl.direct) dlBtn.setAttribute('download', '');
+    /* The button says what it does; the file's format and size sit beneath it. */
+    const sizeEl = document.querySelector('[data-render="workbook-size"]');
+    if (sizeEl && dl.format) sizeEl.textContent = `Free ${dl.format} \u00b7 ${dl.size}`;
   }
 
   document.querySelector('[data-render="participants"]').textContent = TRIAL.participants;
