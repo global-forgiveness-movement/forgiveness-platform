@@ -16,11 +16,11 @@
 const HFH = 'https://hfh.fas.harvard.edu/post/global-forgiveness-movement';
 
 /* The Human Flourishing Program's own front page — used where we credit the
-   programme rather than the movement (About, footer). */
+   program rather than the movement (About, footer). */
 const HFP = 'https://hfh.fas.harvard.edu/';
 
 /* Forgiveness Community of Practice — the Zoom registration Kate uses
-   (her 18 Sep email §3 and §8). This replaces the programme-page stand-in
+   (her 18 Sep email §3 and §8). This replaces the program-page stand-in
    that the 1 Sep ruling left in place as a marker. */
 const COP = 'https://harvard.zoom.us/meeting/register/e5vX3r1TTfO_o95o6QfoBw#/registration';
 
@@ -98,7 +98,6 @@ export const VIDEOS = {
    trial numbers down in the evidence section). */
 export const GROUP_STATS = [
   { number: '6–12', label: 'people in a Forgiveness Group' },
-  { number: '3 or 6', label: 'sessions — secular or church series' },
   { number: '1–1.5 hrs', label: 'per meeting, guided by ~10 min of video' },
   { number: '6', label: 'languages the workbook speaks' },
 ];
@@ -170,7 +169,7 @@ export const TESTIMONIALS = [
    REACH translations (es, zh, uk, id, pt — Kate's 26 Aug email §2, with Ev's
    permission; Wyatt ruled 27 Aug: host in-repo, ship as-is, no conversion)
    and, since 2026-09-01, the four English-edition PDFs, taken byte-identical
-   from the HFP programme page. Being ours, every link is verified by
+   from the HFP program page. Being ours, every link is verified by
    construction — which fully resolves the 25 Aug ruling-1 deep-link concern
    ("an unverified deep link that 404s is worse than a landing page that
    works") for this section.

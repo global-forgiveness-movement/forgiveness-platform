@@ -203,14 +203,15 @@ button.btn { font-size: 1rem; }
   .hero-sub { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
 }
 /* In a headline, words set in italic (⌘I in the page editor) render as the
-   accent colour instead — how an editor highlights a phrase. */
+   accent color instead — how an editor highlights a phrase. */
 h1 i, h1 em { font-style: normal; color: var(--teal); }
 .doors { max-width: 1000px; margin: 1.8rem auto 0; }
 .video--feature { max-width: 900px; margin: 0 auto; }
 
 /* ------------------------------------------------ stats */
-.stats { display: grid; gap: 1rem; grid-template-columns: repeat(2, 1fr); }
-@media (min-width: 720px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+/* As many columns as there are figures (an editor can add or remove them in
+   /admin), each at least 12rem wide; a phone stacks them. No orphan cells. */
+.stats { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); }
 .stat { text-align: center; padding: 0.9rem 0.4rem; }
 .stat b { display: block; font-family: var(--font-head); font-weight: 700; font-size: clamp(1.5rem, 3.4vw, 2.1rem); color: var(--teal-deep); }
 .stat span { font-size: 0.85rem; color: var(--muted); }

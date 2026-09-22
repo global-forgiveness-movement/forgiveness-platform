@@ -89,7 +89,8 @@ function render(msg = '') {
   }
   const n = changedKeys().length;
   bar.innerHTML = `
-    <span class="copybar-msg">Editing — click any outlined text. In a headline, select words and press ⌘I to colour them. ${n ? `<b>${n} unsaved change${n === 1 ? '' : 's'}</b>` : 'No changes yet.'}</span>
+    <span class="copybar-msg">Editing — click any outlined text. To color words in a headline, select them and press <b>Color</b>. ${msg ? `<b>${msg}</b> ` : ''}${n ? `<b>${n} unsaved change${n === 1 ? '' : 's'}</b>` : 'No changes yet.'}</span>
+    <button type="button" class="copybar-btn" data-copy-act="accent" title="Color the selected words in a headline">Color</button>
     <button type="button" class="copybar-btn copybar-btn--primary" data-copy-act="save" ${n ? '' : 'disabled'}>Save — goes live</button>
     <button type="button" class="copybar-btn" data-copy-act="cancel">Cancel</button>`;
 }
@@ -119,6 +120,24 @@ async function save(editorEmail) {
   }
 }
 
+/* Color a phrase in a headline. It toggles the phrase's italic, which the
+   stylesheet renders upright in the accent color (h1 i). A button rather
+   than Cmd+I: Safari keeps Cmd+I for "Email This Page", and a shortcut is
+   invisible anyway. Headlines only — in body text italic stays italic. */
+function accent() {
+  const sel = window.getSelection();
+  const node = sel && sel.rangeCount ? sel.getRangeAt(0).commonAncestorContainer : null;
+  const el = node && (node.nodeType === 1 ? node : node.parentElement);
+  const head = el && el.closest('h1[data-copy]');
+  if (!head || sel.isCollapsed) {
+    render('Select some words in a headline first.');
+    return;
+  }
+  try { document.execCommand('styleWithCSS', false, false); } catch { /* older engines */ }
+  document.execCommand('italic');
+  render();
+}
+
 function cancel() {
   SLOTS().forEach((el) => { if (before.has(el.dataset.copy)) el.innerHTML = before.get(el.dataset.copy); });
   setEditing(false);
@@ -132,6 +151,12 @@ function wireEditor(user) {
   document.body.append(bar);
   render();
 
+  /* Pressing a button normally clears the text selection before the click
+     lands; holding it lets Color act on the words the editor selected. */
+  bar.addEventListener('mousedown', (e) => {
+    if (e.target.closest('[data-copy-act="accent"]')) e.preventDefault();
+  });
+
   bar.addEventListener('click', (e) => {
     const act = e.target.closest('[data-copy-act]')?.dataset.copyAct;
     if (act === 'start') {
@@ -140,6 +165,7 @@ function wireEditor(user) {
     }
     if (act === 'save') save(user.email);
     if (act === 'cancel') cancel();
+    if (act === 'accent') accent();
   });
 
   /* While editing, a click on an editable link or button edits it rather than
