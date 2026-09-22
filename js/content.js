@@ -81,7 +81,10 @@ export async function savePage(page, editor) {
 export async function saveCopy(slots, editor) {
   const previous = await store.get('content', 'copy');
   await keepHistory('copy', previous ?? { slots: {} }, editor);
-  await store.set('content', 'copy', { slots, updatedAt: new Date().toISOString() });
+  /* Replace, not merge: `slots` is the complete set of overrides, and one
+     that was removed (typed back to the original) must actually go. A merge
+     kept a stale headline live after Wyatt reverted it, 22 Sep. */
+  await store.set('content', 'copy', { slots, updatedAt: new Date().toISOString() }, { replace: true });
 }
 
 export async function listHistory() {

@@ -72,9 +72,13 @@ const firebase = {
     const snap = await fs.getDoc(fs.doc(db, collection, id));
     return snap.exists() ? snap.data() : null;
   },
-  async set(collection, id, value) {
+  /* Merges by default, so a partial write never wipes fields it didn't name.
+     { replace: true } writes the document exactly as given — needed wherever
+     REMOVING a field is the point (page text: a block typed back to its
+     original must lose its override, and a merge can never delete it). */
+  async set(collection, id, value, { replace = false } = {}) {
     const { db, fs } = await firestore();
-    await fs.setDoc(fs.doc(db, collection, id), value, { merge: true });
+    await fs.setDoc(fs.doc(db, collection, id), value, replace ? {} : { merge: true });
   },
   async add(collection, value) {
     const { db, fs } = await firestore();
