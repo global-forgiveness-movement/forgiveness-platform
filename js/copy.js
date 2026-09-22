@@ -89,7 +89,7 @@ function render(msg = '') {
   }
   const n = changedKeys().length;
   bar.innerHTML = `
-    <span class="copybar-msg">Editing — click any outlined text. ${n ? `<b>${n} unsaved change${n === 1 ? '' : 's'}</b>` : 'No changes yet.'}</span>
+    <span class="copybar-msg">Editing — click any outlined text. In a headline, select words and press ⌘I to colour them. ${n ? `<b>${n} unsaved change${n === 1 ? '' : 's'}</b>` : 'No changes yet.'}</span>
     <button type="button" class="copybar-btn copybar-btn--primary" data-copy-act="save" ${n ? '' : 'disabled'}>Save — goes live</button>
     <button type="button" class="copybar-btn" data-copy-act="cancel">Cancel</button>`;
 }
