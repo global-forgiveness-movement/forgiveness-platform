@@ -25,7 +25,7 @@ one here.** It stays short so it survives being read.
 | 5 | **Read every screenshot he sends, pixel by pixel; pairs are for comparing** |
 | 6 | **Never report a defect (or a fix) as confirmed before you have looked at it rendered** |
 | 7 | **Do not build tooling when the ask is to build the site** — say the one line, park it |
-| 8 | **ELEGANCE OVER PATCHING** — architect once, use repeatedly; no drifting forks (§Design) |
+| 8 | **ELEGANCE OVER PATCHING — `ONEHELM`** — architect once, use repeatedly; no drifting forks (§Design) |
 | 9 | **ELIMINATE FRICTION** — the visitor thinks about forgiveness, never about the website (§Design) |
 | 10 | **The feedback record is the requirement** — Kate's email > her CSV > the scope plan; cite which ruling you used |
 | 11 | **Nothing client-facing ships without Wyatt's approval** — new copy is flagged as new, never silently blended in |
@@ -37,6 +37,14 @@ one here.** It stays short so it survives being read.
 | 17 | **Work through GSD** — and in a cloud container, install it first (§GSD) |
 
 ## Design — Wyatt's two principles (2026-08-21, his words distilled)
+
+**`ONEHELM` — Wyatt's word for this rule, from pastrypirates (adopted here 2026-09-28).** Anywhere
+he writes it, three answers are owed BEFORE any code, and they go in the commit message: (1) the fact,
+in the site's own words ("a meeting is done"); (2) how many places decide it now, and how many after;
+(3) the name of a check under `scripts/qa/` that goes red if a second place ever appears. **If you cannot
+answer all three, it is a patch — say so in those words instead of shipping it.** His reason, 2026-09-28:
+*"the problem we want to pre-solve for is DRIFT — where changing something for the facilitator requires
+manually changing it for the members too."*
 
 **Elegance and simplicity over patching and piecemeal.** Code is architected efficiently, written
 once and used repeatedly, so there are no drifting forks that are hard to keep track of. In
