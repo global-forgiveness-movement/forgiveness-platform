@@ -27,7 +27,10 @@
           <p data-copy="evidence.p.these-results-come-from">These results come from people working through the REACH Forgiveness Workbook on their own. A Forgiveness Group is a way to work through that same workbook alongside other people.</p>
         </div>
         <p style="display:flex;gap:0.7rem;flex-wrap:wrap">
-          <a class="btn btn--plum" href="#tell-us" data-copy="groups.a.create-your-facilitator-account">Create your facilitator account</a>
+          <!-- Signed in, there is no account left to create (lane D, 28 Sep):
+               the same button says what it does now, and goes to the same place. -->
+          <a class="btn btn--plum" href="#tell-us" data-when="out" data-copy="groups.a.create-your-facilitator-account">Create your facilitator account</a>
+          <a class="btn btn--plum" href="#tell-us" data-when="in" hidden data-copy="groups.a.create-a-group">Create a group</a>
           <a class="btn btn--outline" href="#facilitate" data-copy="groups.a.how-facilitating-works">How facilitating works</a>
         </p>
       </div>

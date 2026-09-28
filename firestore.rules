@@ -96,20 +96,29 @@ service cloud.firestore {
       allow update, delete: if isEditor();
     }
 
-    /* The account that created this group code. Codes made before 28 Sep
-       name nobody, so nobody can write their group state — safe by default. */
+    /* The account that created this group code — THE one record of who
+       facilitates a group (js/group-engine.js facilitatorOf reads the same
+       field). Codes made before 28 Sep named nobody until an editor ran
+       "Give older groups back their facilitator" in /admin; until then
+       nobody can write their group state — safe by default. */
     function facilitates(code) {
       return signedIn()
         && exists(/databases/$(database)/documents/groupCodes/$(code))
         && get(/databases/$(database)/documents/groupCodes/$(code)).data.get('facilitator', '') == request.auth.uid;
     }
 
-    /* Someone who entered this code on My Path. The code is the key: anyone
-       a facilitator gives it to can join, exactly as in person. */
+    /* Someone who entered this code on My Path (or created it). The code is
+       the key: anyone a facilitator gives it to can join, exactly as in
+       person. Since 28 Sep a person can be in several groups, kept as a map
+       keyed by code (members/{uid}.groups); the single-group shape from
+       before ({ code }) is still accepted until My Path converts it. A group
+       someone has finished with stays in the map, so "Bring back" finds it
+       just as they left it. */
     function inGroup(code) {
       return signedIn()
         && exists(/databases/$(database)/documents/members/$(request.auth.uid))
-        && get(/databases/$(database)/documents/members/$(request.auth.uid)).data.get('code', '') == code;
+        && (code in get(/databases/$(database)/documents/members/$(request.auth.uid)).data.get('groups', {})
+            || get(/databases/$(database)/documents/members/$(request.auth.uid)).data.get('code', '') == code);
     }
 
     /* ---- a running group's shared state (js/group-engine.js) ---- */
@@ -124,17 +133,22 @@ service cloud.firestore {
     }
 
     /* ---- one person's lesson ticks ---- */
-    /* Theirs alone (ruling 5). The facilitator cannot read them — the
-       privacy line on My Path says entering a code "does not tell your
+    /* Theirs alone (ruling 5), one set per group: { groups: { [code]:
+       { [step]: true } }, updatedAt }. The facilitator cannot read them —
+       the privacy line on My Path says entering a code "does not tell your
        facilitator ... anything about your workbook", and this keeps it true.
        If Kate and Richard rule that a facilitator may see ticks, flip
        FACILITATOR_SEES_MEMBER_TICKS in js/group-engine.js, change that
-       sentence on My Path, AND add this line — all three together:
-         allow read: if facilitates(resource.data.code);            */
+       sentence on My Path, AND give the facilitator a read here — which,
+       with ticks for several groups in one document, means first moving
+       each group's ticks to its own document (memberTicks/{uid}_{code}),
+       because a rule can only grant a whole document. The pre-28 Sep shape
+       ({ code, ticks }) is still read and deleted; every write is the new one. */
     match /memberTicks/{uid} {
       allow read, delete: if isOwner(uid);
       allow create, update: if isOwner(uid)
-                            && request.resource.data.keys().hasOnly(['code', 'ticks', 'updatedAt']);
+                            && request.resource.data.keys().hasOnly(['groups', 'updatedAt'])
+                            && request.resource.data.groups is map;
     }
 
     /* ---- a person's own records ---- */
@@ -145,6 +159,9 @@ service cloud.firestore {
       allow read, write: if isOwner(uid);
     }
 
+    /* Name, newsletter choice, and the groups this person is in
+       ({ groups: { [code]: { seriesId, groupName, status, joinedAt } } }).
+       Nothing in it decides who facilitates — that is groupCodes only. */
     match /members/{uid} {
       allow read, write: if isOwner(uid);
     }

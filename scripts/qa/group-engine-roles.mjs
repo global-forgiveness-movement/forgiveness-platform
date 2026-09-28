@@ -29,11 +29,12 @@ for (const series of Object.values(SERIES)) {
 const S = SERIES.secular;
 
 console.log('Who is looking');
-ok(roleFor({ surface: 'public', user: { id: 'u' }, membership: { seriesId: 'secular', facilitator: true } }) === 'visitor', 'the Groups page is always the visitor view');
+ok(roleFor({ surface: 'public', user: { id: 'u' }, membership: { seriesId: 'secular' }, codeDoc: { facilitator: 'u' } }) === 'visitor', 'the Groups page is always the visitor view');
 ok(roleFor({ surface: 'mypath', user: null }) === 'visitor', 'signed out is a visitor');
 ok(roleFor({ surface: 'mypath', user: { id: 'u' }, membership: null }) === 'none', 'signed in, no group: none');
 ok(roleFor({ surface: 'mypath', user: { id: 'u' }, membership: { seriesId: 'secular' } }) === 'member', 'a code entered: member');
-ok(roleFor({ surface: 'mypath', user: { id: 'u' }, membership: { seriesId: 'secular', facilitator: true } }) === 'facilitator', 'a group created: facilitator');
+ok(roleFor({ surface: 'mypath', user: { id: 'u' }, membership: { seriesId: 'secular' }, codeDoc: { facilitator: 'u' } }) === 'facilitator', 'the code’s record names you: facilitator');
+ok(roleFor({ surface: 'mypath', user: { id: 'u' }, membership: { seriesId: 'secular' }, codeDoc: { seriesId: 'secular' } }) === 'member', 'a pre-28 Sep code naming nobody: member, so no tick is offered that the database would refuse');
 
 console.log('Visitor and none see the plain map');
 for (const role of ['visitor', 'none']) {

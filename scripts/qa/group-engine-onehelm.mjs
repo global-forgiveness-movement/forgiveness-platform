@@ -91,7 +91,7 @@ if (recordOnly !== 'facilitator') hits.push(`roleFor  the code's record named th
 if (someoneElse !== 'member') hits.push(`roleFor  the code names another account but roleFor said "${someoneElse}"`);
 
 /* The database's twin of the same fact. */
-const rules = readFileSync(join(ROOT, 'firestore.rules'), 'utf8');
+const rules = codeOf(readFileSync(join(ROOT, 'firestore.rules'), 'utf8'));
 const fx = rules.match(/function facilitates\(code\)\s*\{([\s\S]*?)\n\s*\}/);
 if (!fx || !/groupCodes\/\$\(code\)\)\.data\.get\('facilitator'/.test(fx[1])) {
   hits.push('firestore.rules  facilitates(code) must read groupCodes/$(code).facilitator');
