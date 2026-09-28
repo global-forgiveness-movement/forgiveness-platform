@@ -6,6 +6,7 @@
 import { NAV, FOOTER_COLS } from './data.js';
 import { getVideos, getPages, fieldAttr } from './content.js';
 import { recordDownload } from './metrics.js';
+import { videoFrame } from './video.js';
 import { ensureGate, leaf } from './gate.js';
 
 export const STAMP = 'GFM-V1 · 2026-09-28b';
@@ -106,15 +107,16 @@ function buildFooter() {
 
 /* Video slots: <figure class="video" data-video="key"></figure> hydrates from
    the videos collection (editor-published version wins, committed default
-   otherwise). Swapping a placeholder for the real Vimeo file is a data edit. */
+   otherwise). Swapping a placeholder for the real Vimeo file is a data edit:
+   paste the Vimeo page link as it is — js/video.js turns it into the address
+   the film plays from. */
 async function hydrateVideos() {
   const videos = await getVideos();
   document.querySelectorAll('[data-video]').forEach((slot) => {
     const v = videos[slot.dataset.video];
     if (!v || slot.querySelector('iframe')) return;
     slot.innerHTML = `
-      <iframe src="${v.src}" title="${v.title}" loading="lazy"
-        allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>
+      ${videoFrame(v.src, v.title)}
       <figcaption ${fieldAttr('videos', v, 0, 'caption')}>${v.caption}</figcaption>`;
   });
 }

@@ -15,6 +15,8 @@
    Every text drawn from the series carries data-field (THE CONTRACT), so the
    page-text editor can change it where it sits. */
 
+import { videoFrame } from './video.js';
+
 const ICON_TOGETHER = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8.5" cy="8" r="3.2"/><circle cx="15.5" cy="8" r="3.2"/><path d="M2.5 19c.6-3.4 3-5.3 6-5.3s5.4 1.9 6 5.3M9.5 19c.6-3.4 3-5.3 6-5.3s5.4 1.9 6 5.3"/></svg>';
 const ICON_OWN = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 19.5c.7-3.6 3.3-5.6 6.5-5.6s5.8 2 6.5 5.6"/></svg>';
 const ICON = { own: ICON_OWN, together: ICON_TOGETHER };
@@ -77,7 +79,7 @@ function videoHtml(v) {
   if (!v) return '';
   if (v.playable) {
     return `<figure class="video flow-video">
-        <iframe src="${esc(v.src)}" title="${esc(v.title)}" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>
+        ${videoFrame(v.src, v.title)}
         <figcaption>${esc(v.note)}</figcaption>
       </figure>`;
   }

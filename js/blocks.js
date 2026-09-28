@@ -3,6 +3,8 @@
    Wyatt-built page render through the same classes by construction.
    All editor text is escaped; links resolve against the site root. */
 
+import { videoFrame } from './video.js';
+
 export const esc = (s = '') =>
   String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -50,8 +52,7 @@ const RENDER = {
   video: (b) => `
     <section class="section"><div class="wrap" style="max-width:820px">
       <figure class="video">
-        <iframe src="${esc(b.src)}" title="${esc(b.caption || 'Video')}" loading="lazy"
-          allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>
+        ${videoFrame(b.src, b.caption || 'Video')}
         ${b.caption ? `<figcaption>${esc(b.caption)}</figcaption>` : ''}
       </figure>
     </div></section>`,
