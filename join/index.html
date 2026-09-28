@@ -66,11 +66,11 @@
 
 <script type="module">
   /* A group code entered before there was an account to attach it to. */
-  import { heldGroupCode } from '../js/groups.js';
+  import { heldGroupCode, heldCodeLine } from '../js/groups.js';
   const heldSlot = document.querySelector('[data-render="held-code"]');
   const held = heldGroupCode();
   if (heldSlot && held) {
-    heldSlot.innerHTML = `Your group code <b>${held.code}</b> is saved \u2014 the <b>${held.series.name}</b>. Create your account below and we\u2019ll connect you to your group.`;
+    heldSlot.innerHTML = heldCodeLine(held);
     heldSlot.hidden = false;
   }
   import { signUp, signIn, signInGoogle, resetPassword, onAuth, AUTH_MODE } from '../js/auth.js';
@@ -80,7 +80,8 @@
   /* Signed in — whether already or just now — this page's job is done. */
   onAuth((u) => { if (u) location.replace('../my-path/'); });
 
-  let mode = 'signup';
+  /* My Path's "I already have an account" lands here as #signin. */
+  let mode = location.hash === '#signin' ? 'signin' : 'signup';
   const form = document.getElementById('authForm');
   const msg = form.querySelector('.form-msg');
 

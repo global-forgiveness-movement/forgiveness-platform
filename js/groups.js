@@ -49,6 +49,21 @@ export function parseGroupCode(raw) {
   return { code: `GFM-${body[0]}-${block}`, seriesId, series: SERIES[seriesId] };
 }
 
+/* Why a typed code is not a code, in words a person can act on. Follows
+   parseGroupCode's own steps, so the two cannot disagree about what a code is;
+   null means parseGroupCode would accept it. */
+export function groupCodeProblem(raw) {
+  if (parseGroupCode(raw)) return null;
+  const clean = String(raw || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const body = clean.startsWith('GFM') ? clean.slice(3) : clean;
+  if (!body) return `Type the code your facilitator gave you. It looks like ${CODE_SHAPE}.`;
+  if (!DIGIT_SERIES[body[0]]) return 'The number after “GFM” says which series your group uses, so it is always 3 or 6. Check that part with your facilitator.';
+  const block = body.slice(1);
+  const odd = [...block].find((c) => !ALPHABET.includes(c));
+  if (odd) return `Group codes never use “${odd}”, so one character is off. Check it with your facilitator.`;
+  return `That has ${block.length} character${block.length === 1 ? '' : 's'} after the ${body[0]}. A group code has 4, like ${CODE_SHAPE}.`;
+}
+
 /* The group form's <select> already carries the series ids as its values
    ('secular' / 'church'), so this only has to guard against an unknown one. */
 export const seriesIdFromFormValue = (value) =>
@@ -107,11 +122,23 @@ export async function lookupGroup(raw) {
    is a user to attach it to, and it is forgotten the moment it is applied. */
 const PENDING = 'gfm.pendingGroupCode.v1';
 
+/* `kept` is false when this browser refuses storage (some private windows):
+   the page then says so, instead of promising a connection it cannot make. */
 export function holdGroupCode(raw) {
   const parsed = parseGroupCode(raw);
   if (!parsed) return null;
-  try { localStorage.setItem(PENDING, parsed.code); } catch { /* private window */ }
-  return parsed;
+  let kept = false;
+  try { localStorage.setItem(PENDING, parsed.code); kept = localStorage.getItem(PENDING) === parsed.code; } catch { /* private window */ }
+  return { ...parsed, kept };
+}
+
+/* The one sentence that tells someone their held code is waiting — My Path
+   and /join/ both say it, so it is written once, here. */
+export function heldCodeLine(held) {
+  if (held.kept === false) {
+    return `That’s the <b>${held.series.name}</b>. This browser won’t let us hold on to your code, so write down <b>${held.code}</b> and enter it again once you have an account.`;
+  }
+  return `Your group code <b>${held.code}</b> is saved in this browser. It’s for the <b>${held.series.name}</b>. Create your free account and we’ll connect you to your group.`;
 }
 
 export function heldGroupCode() {

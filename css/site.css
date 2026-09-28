@@ -33,7 +33,12 @@
   --radius-soft: 26px;
   --shadow: 0 10px 30px rgba(0, 61, 87, 0.10);
   --pad: clamp(1.1rem, 4vw, 2rem);
-  --measure: 68ch;
+  /* The page's two widths, decided here and nowhere else (Richard, 24 Sep:
+     "use the whole sort of right side of the page ... easier for older folk
+     to read"). --page is how wide the content spans; --measure is the one
+     centered column running text sits in (about 70 characters). */
+  --page: 1200px;
+  --measure: 40rem;
 }
 
 * { box-sizing: border-box; }
@@ -53,7 +58,7 @@ body {
   background: var(--cream);
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: 1.02rem;
+  font-size: 1.125rem;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
@@ -69,7 +74,7 @@ h3 { font-size: 1.12rem; font-weight: 600; }
 p { margin: 0 0 1em; max-width: var(--measure); }
 ul, ol { max-width: var(--measure); }
 .script { font-family: var(--font-script); font-weight: 400; }
-.small { font-size: 0.85rem; }
+.small { font-size: 0.92rem; }
 .muted { color: var(--muted); }
 button { font-family: inherit; cursor: pointer; }
 input, select, textarea { font-family: inherit; font-size: 1rem; color: var(--ink); }
@@ -114,7 +119,7 @@ input, select, textarea { font-family: inherit; font-size: 1rem; color: var(--in
 
 /* ------------------------------------------------ layout */
 main { flex: 1; width: 100%; }
-.wrap { max-width: 1060px; margin: 0 auto; padding: 0 var(--pad); }
+.wrap { max-width: var(--page); margin: 0 auto; padding: 0 var(--pad); }
 .section { padding: clamp(2.2rem, 6vw, 3.8rem) 0; }
 /* Anchored sections land with a little air above the heading. */
 .section[id] { scroll-margin-top: 1rem; }
@@ -206,7 +211,7 @@ button.btn { font-size: 1rem; }
 .door-meta { font-size: 0.9rem; color: var(--muted); }
 .door-meta a { color: var(--teal-deep); }
 /* The one question the three doors answer. */
-.doors-ask { max-width: 1000px; margin: 2.2rem auto 0; font-family: var(--font-head); font-weight: 600; font-size: clamp(1.25rem, 2.4vw, 1.55rem); color: var(--navy); }
+.doors-ask { max-width: none; margin: 2.2rem 0 0; font-family: var(--font-head); font-weight: 600; font-size: clamp(1.25rem, 2.4vw, 1.55rem); color: var(--navy); }
 .doors-ask + .doors { margin-top: 1rem; }
 
 /* Home hero: the three doors ARE the hero's call to action, so the lede stays
@@ -215,7 +220,7 @@ button.btn { font-size: 1rem; }
 /* The hero spans the same 1000px as the doors beneath it, so there is no dead
    column on the right. The headline takes the full width; the lede and the
    quiet "no wrong door" line share the row below it. */
-.hero-lede { max-width: 1000px; margin-inline: auto; }
+.hero-lede { max-width: none; }
 .hero-lede h1 { margin-top: 0.2rem; font-size: clamp(2rem, 5vw, 3.1rem); line-height: 1.12; }
 .hero-sub { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 0 2.5rem; align-items: end; }
 .hero-sub p { margin: 0; }
@@ -226,8 +231,8 @@ button.btn { font-size: 1rem; }
 /* In a headline, words set in italic (⌘I in the page editor) render as the
    accent color instead — how an editor highlights a phrase. */
 h1 i, h1 em { font-style: normal; color: var(--teal); }
-.doors { max-width: 1000px; margin: 1.8rem auto 0; }
-.video--feature { max-width: 900px; margin: 0 auto; }
+.doors { margin: 1.8rem 0 0; }
+.video.video--feature { max-width: 60rem; margin: 0 auto; }
 
 /* ------------------------------------------------ stats */
 /* As many columns as there are figures (an editor can add or remove them in
@@ -240,7 +245,7 @@ h1 i, h1 em { font-style: normal; color: var(--teal); }
 .section--navy .stat span { color: rgba(242, 244, 240, 0.7); }
 
 /* Effect sizes */
-.effects { display: grid; gap: 1rem; grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 620px; }
+.effects { display: grid; gap: 1rem; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .effect { background: var(--white); border-radius: var(--radius); border: 1px solid var(--line); text-align: center; padding: 1rem 0.5rem; }
 .effect b { display: block; font-family: var(--font-head); font-size: 1.5rem; color: var(--plum); }
 .effect span { font-size: 0.8rem; color: var(--muted); display: block; }
@@ -342,7 +347,7 @@ details[open] .pbio { animation: pbio-in 0.25s ease; }
 
 /* ------------------------------------------------ footer */
 .site-foot { background: var(--navy); color: rgba(242, 244, 240, 0.85); margin-top: 3rem; }
-.site-foot .cols { display: grid; gap: 1.6rem; padding: 2.2rem var(--pad) 1.2rem; max-width: 1060px; margin: 0 auto; }
+.site-foot .cols { display: grid; gap: 1.6rem; padding: 2.2rem var(--pad) 1.2rem; max-width: var(--page); margin: 0 auto; }
 @media (min-width: 720px) { .site-foot .cols { grid-template-columns: repeat(3, 1fr); } }
 .site-foot h4 { color: var(--mustard); font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.6rem; }
 .site-foot ul { list-style: none; margin: 0; padding: 0; }
@@ -468,3 +473,35 @@ hr.leafline { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
 .flow-key svg { width: 18px; height: 18px; }
 .flow-key--together { color: var(--teal-deep); }
 .flow-key--own { color: var(--plum); }
+
+/* ---- lane A: front door (full width, centered; the evidence line; code, then sign up) ---- */
+
+/* THE COLUMN. Inside a page-wide .wrap, running text and the things that read
+   with it (headings, kickers, notices, a lone card or form) sit in ONE centered
+   column at --measure, left-aligned inside it. Grids, galleries and videos keep
+   the full --page width. A block that sets its own narrower max-width still
+   centers on the same axis. .center wraps center their text as before. */
+.wrap:not(.grid) > :where(h1, h2, h3, p, ul:not([class]), ol:not([class]), .kicker, .notice, .card, .form, .sessions, .effects, .evidence-note, .dl-row, .measure) {
+  max-width: var(--measure);
+  margin-inline: auto;
+}
+.wrap > .doors-ask { max-width: none; margin-inline: 0; }
+.effects { margin-block: 1.2rem; }
+.reach { max-width: none; padding: 0; margin: 1.4rem 0; }
+@media (max-width: 520px) { .effects { grid-template-columns: minmax(0, 1fr); } }
+
+/* The evidence is about the workbook (Kate, 24 Sep). One line, said the same
+   on the home page and the Groups page — one data-copy key for both. */
+.evidence-note { border-left: 3px solid var(--sage); padding-left: 1rem; color: var(--ink); }
+.evidence-note--aside { font-size: 0.98rem; margin: 0 0 1em; }
+.evidence-note--aside .kicker { margin-bottom: 0.25rem; }
+.evidence-note--aside p:last-child { margin: 0; }
+
+/* My Path, signed out: code first, then the account. */
+.wrap .precode { max-width: 28rem; margin: 0 auto 1.4rem; text-align: left; }
+.precode-next { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1rem; margin: 0; }
+
+/* A form's fields shrink with a phone instead of pushing past it (the sign-up
+   card scrolled sideways at 375 wide — an input's default width set the floor). */
+.form { grid-template-columns: minmax(0, 1fr); }
+.form input, .form select, .form textarea { min-width: 0; }
