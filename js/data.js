@@ -24,6 +24,15 @@ const HFP = 'https://hfh.fas.harvard.edu/';
    that the 1 Sep ruling left in place as a marker. */
 const COP = 'https://harvard.zoom.us/meeting/register/e5vX3r1TTfO_o95o6QfoBw#/registration';
 
+/* The marks beside the site name in the header (Wyatt, 28 Sep). The GFM logo
+   file has not arrived: while `gfm` is null the header draws the leaf. When it
+   lands, put the file in assets/brand/ and name it here — one line. The HFP
+   seal is the program's own mark, no Harvard shield (Richard, 25 Aug). */
+export const BRAND = {
+  gfm: null, // e.g. 'assets/brand/gfm-logo.png'
+  hfpSeal: 'assets/brand/hfp-seal.png',
+};
+
 export const NAV = [
   ['', 'Home'],
   ['workbooks/', 'Workbooks'],
@@ -191,7 +200,7 @@ export const WORKBOOKS = [
     id: 'reach',
     badge: 'Recommended · The tested edition',
     title: 'REACH Forgiveness Workbook',
-    desc: 'The standard edition. About two to three hours across nine components: identify the hurt, learn the two kinds of forgiveness, work the five REACH steps, then extend what you have learned. This is the version used in the international trial.',
+    desc: 'A self-guided workbook designed to take two to three hours. It was tested in a randomized trial with over 4,500 participants across 6 sites in 5 countries. You can download it, print it, share it, and translate it for your community. It is free, and it will stay free.',
     pills: ['2–3 hours', 'Secular', '6 languages', 'Group-ready'],
     languages: true,
     url: HFH,
@@ -289,7 +298,7 @@ export const SERIES = {
     id: 'church',
     name: '6-Session Forgiveness Group Series for Churches',
     workbook: 'REACH Forgiveness Workbook, Adapted for Churches',
-    framing: 'Christian — scripture, prayer, and lectio divina woven through',
+    framing: 'Christian — scripture, prayer, and reflection woven through',
     videoKey: 'churchTrailer',
     prep: { title: 'Get the workbook', detail: 'Everyone has their own copy: free PDF or print.' },
     sessions: [

@@ -3,7 +3,7 @@
    footer, hydrates video embeds from data.js, and counts workbook downloads.
    Written once, used everywhere — page files contain only their <main>. */
 
-import { NAV, FOOTER_COLS } from './data.js';
+import { NAV, FOOTER_COLS, BRAND } from './data.js';
 import { getVideos, getPages, fieldAttr } from './content.js';
 import { recordDownload } from './metrics.js';
 import { videoFrame } from './video.js';
@@ -46,9 +46,10 @@ function buildHeader() {
          <a class="btn btn--outline" href="${href('join/')}">Create account</a>`;
   const head = el('header', { class: 'site-head' }, `
     <a class="site-brand" href="${href('')}">
-      ${leaf('#00887a')}
+      ${BRAND.gfm ? `<img class="brand-mark" src="${href(BRAND.gfm)}" alt="">` : leaf('#00887a')}
       <span class="t"><b>Global Forgiveness Movement</b>
       <span>Human Flourishing Program</span></span>
+      <img class="brand-seal" src="${href(BRAND.hfpSeal)}" alt="" width="40" height="40">
     </a>
     <nav class="site-nav" id="site-menu" aria-label="Main">${nav}</nav>
     <div class="site-auth" data-auth-slot>${authLinks}</div>
