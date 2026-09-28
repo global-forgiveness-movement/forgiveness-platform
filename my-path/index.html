@@ -50,6 +50,7 @@
   <div data-when="in" hidden>
     <section class="section section--paper">
       <div class="wrap">
+       <div class="path-col">
         <p class="kicker" data-copy="mypath.p.my-path">My Path</p>
         <h1>Welcome back<span data-render="firstname"></span></h1>
         <p class="muted" data-copy="mypath.p.there-s-no-hurry">There’s no hurry. Pick up whenever you’re ready.</p>
@@ -62,7 +63,11 @@
             <button class="btn btn--primary" type="submit">Save</button>
           </form>
         </div>
-        <div class="card" style="max-width:680px" data-render="progress-card"></div>
+        <!-- Wyatt, 28 Sep: the workbook under its own heading, the same size
+             as "Your groups", so the page reads as two parts. -->
+        <h2 class="path-part" data-copy="mypath.h2.your-forgiveness">Your forgiveness</h2>
+        <div class="card" data-render="progress-card"></div>
+       </div>
       </div>
     </section>
 
@@ -75,7 +80,7 @@
          display draws it (js/series.js). -->
     <section class="section" id="your-group">
       <div class="wrap">
-        <div class="group-home">
+        <div class="path-col">
           <h2 data-render="group-heading">Your group</h2>
           <div class="group-switch" data-render="switch" hidden></div>
           <div data-render="group"></div>
