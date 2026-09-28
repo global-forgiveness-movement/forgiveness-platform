@@ -111,7 +111,7 @@ async function hydrateVideos() {
   const videos = await getVideos();
   document.querySelectorAll('[data-video]').forEach((slot) => {
     const v = videos[slot.dataset.video];
-    if (!v) return;
+    if (!v || slot.querySelector('iframe')) return;
     slot.innerHTML = `
       <iframe src="${v.src}" title="${v.title}" loading="lazy"
         allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>
@@ -183,6 +183,9 @@ async function buildShell() {
   document.body.prepend(buildHeader());
   document.body.append(buildFooter());
   hydrateVideos();
+  /* A page that draws video slots late (the Groups page series chooser)
+     asks for the same hydration again rather than keeping its own. */
+  window.addEventListener('gfm:videos', hydrateVideos);
   appendCustomNav();
   import('./copy.js').then((m) => m.mountCopy()).catch((err) => console.warn('page text unavailable:', err));
   watchDownloads();

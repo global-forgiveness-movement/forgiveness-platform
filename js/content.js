@@ -5,7 +5,7 @@
 
 import { store, withPatience } from './store.js';
 import {
-  TESTIMONIALS, VIDEOS, EVENTS, PUBLICATIONS, PEOPLE, GROUP_STATS,
+  TESTIMONIALS, VIDEOS, EVENTS, PUBLICATIONS, PEOPLE, GROUP_STATS, SERIES,
 } from './data.js';
 
 const DEFAULTS = {
@@ -15,6 +15,7 @@ const DEFAULTS = {
   publications: PUBLICATIONS,
   people: PEOPLE,
   stats: GROUP_STATS,
+  series: Object.values(SERIES),
 };
 
 export async function getCollection(name) {

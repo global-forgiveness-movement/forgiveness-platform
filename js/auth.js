@@ -97,7 +97,9 @@ const demo = {
   },
   async deleteAccount() {
     if (!user) return;
+    await (await import('./groups.js')).eraseGroupData(user.id);
     await store.remove('progress', user.id);
+    await store.remove('members', user.id);
     await store.remove('demoUsers', user.id);
     localStorage.removeItem(SESSION);
     announce(null);
@@ -190,6 +192,9 @@ const firebase = {
   async deleteAccount() {
     const { auth, a } = await fba();
     if (!auth.currentUser) return;
+    /* Group data first: erasing a facilitator's group state needs their
+       members record, which is removed below. */
+    await (await import('./groups.js')).eraseGroupData(auth.currentUser.uid);
     await store.remove('progress', auth.currentUser.uid);
     await store.remove('members', auth.currentUser.uid);
     await a.deleteUser(auth.currentUser);

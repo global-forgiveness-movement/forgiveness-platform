@@ -60,33 +60,30 @@
     <section class="section section--paper">
       <div class="wrap">
         <h2 data-copy="mypath.h2.your-group">Your group</h2>
-        <div class="card" style="max-width:680px" data-render="group-card"></div>
+        <!-- Drawn from js/group-engine.js pathView(role): "start or join" for
+             someone in no group, the group itself for a member or facilitator. -->
+        <div class="path-cards" data-render="group-card"></div>
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" data-render="series-section" hidden>
       <div class="wrap">
         <h2 data-copy="mypath.h2.your-forgiveness-group-series">Your Forgiveness Group series</h2>
         <p style="max-width:62ch" data-copy="mypath.p.you-do-the-workbook"><b>You do the workbook lessons on your own, before each meeting.</b> The meeting itself is for discussing them — the sessions below are loosely structured around the lessons already completed, not a time to work through them together.</p>
         <p class="muted" style="max-width:62ch" data-copy="mypath.p.these-are-the-videos">These are the videos your facilitator plays at each group meeting. The films are in production and land here this fall — the structure below is what to expect. Thinking of facilitating one? <a href="../groups/">Everything about facilitating a group →</a></p>
-        <div class="grid grid--2" data-render="series" style="margin-top:1.2rem"></div>
+        <div class="card series-card" data-render="series" style="margin-top:1.2rem"></div>
       </div>
     </section>
 
     <section class="section section--paper">
       <div class="wrap">
         <h2 data-copy="mypath.h2.your-materials">Your materials</h2>
-        <div class="grid grid--2">
-          <div class="card">
+        <!-- The facilitator guide now sits inside each meeting's box, shown to
+             the facilitator only (Kate, 24 Sep: members don't need it). -->
+        <div class="card" style="max-width:680px">
             <h3 style="font-size:1rem" data-copy="mypath.h3.reach-forgiveness-workbook">REACH Forgiveness Workbook</h3>
             <p class="small muted" data-copy="mypath.p.every-edition-and-language">Every edition and language, always free.</p>
             <a class="btn btn--outline" href="../workbooks/" data-copy="mypath.a.get-the-pdf">Get the PDF</a>
-          </div>
-          <div class="card">
-            <h3 style="font-size:1rem" data-copy="mypath.h3.facilitator-materials">Facilitator materials</h3>
-            <p class="small muted" data-copy="mypath.p.the-facilitator-guide-and">The facilitator guide and session film arrive with the video series this fall.</p>
-            <span class="pill pill--plum">Coming soon</span>
-          </div>
         </div>
       </div>
     </section>
@@ -110,20 +107,15 @@
 <script type="module">
   import { onAuth, signOutUser, deleteAccount, setDisplayName, firstName } from '../js/auth.js';
   import { syncProgress } from '../js/progress-sync.js';
-  import { memberGroup, joinGroup, leaveGroup, CODE_SHAPE, holdGroupCode, heldGroupCode, applyHeldGroupCode } from '../js/groups.js';
-  import { SERIES } from '../js/data.js';
-  import { seriesFlow, FLOW_LEGEND } from '../js/series.js';
+  import {
+    memberGroup, joinGroup, leaveGroup, CODE_SHAPE, holdGroupCode, heldGroupCode, applyHeldGroupCode,
+    loadSeries, groupState, myTicks, groupTicks, actOnGroup, tickMine, SESSION_VIDEO,
+  } from '../js/groups.js';
+  import { deriveSeries, pathView, roleFor } from '../js/group-engine.js';
+  import { seriesFlow, seriesName, seriesFraming, meetingLine, wireSeries, esc, FLOW_LEGEND } from '../js/series.js';
+  import { mountCreateGroup } from '../js/group-create.js';
 
   const TOTAL_LESSONS = 12;
-
-  document.querySelector('[data-render="series"]').innerHTML = [SERIES.secular, SERIES.church]
-    .map((s) => `
-      <div class="card">
-        <p class="kicker">${s.framing}</p>
-        <h3 style="font-size:1.05rem">${s.name}</h3>
-        ${FLOW_LEGEND}
-        ${seriesFlow(s, { meetingNote: 'video arrives this fall' })}
-      </div>`).join('');
 
   function progressCard(p) {
     const done = p.completed.length;
@@ -153,7 +145,7 @@
     document.querySelector('[data-render="progress-card"]').innerHTML = progressCard(p);
     /* A code they typed before they had an account, attached now. */
     await applyHeldGroupCode(u.id);
-    renderGroup(await memberGroup(u.id), u.id);
+    renderGroup(u.id);
   });
 
   /* Signed out: the code is parsed here, in the browser, so someone gets a
@@ -191,63 +183,106 @@
     catch { btn.disabled = false; }
   });
 
-  /* The group card has two states and one owner. No group: a code box.
-     In a group: which series, and the way back to the videos. */
+  /* "Your group" and "Your series" — one engine decides what this person
+     sees (js/group-engine.js), one display draws it (js/series.js). This
+     script only fetches, hands over, and writes back what was ticked. */
   const slot = () => document.querySelector('[data-render="group-card"]');
+  const seriesSlot = document.querySelector('[data-render="series"]');
+  const seriesSection = document.querySelector('[data-render="series-section"]');
+  let ctx = null; // { userId, code } of the group on screen
 
-  function renderGroup(g, userId) {
+  wireSeries(seriesSlot, async (a) => {
+    if (!ctx) return;
+    if (a.scope === 'group') await actOnGroup(ctx.code, a.stepId, a);
+    else await tickMine(ctx.userId, ctx.code, a.stepId, a.value);
+    await renderGroup(ctx.userId);
+  });
+
+  async function renderGroup(userId) {
     const el = slot();
     if (!el) return;
-    if (g) {
-      /* Same card, two readings — a facilitator's group and a member's are
-         the same record (js/groups.js), so this is one path, not a fork. */
-      const mine = !!g.facilitator;
-      el.innerHTML = `<p class="kicker" style="margin-bottom:0.3rem">${mine ? 'The group you facilitate' : 'You’re following a group'}</p>
-        <h3>${g.series.name}</h3>
-        <p class="small muted">${g.groupName ? g.groupName + ' · ' : ''}Code <span class="groupcode">${g.code}</span></p>
-        <p class="small">${mine
-          ? 'Share that code with everyone in your group — it is saved here, so you never have to remember it. They do the lessons on their own; your meetings are for discussing them.'
-          : 'Your group meets and discusses; you do the lessons on your own. The session videos are below — rewatch any of them whenever you like.'}</p>
-        <button class="btn" id="leaveGroupBtn" style="color:var(--plum)">${mine ? 'Remove this group from My Path' : 'Leave this group'}</button>`;
-      const leave = document.getElementById('leaveGroupBtn');
-      leave.addEventListener('click', async () => {
-        const warn = mine
-          ? 'Remove this group from My Path? We keep your registration, but the code stops showing here — write it down first.'
-          : 'Stop following this group? Your workbook progress is not affected.';
-        if (!confirm(warn)) return;
-        await leaveGroup(userId);
-        renderGroup(null, userId);
-      });
-      return;
+    const membership = await memberGroup(userId);
+    const role = roleFor({ surface: 'mypath', user: { id: userId }, membership });
+    const path = pathView(role);
+    let view = null;
+    if (membership) {
+      const [all, group, me, ticks] = await Promise.all([
+        loadSeries(), groupState(membership.code), myTicks(userId, membership.code), groupTicks(membership.code),
+      ]);
+      view = deriveSeries({ series: all[membership.seriesId], group, me, ticks, role, now: new Date(), video: SESSION_VIDEO });
+      ctx = { userId, code: membership.code };
+    } else {
+      ctx = null;
     }
-    el.innerHTML = `<p class="kicker" style="margin-bottom:0.3rem">Already meeting with a group?</p>
-      <h3>Enter your group code</h3>
-      <p class="small">Your facilitator has it. <b>Entering it does three things:</b> it shows you which
-        series your group is following, it lets you rewatch any session video in your own time, and it
-        keeps your place in the workbook. It does not tell your facilitator — or anyone else — anything
-        about your workbook or what you have written. You can leave the group here whenever you like.</p>
-      <p class="small muted">If you’re not in a group, you can ignore this — nothing here is required.</p>
-      <form class="form" id="codeForm" style="max-width:340px">
-        <label>Group code
-          <input name="code" placeholder="${CODE_SHAPE}" autocomplete="off" spellcheck="false" required>
-        </label>
-        <button class="btn btn--primary" type="submit">Join my group</button>
-        <div class="form-msg" hidden role="status"></div>
-      </form>`;
-    const form = document.getElementById('codeForm');
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const msg = form.querySelector('.form-msg');
-      const found = await joinGroup(userId, new FormData(form).get('code'));
-      if (!found) {
-        msg.className = 'form-msg form-msg--err';
-        msg.textContent = `That code isn’t one of ours. They look like ${CODE_SHAPE} — check it with your facilitator.`;
-        msg.hidden = false;
-        return;
-      }
-      renderGroup(await memberGroup(userId), userId);
-    });
+    el.innerHTML = path.cards.map((c) => `<div class="card" data-card="${c}"></div>`).join('');
+    path.cards.forEach((c) => CARDS[c](el.querySelector(`[data-card="${c}"]`), { userId, membership, view }));
+    seriesSection.hidden = !(view && view.showSeries);
+    seriesSlot.innerHTML = view ? `${seriesFraming(view)}${seriesName(view)}${FLOW_LEGEND}${seriesFlow(view)}` : '';
   }
+
+  const CARDS = {
+    /* The group itself: which series, the code, and the next meeting on top. */
+    group(card, { userId, membership, view }) {
+      const n = view.next;
+      const next = n
+        ? `<div class="next-meet">
+            <p class="kicker">Next · meeting ${n.n}</p>
+            <p>${n.whenText || n.place || n.link ? meetingLine(n) : `<span class="muted">${esc(n.note)}</span>`}</p>
+          </div>`
+        : `<div class="next-meet"><p class="kicker">Every meeting is done</p><p class="muted">The videos stay here to re-watch whenever you like.</p></div>`;
+      card.innerHTML = `<p class="kicker" style="margin-bottom:0.3rem">${view.panel.kicker}</p>
+        ${seriesName(view)}
+        <p class="small muted">${membership.groupName ? esc(membership.groupName) + ' · ' : ''}Code <span class="groupcode">${membership.code}</span></p>
+        ${next}
+        <p class="small">${view.panel.blurb}</p>
+        <button class="btn" data-leave style="color:var(--plum)">${view.panel.leave}</button>`;
+      card.querySelector('[data-leave]').addEventListener('click', async () => {
+        if (!confirm(view.panel.leaveWarn)) return;
+        await leaveGroup(userId);
+        renderGroup(userId);
+      });
+    },
+
+    /* Ruling 9: create a group inside My Path — the same one-question form
+       as the Groups page, not a copy of it (js/group-create.js). */
+    create(card, { userId }) {
+      card.innerHTML = `<p class="kicker" style="margin-bottom:0.3rem">Leading a group?</p>
+        <h3>Start a group</h3>
+        <p class="small">Pick your series and we’ll give you a group code straight away. You’ll run the group from here: meeting dates, and a tick for each meeting that opens the next step for everyone.</p>
+        <div data-slot="create"></div>`;
+      mountCreateGroup(card.querySelector('[data-slot="create"]'), { onCreated: () => renderGroup(userId) });
+    },
+
+    join(card, { userId }) {
+      card.innerHTML = `<p class="kicker" style="margin-bottom:0.3rem">Already meeting with a group?</p>
+        <h3>Enter your group code</h3>
+        <p class="small">Your facilitator has it. <b>Entering it does three things:</b> it shows you which
+          series your group is following, it lets you rewatch any session video in your own time, and it
+          keeps your place in the workbook. It does not tell your facilitator — or anyone else — anything
+          about your workbook or what you have written. You can leave the group here whenever you like.</p>
+        <p class="small muted">If you’re not in a group, you can ignore this — nothing here is required.</p>
+        <form class="form" id="codeForm">
+          <label>Group code
+            <input name="code" placeholder="${CODE_SHAPE}" autocomplete="off" spellcheck="false" required>
+          </label>
+          <button class="btn btn--primary" type="submit">Join my group</button>
+          <div class="form-msg" hidden role="status"></div>
+        </form>`;
+      const form = card.querySelector('#codeForm');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const msg = form.querySelector('.form-msg');
+        const found = await joinGroup(userId, new FormData(form).get('code'));
+        if (!found) {
+          msg.className = 'form-msg form-msg--err';
+          msg.textContent = `That code isn’t one of ours. They look like ${CODE_SHAPE} — check it with your facilitator.`;
+          msg.hidden = false;
+          return;
+        }
+        renderGroup(userId);
+      });
+    },
+  };
 
   document.getElementById('signOutBtn').addEventListener('click', async () => {
     await signOutUser();

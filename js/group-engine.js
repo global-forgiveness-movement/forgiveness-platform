@@ -47,6 +47,14 @@ export function roleFor({ surface, user, membership }) {
   return membership.facilitator ? 'facilitator' : 'member';
 }
 
+/* Whether a group code was created by this account (groupCodes/{code}
+   names its facilitator's account id). */
+export const createdBy = (codeDoc, userId) => !!userId && codeDoc?.facilitator === userId;
+
+/* Whether this membership runs the group (writes its dates and ticks). */
+export const runsGroup = (membership) =>
+  CAN[roleFor({ surface: 'mypath', user: {}, membership })].tickGroup;
+
 /* The ordered steps of a series, before anyone's state is applied. The ids
    are the keys group state and ticks are stored under, so they must never
    depend on titles (an editor can rename a step without losing its ticks). */
@@ -100,6 +108,19 @@ const CAN = {
   member:      { inGroup: true,  tickGroup: false, tickMine: true,  setMeeting: false, playOpen: false, playDone: true,  guide: false, seesTicks: false },
   facilitator: { inGroup: true,  tickGroup: true,  tickMine: true,  setMeeting: true,  playOpen: true,  playDone: true,  guide: true,  seesTicks: FACILITATOR_SEES_MEMBER_TICKS },
 };
+
+/* What My Path puts in "Your group" for each role: the cards, in order,
+   and whether the series itself is shown (ruling 9: only your series). */
+const PATH = {
+  visitor: { cards: [], showSeries: true },
+  none: { cards: ['create', 'join'], showSeries: false },
+  member: { cards: ['group'], showSeries: true },
+  facilitator: { cards: ['group'], showSeries: true },
+};
+export function pathView(role) {
+  if (!ROLES.includes(role)) throw new Error(`unknown role: ${role}`);
+  return { role, ...PATH[role], panel: PANEL[role] || null };
+}
 
 const GROUP_TICK_LABEL = {
   prep: 'Everyone has their workbook',
@@ -232,8 +253,7 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
     next,
     currentId: current?.id || null,
     finished: can.inGroup && steps.every((s) => s.kind !== 'together' || s.state === 'done'),
-    panel: PANEL[role] || null,
-    showSeries: role !== 'none',
+    ...pathView(role),
   };
 }
 
