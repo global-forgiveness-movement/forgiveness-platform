@@ -5,6 +5,7 @@
 
    Field types the form generator understands:
    text · textarea · url · check · number · select (needs options) ·
+   (any of these with readonly: true shows, and keeps, a value nobody should change) ·
    list (needs fields — a repeating group of the above) */
 
 export const COLLECTIONS = {
@@ -20,9 +21,9 @@ export const COLLECTIONS = {
   },
   videos: {
     label: 'Videos',
-    help: 'The films embedded around the site. To swap what plays in a slot, paste its Vimeo or YouTube link into “video link” as it is — the page address from your browser, a share link, or an embed address all work. Don’t change the “slot” field — it says where on the site the video appears.',
+    help: 'The films embedded around the site. To swap what plays in a slot, paste its Vimeo or YouTube link into “video link” as it is — the page address from your browser, a share link, or an embed address all work.',
     fields: [
-      { key: 'key', label: 'Slot (where it appears — don’t change)', type: 'text' },
+      { key: 'key', label: 'Where it appears', type: 'text', readonly: true },
       { key: 'src', label: 'Video link', type: 'url', help: 'Paste a Vimeo or YouTube link as it is — the page address, a share link, or an embed address. The site works out the rest.' },
       { key: 'title', label: 'Title (for screen readers)', type: 'text' },
       { key: 'caption', label: 'Caption under the video', type: 'text' },
@@ -75,7 +76,7 @@ export const COLLECTIONS = {
     help: 'The cards on the Workbooks page. Their words can also be changed right on that page. Files and sizes aren’t set here — a new edition needs its file added to the site first.',
     fixed: true,
     fields: [
-      { key: 'id', label: 'Edition (don’t change)', type: 'text' },
+      { key: 'id', label: 'Edition', type: 'text', readonly: true },
       { key: 'badge', label: 'Small line above the title', type: 'text' },
       { key: 'title', label: 'Title', type: 'text' },
       { key: 'desc', label: 'Description', type: 'textarea' },
@@ -86,7 +87,7 @@ export const COLLECTIONS = {
     help: 'The five steps on the homepage. The letters spell REACH and stay as they are.',
     fixed: true,
     fields: [
-      { key: 'letter', label: 'Letter (don’t change)', type: 'text' },
+      { key: 'letter', label: 'Letter', type: 'text', readonly: true },
       { key: 'word', label: 'Word', type: 'text' },
       { key: 'line', label: 'Line after it', type: 'text' },
     ],

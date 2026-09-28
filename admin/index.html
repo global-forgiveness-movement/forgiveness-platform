@@ -8,18 +8,39 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z' fill='%2300887a' transform='rotate(40 12 12)'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="../css/site.css">
   <style>
-    /* Admin-only dressing on top of the site system. */
-    .adm-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 1rem 0 1.4rem; }
-    .adm-tabs button { border: 1.5px solid var(--line); background: var(--white); border-radius: 999px;
-      padding: 0.45rem 1rem; font-family: var(--font-head); font-weight: 500; font-size: 0.9rem; }
-    .adm-tabs button[aria-selected="true"] { background: var(--teal); border-color: var(--teal); color: #fff; }
+    /* Admin-only dressing on top of the site system. ONE column for the whole
+       editor (header, menu, panel share one left edge), so the site's centered
+       reading column never splits the title off from what it titles. */
+    .adm { max-width: 68rem; margin: 0 auto; }
+    .adm-head { margin-bottom: 1.4rem; }
+    .adm-head h1 { font-size: 1.8rem; margin: 0 0 0.35rem; }
+    .adm-head p { margin: 0; }
+    .adm-hint { display: flex; flex-wrap: wrap; gap: 0.3rem 0.8rem; align-items: baseline; background: var(--paper);
+      border: 1px solid var(--line); border-radius: 12px; padding: 0.6rem 0.9rem; margin: 0 0 1.6rem; font-size: 0.92rem; }
+    .adm-hint p { margin: 0; flex: 1 1 24rem; }
+    .adm-hint a { white-space: nowrap; margin-left: auto; }
+    .adm-layout { display: grid; grid-template-columns: 13.5rem minmax(0, 1fr); gap: 2.2rem; align-items: start; }
+    .adm-nav { position: sticky; top: 1rem; }
+    .adm-nav h2 { font-family: var(--font-head); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); margin: 1.1rem 0 0.3rem 0.7rem; }
+    .adm-nav h2:first-child { margin-top: 0; }
+    .adm-nav button { display: block; width: 100%; text-align: left; border: 0; background: none; border-radius: 10px;
+      padding: 0.45rem 0.7rem; font-family: var(--font-head); font-size: 0.92rem; color: var(--navy); cursor: pointer; }
+    .adm-nav button:hover { background: var(--cream-soft); }
+    .adm-nav button[aria-current="true"] { background: var(--teal); color: #fff; }
+    .adm-pick { display: none; }
+    .adm-panel > h2 { font-size: 1.4rem; margin: 0 0 0.3rem; }
+    .adm-panel > .adm-lede { color: var(--muted); margin: 0 0 1.2rem; max-width: 62ch; }
     .adm-item { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius);
       padding: 1rem 1.2rem; margin-bottom: 0.8rem; }
     .adm-item .form { max-width: none; }
     .adm-row { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; margin-top: 0.6rem; }
     .adm-row .spacer { flex: 1; }
     .adm-mini { border: 1px solid var(--line); background: var(--cream-soft); border-radius: 999px;
-      padding: 0.25rem 0.75rem; font-size: 0.8rem; font-family: var(--font-head); }
+      padding: 0.25rem 0.75rem; font-size: 0.8rem; font-family: var(--font-head); cursor: pointer; }
+    .adm-mini--quiet { background: none; color: var(--plum); border-color: transparent; }
+    .adm-mini[data-armed] { background: var(--plum); border-color: var(--plum); color: #fff; }
+    .adm-fixed { background: var(--cream-soft) !important; color: var(--muted); }
     .adm-sub { border-left: 3px solid var(--sage); padding-left: 0.9rem; margin: 0.6rem 0; }
     /* Wraps rather than overflowing: at 390px a message row carries a pill, a
        name, a date, an address and a reply link, which measured 81px wider than
@@ -28,14 +49,31 @@
     .adm-block-head .adm-email { overflow-wrap: anywhere; min-width: 0; }
     .adm-block-head b { font-family: var(--font-head); color: var(--navy); }
     .adm-save { position: sticky; bottom: 0; background: var(--cream); padding: 0.8rem 0; }
+    .adm-fold { margin-top: 2.4rem; border-top: 1px solid var(--line); padding-top: 1rem; }
+    .adm-fold summary { cursor: pointer; font-family: var(--font-head); font-weight: 600; font-size: 0.92rem; color: var(--teal-deep); }
+    .adm-fold[open] summary { margin-bottom: 0.7rem; }
+    .adm-fold p { font-size: 0.92rem; }
+    /* Phone: the menu becomes one native picker, same groups, same order. */
+    @media (max-width: 780px) {
+      .adm-layout { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+      .adm-nav { display: none; }
+      .adm-pick { display: flex; align-items: center; gap: 0.6rem; position: sticky; top: 0; z-index: 2;
+        background: var(--cream); padding: 0.5rem 0; font-family: var(--font-head); font-weight: 600; color: var(--navy); }
+      .adm-pick select { flex: 1; min-width: 0; font-size: 1rem; padding: 0.55rem 0.7rem; border-radius: 10px;
+        border: 1.5px solid var(--line); background: var(--white); }
+      .adm-item { padding: 0.9rem; }
+    }
   </style>
 </head>
 <body>
 <main>
   <section class="section">
     <div class="wrap">
-      <p class="kicker">Site editor</p>
-      <h1 style="font-size:1.7rem">Edit the site</h1>
+     <div class="adm">
+      <header class="adm-head">
+        <h1>Site editor</h1>
+        <p class="muted" data-view-line="editor" hidden>Changes go live when you save. Every save is kept — you can always undo it in History.</p>
+      </header>
 
       <div data-view="signin" hidden>
         <p>Sign in with your editor account to make changes.</p>
@@ -51,19 +89,28 @@
           Preview note: the backend isn’t connected yet, so edits here save in this browser only —
           perfect for trying the editor, not yet shared with the world.
         </div>
-        <p class="muted small">Changes go live the moment you save. Every save is kept in History, so nothing is ever lost — edit freely.</p>
         <!-- Every word on the site's pages is edited ON the page (js/copy.js),
              not here (Wyatt, 28 Sep: "all text is editable where it sits").
-             Wyatt looked here first; so will Kate. Say where to go. -->
-        <div class="card card--tint" style="margin:0 0 1.2rem;max-width:62ch">
-          <h3 style="font-size:1rem;margin:0 0 0.3rem">Changing the words on a page?</h3>
-          <p class="small" style="margin:0 0 0.7rem">Every word is edited on the page itself — headings, paragraphs, buttons, and the lists too: testimonials, people, publications, events, workbook cards. Open any page, press <b>Edit page text</b> in the bottom-right corner, click the outlined words and type. <b>Save</b> puts it live; every save appears under History below.</p>
-          <p class="small" style="margin:0 0 0.7rem"><b>This page is for everything else:</b> adding, removing and reordering items in a list, setting video links, building new pages, reading messages, and bringing back an earlier version from History.</p>
-          <p class="small" style="margin:0"><a href="../" target="_blank" rel="noopener">Open the home page to edit →</a></p>
+             One line says so; the longer telling waits, folded, at the foot. -->
+        <div class="adm-hint">
+          <p><b>Changing words?</b> Do it on the page itself — press <b>Edit page text</b> on any page.</p>
+          <a href="../" target="_blank" rel="noopener">Open the site →</a>
         </div>
-        <div class="adm-tabs" role="tablist" data-tabs></div>
-        <div data-panel></div>
+        <div class="adm-layout">
+          <nav class="adm-nav" aria-label="Site editor sections" data-nav></nav>
+          <div>
+            <label class="adm-pick">Edit: <select data-pick></select></label>
+            <div class="adm-panel" data-panel></div>
+          </div>
+        </div>
+        <details class="adm-fold">
+          <summary>How this editor works</summary>
+          <p>Every word on the site is edited on the page itself — headings, paragraphs, buttons, and the words in the lists too: testimonials, people, publications, events, workbook cards. Open any page, press <b>Edit page text</b> in the bottom-right corner, click the outlined words and type. <b>Save</b> puts it live.</p>
+          <p>This page is for everything else: adding, removing and reordering the items in a list, setting video links, building new pages, reading what people send through the site, and bringing back an earlier version.</p>
+          <p>Every save — here or on a page — is kept under <b>History</b>. Restoring an old version keeps the one it replaces, so nothing is ever lost.</p>
+        </details>
       </div>
+     </div>
     </div>
   </section>
 </main>
@@ -97,12 +144,13 @@
         ${items.map((item) => subItemHTML(f, item)).join('')}
         <button type="button" class="adm-mini" data-addsub='${esc(JSON.stringify(f.key))}'>+ add</button></div>`;
     }
+    if (f.readonly) return `<label>${esc(f.label)}<input class="adm-fixed" data-key="${f.key}" value="${esc(v)}" readonly>${help}</label>`;
     return `<label>${esc(f.label)}<input data-key="${f.key}" value="${esc(v)}">${help}</label>`;
   }
   function subItemHTML(f, item = {}) {
     return `<div class="adm-item" data-subitem>
       <div class="form">${f.fields.map((sf) => fieldHTML(sf, item[sf.key])).join('')}</div>
-      <div class="adm-row"><span class="spacer"></span><button type="button" class="adm-mini" data-removesub>remove</button></div>
+      <div class="adm-row"><span class="spacer"></span><button type="button" class="adm-mini adm-mini--quiet" data-removesub>Remove</button></div>
     </div>`;
   }
   function readFields(container, fields) {
@@ -118,9 +166,20 @@
     }
     return out;
   }
+  /* Anything that throws work away asks twice: the first press arms the
+     button ("Sure? Press again"), a second within a few seconds acts. One
+     helper for remove, remove-section and restore — no dialogs. */
+  function twoPress(btn) {
+    if (btn.dataset.armed) return true;
+    const was = btn.textContent;
+    btn.dataset.armed = '1';
+    btn.textContent = 'Sure? Press again';
+    setTimeout(() => { delete btn.dataset.armed; btn.textContent = was; }, 4000);
+    return false;
+  }
   /* add/remove for nested lists, one delegated handler */
   document.addEventListener('click', (e) => {
-    if (e.target.matches('[data-removesub]')) e.target.closest('[data-subitem]').remove();
+    if (e.target.matches('[data-removesub]') && twoPress(e.target)) e.target.closest('[data-subitem]').remove();
     if (e.target.matches('[data-addsub]')) {
       const key = JSON.parse(e.target.dataset.addsub);
       const schema = findListField(key);
@@ -130,26 +189,44 @@
   let activeListFields = [];
   const findListField = (key) => activeListFields.find((f) => f.key === key);
 
-  /* ---------------------------------------------- tabs */
-  const TABS = [...Object.keys(COLLECTIONS), 'pages', 'messages', 'history'];
-  const TAB_LABELS = { pages: 'Pages', messages: 'Messages', history: 'History' };
-  function renderTabs(active) {
-    $('[data-tabs]').innerHTML = TABS.map((t) => {
-      const label = TAB_LABELS[t] || COLLECTIONS[t].label;
-      return `<button role="tab" aria-selected="${t === active}" data-tab="${t}">${label}</button>`;
-    }).join('');
+  /* ---------------------------------------------- menu */
+  /* ONE menu, drawn twice: a grouped sidebar on a wide screen, a native
+     picker with the same groups on a phone. A collection added to the schema
+     and not placed here still appears, under "Around the site", so the menu
+     can never silently lose a section. */
+  const LABELS = { messages: 'Messages', pages: 'New pages', history: 'History — undo a change' };
+  const HOME = ['stats', 'reach', 'testimonials'];
+  const MENU = [
+    { group: 'Inbox', items: ['messages'] },
+    { group: 'Homepage', items: HOME },
+    { group: 'Around the site', items: Object.keys(COLLECTIONS).filter((k) => !HOME.includes(k)) },
+    { group: 'Your own pages', items: ['pages'] },
+    { group: 'Safety net', items: ['history'] },
+  ];
+  const ALL = MENU.flatMap((g) => g.items);
+  const labelOf = (t) => LABELS[t] || COLLECTIONS[t].label;
+  function renderMenu(active) {
+    $('[data-nav]').innerHTML = MENU.map((g) => `<h2>${g.group}</h2>${g.items.map((t) =>
+      `<button type="button" data-tab="${t}" aria-current="${t === active}">${esc(labelOf(t))}</button>`).join('')}`).join('');
+    $('[data-pick]').innerHTML = MENU.map((g) => `<optgroup label="${g.group}">${g.items.map((t) =>
+      `<option value="${t}" ${t === active ? 'selected' : ''}>${esc(labelOf(t))}</option>`).join('')}</optgroup>`).join('');
   }
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-tab]');
     if (b) openTab(b.dataset.tab);
   });
+  document.addEventListener('change', (e) => { if (e.target.matches('[data-pick]')) openTab(e.target.value); });
+  window.addEventListener('hashchange', () => editor && openTab(location.hash.slice(1)));
   function openTab(name) {
-    renderTabs(name);
+    if (!ALL.includes(name)) name = 'messages';
+    renderMenu(name);
+    history.replaceState(null, '', `#${name}`);
     if (name === 'pages') return renderPagesTab();
     if (name === 'messages') return renderMessagesTab();
     if (name === 'history') return renderHistoryTab();
     renderCollectionTab(name);
   }
+  const head = (name, lede) => `<h2>${esc(labelOf(name))}</h2><p class="adm-lede">${esc(lede)}</p>`;
 
   /* ---------------------------------------------- collections */
   async function renderCollectionTab(name) {
@@ -162,9 +239,9 @@
           <div class="adm-row"><span class="spacer"></span>
             <button type="button" class="adm-mini" data-itemup aria-label="Move up">↑</button>
             <button type="button" class="adm-mini" data-itemdown aria-label="Move down">↓</button>
-            <button type="button" class="adm-mini" data-removesub>remove</button></div>`;
+            <button type="button" class="adm-mini adm-mini--quiet" data-removesub>Remove</button></div>`;
     $('[data-panel]').innerHTML = `
-      <p class="muted small" style="max-width:62ch">${esc(schema.help)}</p>
+      ${head(name, schema.help)}
       <div data-items>${items.map((it) => `
         <div class="adm-item" data-subitem data-original="${esc(JSON.stringify(it))}">
           <div class="form">${schema.fields.map((f) => fieldHTML(f, it[f.key])).join('')}</div>${itemControls}
@@ -200,7 +277,7 @@
   async function renderPagesTab() {
     const pages = await getPages();
     $('[data-panel]').innerHTML = `
-      <p class="muted small" style="max-width:62ch">Build whole new pages from sections. A page gets its own web address, and can appear in the site menu.</p>
+      ${head('pages', 'Build whole new pages from sections. A page gets its own web address, and can appear in the site menu.')}
       ${pages.map((p) => `<div class="adm-item"><div class="adm-block-head">
         <b>${esc(p.title)}</b><span class="muted small">/${esc(p.slug)}/</span>
         ${p.showInNav ? '<span class="pill">in menu</span>' : ''}
@@ -220,7 +297,7 @@
       <div class="adm-block-head"><b>${esc(schema.label)}</b><span class="spacer" style="flex:1"></span>
         <button type="button" class="adm-mini" data-moveup>↑</button>
         <button type="button" class="adm-mini" data-movedown>↓</button>
-        <button type="button" class="adm-mini" data-removeblock>remove</button></div>
+        <button type="button" class="adm-mini adm-mini--quiet" data-removeblock>Remove</button></div>
       <div class="form" style="margin-top:0.6rem">${schema.fields.map((f) => fieldHTML(f, values[f.key])).join('')}</div>
     </div>`;
   }
@@ -261,7 +338,7 @@
   document.addEventListener('click', (e) => {
     const item = e.target.closest('[data-block]');
     if (!item) return;
-    if (e.target.matches('[data-removeblock]')) item.remove();
+    if (e.target.matches('[data-removeblock]') && twoPress(e.target)) item.remove();
     if (e.target.matches('[data-moveup]') && item.previousElementSibling) item.previousElementSibling.before(item);
     if (e.target.matches('[data-movedown]') && item.nextElementSibling) item.nextElementSibling.after(item);
   });
@@ -299,24 +376,26 @@
   async function renderMessagesTab() {
     $('[data-panel]').innerHTML = '<p class="muted small">Loading…</p>';
     const rows = await listInbox();
-    $('[data-panel]').innerHTML = `${REPAIR_CARD}
-      <p class="muted small" style="max-width:62ch">Everything people have sent through the site, newest first — messages from the Contact page and facilitators registering a Forgiveness Group. Nobody but an editor can read these, and nothing here is published.</p>
+    $('[data-panel]').innerHTML = `
+      ${head('messages', 'What people send through the site, newest first: Contact page messages and new Forgiveness Group registrations. Only editors can read these.')}
       ${rows.length
         ? rows.map(messageRow).join('')
         : '<p class="muted">Nothing yet. Messages from the Contact page and new group registrations will appear here.</p>'}`;
-    $('[data-repair]').addEventListener('click', runRepair);
   }
 
   /* Groups created before September 28 don't name who runs them on their
      code's record, so their facilitator's ticks can't save. One button gives
      each its facilitator back from its own registration (js/groups.js
-     repairFacilitators — it never guesses). Safe to press again. */
+     repairFacilitators — it never guesses). Safe to press again. It was run
+     live on 28 Sep, so it waits folded at the foot of History, not in the
+     inbox Kate opens every day. */
   const REPAIR_CARD = `
-    <div class="card card--tint" style="margin:0 0 1.2rem;max-width:62ch">
-      <p class="small" style="margin:0 0 0.7rem">Groups created before September 28 don’t record who runs them, so their facilitator can’t tick meetings. This names the account that registered each one; anything it can’t match is listed, never guessed.</p>
-      <button class="btn btn--primary" type="button" data-repair>Give older groups back their facilitator</button>
+    <details class="adm-fold">
+      <summary>Maintenance — one-time fixes you shouldn’t need</summary>
+      <p class="small" style="margin:0 0 0.7rem">Groups created before September 28 don’t record who runs them, so their facilitator can’t tick meetings. This names the account that registered each one; anything it can’t match is listed, never guessed. Already done for the groups that existed on September 28.</p>
+      <button class="btn btn--outline" type="button" data-repair>Give older groups back their facilitator</button>
       <div data-repair-report role="status" style="margin-top:0.8rem"></div>
-    </div>`;
+    </details>`;
 
   async function runRepair(e) {
     const btn = e.currentTarget;
@@ -341,15 +420,18 @@
   async function renderHistoryTab() {
     const entries = await listHistory();
     $('[data-panel]').innerHTML = `
-      <p class="muted small">Every save, newest first. Restore brings that version back (and the version it replaces is itself kept here).</p>
+      ${head('history', 'Every save, newest first. Restore brings that version back — and the version it replaces is kept here too, so nothing is lost.')}
       ${entries.map((h) => `<div class="adm-item"><div class="adm-block-head">
         <b>${esc(h.target.startsWith('page:') ? `Page: ${h.target.slice(5)}` : h.target === 'copy' ? 'Page text (edited on the site)' : (COLLECTIONS[h.target]?.label || h.target))}</b>
         <span class="muted small">${new Date(h.savedAt).toLocaleString()} · ${esc(h.editor)}</span>
         <span class="spacer" style="flex:1"></span>
-        <button type="button" class="adm-mini" data-restore="${esc(h.id)}">restore this version</button>
-      </div></div>`).join('') || '<p class="muted">No saves yet.</p>'}`;
+        <button type="button" class="adm-mini" data-restore="${esc(h.id)}">Restore this version</button>
+      </div></div>`).join('') || '<p class="muted">No saves yet. Each time you save, a copy of the version before lands here.</p>'}
+      ${REPAIR_CARD}`;
+    $('[data-repair]').addEventListener('click', runRepair);
     document.querySelectorAll('[data-restore]').forEach((b) =>
       b.addEventListener('click', async () => {
+        if (!twoPress(b)) return;
         await restoreHistory(entries.find((x) => x.id === b.dataset.restore), editor.email);
         flash('Restored — it’s live.');
       }));
@@ -370,7 +452,8 @@
     editor = user;
     if (MODE === 'demo') $('[data-demo-note]').hidden = false;
     show('editor');
-    openTab(Object.keys(COLLECTIONS)[0]);
+    $('[data-view-line="editor"]').hidden = false;
+    openTab(location.hash.slice(1) || 'messages');
   });
 </script>
 <script type="module" src="../js/site.js"></script>
