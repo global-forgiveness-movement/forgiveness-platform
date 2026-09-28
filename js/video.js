@@ -70,7 +70,13 @@ function vimeo(u, host) {
     }
   }
   if (!id) return null;
-  return `https://player.vimeo.com/video/${id}${hash ? `?h=${encodeURIComponent(hash)}` : ''}`;
+  /* Vimeo's own overlay would show the raw upload name ("Nonrel_60promo v7")
+     and the uploader's portrait to every visitor. Hidden here, once, for every
+     film on the site (Wyatt, 28 Sep). */
+  const q = new URLSearchParams();
+  if (hash) q.set('h', hash);
+  q.set('title', '0'); q.set('byline', '0'); q.set('portrait', '0');
+  return `https://player.vimeo.com/video/${id}?${q}`;
 }
 
 /* Any YouTube or Vimeo page, share or embed link → the address the film plays

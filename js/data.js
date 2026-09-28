@@ -31,6 +31,9 @@ const COP = 'https://harvard.zoom.us/meeting/register/e5vX3r1TTfO_o95o6QfoBw#/re
 export const BRAND = {
   gfm: 'assets/brand/gfm-logo.png', // the GFM logo carries the name, so the header shows no words beside it (Wyatt, 28 Sep)
   hfpSeal: 'assets/brand/hfp-seal.png',
+  /* Kate's seal WITH "at Harvard University": body only, never the header
+     (Richard, 25 Aug). Wyatt, 28 Sep: at the foot of the About page. */
+  hfpSealHarvard: 'assets/brand/hfp-seal-harvard.png',
 };
 
 export const NAV = [
@@ -75,31 +78,34 @@ export const FOOTER_COLS = [
 export const PLAYLIST =
   'https://www.youtube-nocookie.com/embed/videoseries?list=PLwztLq8L6GzGM0KtjT74JTB-91uuo_dvE';
 
+/* The clients' films, on Kate's Vimeo (uploaded by Wyatt, 28 Sep). js/video.js
+   turns each page link into what plays. Captions are new copy (flagged 28 Sep);
+   an editor can change them in place. */
 export const VIDEOS = {
   hero: {
-    src: PLAYLIST,
-    title: 'Global Forgiveness Movement films',
-    caption: 'Placeholder: the clients’ current films. Final slot: the non-religious promo film (Kate, 18 Sep).',
+    src: 'https://vimeo.com/1231066400',
+    title: 'Global Forgiveness Movement',
+    caption: 'An introduction to the Global Forgiveness Movement.',
   },
   groupFilm: {
-    src: PLAYLIST,
+    src: 'https://vimeo.com/1231066402',
     title: 'What a Forgiveness Group is',
-    caption: 'Placeholder playlist. Final slot: the “HFP Forgiveness” film (Kate, 18 Sep).',
+    caption: 'What a Forgiveness Group is, and how one runs.',
   },
   secularTrailer: {
-    src: PLAYLIST,
+    src: 'https://vimeo.com/1231066400',
     title: 'Forgiveness Group series trailer',
-    caption: 'Placeholder playlist. Final slot: the non-religious promo film — the same film as the home page until a group-specific one exists (Kate, 18 Sep).',
+    caption: 'The 3-Session Forgiveness Group Series.',
   },
   churchTrailer: {
-    src: PLAYLIST,
+    src: 'https://vimeo.com/1231066399',
     title: 'Church Forgiveness Group series trailer',
-    caption: 'Placeholder playlist. Final slot: the religious promo film (Kate, 18 Sep).',
+    caption: 'The 6-Session Forgiveness Group Series for Churches.',
   },
   research: {
-    src: PLAYLIST,
+    src: 'https://vimeo.com/1231066401',
     title: 'The research behind REACH forgiveness',
-    caption: 'Placeholder playlist. Final slot: the research film, hi-res (Kate, 18 Sep).',
+    caption: 'The research behind the REACH Forgiveness Workbook.',
   },
 };
 

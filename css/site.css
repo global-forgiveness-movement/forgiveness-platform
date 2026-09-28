@@ -617,3 +617,7 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
   .site-brand .brand-seal { width: 28px; height: 28px; padding-left: 0.45rem; }
 }
 .workbooks-basis { margin-top: 1.2rem; }
+
+/* The Harvard HFP seal at the foot of About. */
+.about-seal img { width: 160px; height: 160px; max-width: 100%; }
+@media (max-width: 760px) { .about-seal img { width: 128px; height: 128px; } }

@@ -49,14 +49,14 @@ ok(others.length === 0, others.length ? `an iframe is built outside ${HOME}:\n  
 console.log('Links an editor might paste');
 const CASES = [
   // Vimeo
-  ['https://vimeo.com/123456789', 'https://player.vimeo.com/video/123456789'],
-  ['vimeo.com/123456789', 'https://player.vimeo.com/video/123456789'],
-  ['https://vimeo.com/123456789/abcdef1234', 'https://player.vimeo.com/video/123456789?h=abcdef1234'],
-  ['https://vimeo.com/123456789?share=copy', 'https://player.vimeo.com/video/123456789'],
-  ['https://player.vimeo.com/video/123456789?h=abcdef1234&badge=0', 'https://player.vimeo.com/video/123456789?h=abcdef1234'],
-  ['https://vimeo.com/channels/staffpicks/123456789', 'https://player.vimeo.com/video/123456789'],
-  ['https://vimeo.com/groups/forgive/videos/123456789', 'https://player.vimeo.com/video/123456789'],
-  ['https://vimeo.com/manage/videos/123456789/abcdef1234', 'https://player.vimeo.com/video/123456789?h=abcdef1234'],
+  ['https://vimeo.com/123456789', 'https://player.vimeo.com/video/123456789?title=0&byline=0&portrait=0'],
+  ['vimeo.com/123456789', 'https://player.vimeo.com/video/123456789?title=0&byline=0&portrait=0'],
+  ['https://vimeo.com/123456789/abcdef1234', 'https://player.vimeo.com/video/123456789?h=abcdef1234&title=0&byline=0&portrait=0'],
+  ['https://vimeo.com/123456789?share=copy', 'https://player.vimeo.com/video/123456789?title=0&byline=0&portrait=0'],
+  ['https://player.vimeo.com/video/123456789?h=abcdef1234&badge=0', 'https://player.vimeo.com/video/123456789?h=abcdef1234&title=0&byline=0&portrait=0'],
+  ['https://vimeo.com/channels/staffpicks/123456789', 'https://player.vimeo.com/video/123456789?title=0&byline=0&portrait=0'],
+  ['https://vimeo.com/groups/forgive/videos/123456789', 'https://player.vimeo.com/video/123456789?title=0&byline=0&portrait=0'],
+  ['https://vimeo.com/manage/videos/123456789/abcdef1234', 'https://player.vimeo.com/video/123456789?h=abcdef1234&title=0&byline=0&portrait=0'],
   // YouTube
   ['https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
   ['https://m.youtube.com/watch?v=dQw4w9WgXcQ&feature=share', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
@@ -83,7 +83,7 @@ for (const [input, want] of CASES) {
 
 console.log('The frame');
 const frame = videoFrame('https://vimeo.com/123456789', 'A "film"');
-ok(frame.includes('src="https://player.vimeo.com/video/123456789"'), 'a Vimeo page link draws a player.vimeo.com frame');
+ok(frame.includes('src="https://player.vimeo.com/video/123456789?title=0&amp;byline=0&amp;portrait=0"'), 'a Vimeo page link draws a player.vimeo.com frame');
 ok(frame.includes('title="A &quot;film&quot;"'), 'the title is escaped');
 ok(videoFrame('not a link') === '', 'a link that is not a film draws nothing, not a broken frame');
 

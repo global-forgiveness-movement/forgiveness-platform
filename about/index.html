@@ -61,9 +61,19 @@
     </div>
   </section>
 
+  <!-- The HFP seal with "at Harvard University" (Kate, 28 Sep email). Body only,
+       never the header (Richard, 25 Aug); drawn from BRAND like every mark. -->
+  <section class="section about-seal">
+    <div class="wrap center">
+      <img data-render="hfp-seal-harvard" alt="Human Flourishing Program at Harvard University" width="160" height="160">
+    </div>
+  </section>
+
 </main>
 
 <script type="module">
+  import { BRAND } from '../js/data.js';
+  document.querySelector('[data-render="hfp-seal-harvard"]').src = '../' + BRAND.hfpSealHarvard;
   import { getCollection, fieldAttr } from '../js/content.js';
   getCollection('people').then((people) => {
     document.querySelector('[data-render=people]').innerHTML = people
