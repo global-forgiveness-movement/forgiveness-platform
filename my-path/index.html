@@ -21,19 +21,28 @@
       <!-- Wyatt, 19 Sep: a member needs an account either way, so the code goes
            in FIRST and waits. Nothing is sent anywhere until there is an
            account to attach it to — it is held in this browser only. -->
-      <div class="card" style="max-width:26rem;margin:0 auto 1.4rem;text-align:left">
+      <!-- Kate, 24 Sep: "you only get the code once you've logged in ... just
+           because trying to encourage them to log in." So the code is step one
+           and the account is step two: a valid code turns this card's button
+           into "Create your free account", and the code rides along (held by
+           js/groups.js, the one place that keeps it). -->
+      <div class="card precode" id="preCode-card">
         <p class="kicker" style="margin-bottom:0.3rem" data-copy="mypath.p.been-given-a-group">Been given a group code?</p>
         <h3 data-copy="mypath.h3.put-it-in-now">Put it in now</h3>
         <p class="small">Enter it here and we’ll hold on to it. You still need a free account to save your place — we’ll connect you to your group the moment you have one. Entering a code never tells your facilitator anything about your workbook.</p>
-        <form class="form" id="preCodeForm">
+        <form class="form" id="preCodeForm" novalidate>
           <label for="preCode">Group code</label>
-          <input id="preCode" name="code" placeholder="GFM-3-XXXX" autocomplete="off" spellcheck="false" required>
-          <button class="btn btn--outline" type="submit">Save my code</button>
-          <div class="form-msg" hidden role="status"></div>
+          <input id="preCode" name="code" placeholder="GFM-3-XXXX" autocomplete="off" spellcheck="false" aria-describedby="preCodeMsg">
+          <div class="form-msg" id="preCodeMsg" hidden role="status"></div>
+          <button class="btn btn--outline" type="submit" data-precode="check">Check my code</button>
+          <p class="precode-next" data-precode="next" hidden>
+            <a class="btn btn--primary btn--go" href="../join/">Create your free account</a>
+            <a class="small" href="../join/#signin">I already have an account</a>
+          </p>
         </form>
       </div>
 
-      <a class="btn btn--primary" href="../join/" data-copy="mypath.a.sign-in-or-create">Sign in or create an account</a>
+      <a class="btn btn--primary" href="../join/" data-precode="plain" data-copy="mypath.a.sign-in-or-create">Sign in or create an account</a>
     </div>
   </section>
 
@@ -110,7 +119,7 @@
 <script type="module">
   import { onAuth, signOutUser, deleteAccount, setDisplayName, firstName } from '../js/auth.js';
   import { syncProgress } from '../js/progress-sync.js';
-  import { memberGroup, joinGroup, leaveGroup, CODE_SHAPE, holdGroupCode, heldGroupCode, applyHeldGroupCode } from '../js/groups.js';
+  import { memberGroup, joinGroup, leaveGroup, CODE_SHAPE, holdGroupCode, heldGroupCode, heldCodeLine, groupCodeProblem, forgetGroupCode, applyHeldGroupCode } from '../js/groups.js';
   import { SERIES } from '../js/data.js';
   import { seriesFlow, FLOW_LEGEND } from '../js/series.js';
 
@@ -161,24 +170,37 @@
   const preForm = document.getElementById('preCodeForm');
   if (preForm) {
     const preMsg = preForm.querySelector('.form-msg');
+    const part = (name) => document.querySelector(`[data-precode="${name}"]`);
+    /* One function draws the card's three states \u2014 nothing typed yet, a code
+       held, a code that isn't one \u2014 so the button and the message never
+       disagree. */
+    const show = (held, problem) => {
+      preMsg.hidden = !held && !problem;
+      preMsg.className = `form-msg ${held ? 'form-msg--ok' : 'form-msg--err'}`;
+      if (held) preMsg.innerHTML = heldCodeLine(held);
+      else if (problem) preMsg.textContent = problem;
+      part('check').hidden = !!held;
+      part('next').hidden = !held;
+      part('plain').hidden = !!held;
+      preForm.code.setAttribute('aria-invalid', problem ? 'true' : 'false');
+    };
     const already = heldGroupCode();
-    if (already) {
-      preForm.code.value = already.code;
-      preMsg.className = 'form-msg form-msg--ok';
-      preMsg.innerHTML = `Saved \u2014 that\u2019s the <b>${already.series.name}</b>. Create your account and we\u2019ll connect you.`;
-      preMsg.hidden = false;
-    }
+    if (already) preForm.code.value = already.code;
+    show(already, null);
     preForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const held = holdGroupCode(preForm.code.value);
-      if (held) {
-        preMsg.className = 'form-msg form-msg--ok';
-        preMsg.innerHTML = `Saved \u2014 that\u2019s the <b>${held.series.name}</b>. Create your account and we\u2019ll connect you.`;
-      } else {
-        preMsg.className = 'form-msg form-msg--err';
-        preMsg.textContent = `That doesn\u2019t look like a group code. They look like ${CODE_SHAPE}. Ask your facilitator.`;
-      }
-      preMsg.hidden = false;
+      /* A code that isn't one replaces any code held before — what /join/
+         carries is always what this card last said yes to. */
+      if (!held) forgetGroupCode();
+      else preForm.code.value = held.code;   // shown the way it is written
+      show(held, held ? null : groupCodeProblem(preForm.code.value));
+      if (held) part('next').querySelector('.btn').focus();
+    });
+    /* Typing again means checking again \u2014 the "Create" button never points
+       at a code other than the one on screen. */
+    preForm.code.addEventListener('input', () => {
+      if (!part('next').hidden) show(null, null);
     });
   }
 
