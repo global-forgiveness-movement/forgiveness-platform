@@ -26,11 +26,10 @@ const COP = 'https://harvard.zoom.us/meeting/register/e5vX3r1TTfO_o95o6QfoBw#/re
 
 /* The marks beside the site name in the header (Wyatt, 28 Sep). The GFM logo
    file has not arrived: while `gfm` is null the header draws the leaf. When it
-   lands, put the file in assets/brand/ and name it here — one line. The HFP
-   seal is the program's own mark, no Harvard shield (Richard, 25 Aug). */
+   lands, put the file in assets/brand/ and name it here — one line. The header
+   shows the GFM logo alone (Wyatt, 28 Sep: the HFP seal came out of it). */
 export const BRAND = {
   gfm: 'assets/brand/gfm-logo.png', // the GFM logo carries the name, so the header shows no words beside it (Wyatt, 28 Sep)
-  hfpSeal: 'assets/brand/hfp-seal.png',
   /* Kate's seal WITH "at Harvard University": body only, never the header
      (Richard, 25 Aug). Wyatt, 28 Sep: at the foot of the About page. */
   hfpSealHarvard: 'assets/brand/hfp-seal-harvard.png',
