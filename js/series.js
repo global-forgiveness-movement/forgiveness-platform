@@ -61,18 +61,45 @@ function actionHtml(step, a) {
         <span>${esc(a.label)}${a.note ? `<small>${esc(a.note)}</small>` : ''}</span>
       </label>`;
   }
-  if (a.type === 'meeting') {
-    return `<details class="flow-meet">
-        <summary>${a.when || a.place || a.link ? 'Change the date or place' : 'Add the date and place'}</summary>
-        <form class="flow-meet-form" data-act="meeting" data-step="${step.id}">
-          <label>Date and time <input type="datetime-local" name="when" value="${toLocalInput(a.when)}"></label>
-          <label>Place <input name="place" maxlength="140" placeholder="e.g. Church hall, room 2" value="${esc(a.place)}"></label>
-          <label>Or a video-call link <input name="link" inputmode="url" placeholder="https://…" value="${esc(a.link)}"></label>
-          <button class="btn btn--outline" type="submit">Save</button>
-        </form>
-      </details>`;
-  }
+  if (a.type === 'meeting') return meetingForm(step.id, a);
   return '';
+}
+
+/* THE meeting form — one, wherever a date and place are set: folded inside
+   each meeting step, and laid open in the Next box when nothing is set yet
+   (Wyatt, 28 Sep: "I don't even know where you add it"). */
+const isSet = (a) => !!(a.when || a.place || a.link);
+function meetingForm(stepId, a, { open = false } = {}) {
+  const form = `<form class="flow-meet-form" data-act="meeting" data-step="${stepId}">
+      <label>Date and time <input type="datetime-local" name="when" value="${toLocalInput(a.when)}"></label>
+      <label>Place <input name="place" maxlength="140" placeholder="e.g. Church hall, room 2" value="${esc(a.place)}"></label>
+      <label>Or a video-call link <input name="link" inputmode="url" placeholder="https://…" value="${esc(a.link)}"></label>
+      <button class="btn btn--primary" type="submit">Save</button>
+    </form>`;
+  if (open) return form;
+  return `<details class="flow-meet">
+      <summary>${isSet(a) ? 'Change' : 'Set date and place'}</summary>
+      ${form}
+    </details>`;
+}
+
+/* The one thing to do next, at the top: the next meeting, and — for whoever
+   sets it — its date and place, right here. */
+export function nextBox(view) {
+  const n = view.next;
+  if (!n) {
+    return `<div class="next-meet"><p class="kicker">Every meeting is done</p>
+      <p class="muted">The videos stay below to re-watch whenever you like.</p></div>`;
+  }
+  const set = !!(n.whenText || n.place || n.link);
+  const body = set
+    ? `<p class="next-when">${meetingLine(n)}</p>${n.action ? meetingForm(n.stepId, n.action) : ''}`
+    : n.action ? meetingForm(n.stepId, n.action, { open: true }) : `<p class="muted">${esc(n.note)}</p>`;
+  return `<div class="next-meet">
+      <p class="kicker">Next · Meeting ${n.n}</p>
+      <p class="next-title">${n.title}</p>
+      ${body}
+    </div>`;
 }
 
 function videoHtml(v) {

@@ -145,14 +145,18 @@ const GROUP_TICK_LABEL = {
   meet: 'We met and played the videos',
 };
 
+/* Wyatt, 28 Sep: "someone can very easily, at a glance, understand what they
+   need to do next." So no blurbs: the code, the next meeting, the steps. What
+   differs per role is one line under the code, and a tag in the switcher. */
 const PANEL = {
   member: {
-    kicker: 'You’re following a group',
-    blurb: 'Your group meets and talks; you do the lessons on your own, in your own time. Tick each set of lessons when you’ve done them — that tick is yours alone. Each meeting’s videos open here to re-watch once your group has met.',
+    tag: 'You’re a member',
+    codeLine: 'Your group’s code',
   },
   facilitator: {
-    kicker: 'The group you facilitate',
-    blurb: 'Share the code with everyone in your group — it is saved here, so you never have to remember it. Add each meeting’s date and place below. When you tick a meeting, the next step opens for everyone, and that meeting’s videos open for them to re-watch.',
+    tag: 'You lead',
+    codeLine: 'Give this code to everyone in your group.',
+    copy: 'Copy code',
   },
 };
 
@@ -235,7 +239,7 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
         note: playable
           ? 'Placeholder: the clients’ current films. The session films land in mid-October.'
           : can.playOpen
-            ? 'Opens when the meeting before it is done.'
+            ? 'Opens once the step before it is done.'
             : 'Your facilitator plays this at the meeting. It opens here to re-watch once your group has met.',
       };
     }
@@ -252,11 +256,14 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
     };
   });
 
-  /* The next meeting: the first one not done. Its details sit at the top. */
+  /* The next meeting: the first one not done. Its details sit at the top —
+     and for whoever may set them, so does the very same form the step carries
+     (`action`), so the date is set where the eye already is. */
   const nextStep = can.inGroup ? steps.find((s) => s.kind === 'together' && s.state !== 'done') : null;
   const next = nextStep
     ? { stepId: nextStep.id, n: nextStep.n, title: nextStep.title, ...(nextStep.meeting || { when: '', whenText: '', place: '', link: '' }),
-        note: nextStep.meeting?.whenText ? '' : can.setMeeting ? 'Add its date and place below.' : 'Your facilitator hasn’t added a date yet.' }
+        action: nextStep.actions.find((a) => a.type === 'meeting') || null,
+        note: nextStep.meeting?.whenText || can.setMeeting ? '' : 'Your facilitator hasn’t set a date yet.' }
     : null;
   const current = can.inGroup ? (steps.find((s) => s.state === 'open') || null) : null;
 

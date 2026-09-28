@@ -153,7 +153,6 @@
   import { getCollection, fieldAttr } from '../js/content.js';
   import { loadSeries } from '../js/groups.js';
   import { mountCreateGroup, preselectSeries } from '../js/group-create.js';
-  import { MODE } from '../js/store.js';
   import { onAuth } from '../js/auth.js';
 
   /* The eight guidelines, numbered — Kate's words, from the guidelines
@@ -200,20 +199,11 @@
   }
   document.querySelectorAll('[data-pick]').forEach((b) => b.addEventListener('click', () => show(b.dataset.pick)));
 
+  /* Wyatt, 28 Sep: no confirmation box — a new group goes straight to My
+     Path, where its code, its first meeting and its steps are. My Path shows
+     the newest group first, so nothing needs carrying across. */
   mountCreateGroup(document.querySelector('[data-render="create-group"]'), {
-    onCreated: ({ code, series }, { msg }) => {
-      msg.className = 'form-msg form-msg--ok';
-      msg.innerHTML = `Sent — thank you.<br><br>
-        <b>Your group code is <span class="groupcode">${code}</span></b><br>
-        Share it with your group. When they enter it on My Path, their workbook
-        progress is saved and they can rewatch the ${series.name} videos in their
-        own time. <a href="../my-path/">It is saved in My Path</a> too, so you can
-        always come back for it.` +
-        (MODE === 'demo'
-          ? '<br><br><span class="small muted">Preview note: the backend isn’t connected yet, so this group lives in this browser only.</span>'
-          : '');
-      msg.hidden = false;
-    },
+    onCreated: () => { location.href = '../my-path/#your-group'; },
   });
 </script>
 <script type="module" src="../js/site.js"></script>

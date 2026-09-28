@@ -619,3 +619,36 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 /* The Harvard HFP seal at the foot of About. */
 .about-seal img { width: 160px; height: 160px; max-width: 100%; }
 @media (max-width: 760px) { .about-seal img { width: 128px; height: 128px; } }
+
+/* ---- My Path: one section for your groups (Wyatt, 28 Sep) ----
+   At a glance: which group, its code, the one next thing, then the steps. */
+.group-home { max-width: 46rem; margin-inline: auto; }
+.group-home > h2 { margin-bottom: 0.8rem; }
+.group-switch { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 1.2rem; }
+.group-tab { display: grid; gap: 0.15rem; text-align: left; cursor: pointer; font: inherit; color: var(--navy);
+  background: var(--white); border: 1.5px solid var(--line); border-radius: 14px; padding: 0.55rem 0.9rem; }
+.group-tab b { font-family: var(--font-head); font-weight: 600; font-size: 0.95rem; }
+.group-tab .groupcode { font-size: 0.95em; padding: 0; background: none; }
+.group-tab small { font-size: 0.8rem; color: var(--muted); }
+.group-tab[aria-pressed="true"] { background: var(--teal); border-color: var(--teal); color: #fff; }
+.group-tab[aria-pressed="true"] small, .group-tab[aria-pressed="true"] .groupcode { color: #fff; }
+.group-code { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 0.9rem; }
+.groupcode--big { font-size: clamp(1.5rem, 5vw, 2rem); letter-spacing: 0.06em; }
+.btn--sm { padding: 0.45rem 0.9rem; font-size: 0.88rem; }
+.group-sub { margin: 0.4rem 0 1rem; }
+.next-meet .next-title { font-family: var(--font-head); font-weight: 600; color: var(--navy); margin: 0 0 0.5rem; }
+.next-meet .next-when { margin: 0 0 0.3rem; }
+.next-meet .flow-meet-form { margin-top: 0.2rem; }
+@media (min-width: 640px) {
+  .next-meet .flow-meet-form { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; }
+  .next-meet .flow-meet-form .btn { grid-column: 1 / -1; }
+}
+.group-home .flow { margin-top: 1.2rem; }
+.group-finish { margin: 1rem 0 0; }
+.linkish { background: none; border: 0; padding: 0; font: inherit; font-size: 0.9rem; color: var(--plum); text-decoration: underline; cursor: pointer; }
+.group-more { margin-top: 1.8rem; border-top: 1px solid var(--line); }
+.group-more-item { border-bottom: 1px solid var(--line); padding: 0.8rem 0; }
+.group-more-item > summary { cursor: pointer; font-family: var(--font-head); font-weight: 600; color: var(--teal-deep); }
+.group-more-item[open] > summary { margin-bottom: 0.8rem; }
+.group-more-item .form { max-width: 28rem; }
+.group-more-item .past-list { display: grid; gap: 0.6rem; }

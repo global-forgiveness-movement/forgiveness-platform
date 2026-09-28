@@ -66,25 +66,22 @@
       </div>
     </section>
 
-    <section class="section section--paper">
+    <!-- Wyatt, 28 Sep: ONE section for your groups — "someone can very easily,
+         at a glance, understand what they need to do next." A switcher when
+         there are several, then the chosen group: its code, the next meeting
+         (its date and place set right there), its steps. Everything else —
+         start another, join with a code, past groups — waits folded below.
+         One engine decides what each group shows (js/group-engine.js), one
+         display draws it (js/series.js). -->
+    <section class="section" id="your-group">
       <div class="wrap">
-        <h2 data-copy="mypath.h2.your-groups">Your groups</h2>
-        <!-- Wyatt, 28 Sep: a person can be in several groups at once — lead one
-             or more, and follow others. One card per active group, each drawn
-             from the same engine (js/group-engine.js) for that group alone;
-             starting another group and joining one by code are always here. -->
-        <div class="path-cards" data-render="group-cards"></div>
-        <div class="path-cards path-more" data-render="more-cards"></div>
-      </div>
-    </section>
-
-    <section class="section" data-render="series-section" hidden>
-      <div class="wrap">
-        <h2 data-copy="mypath.h2.your-forgiveness-group-series">Your Forgiveness Group series</h2>
-        <p class="small muted" data-render="series-for" hidden></p>
-        <p style="max-width:62ch" data-copy="mypath.p.you-do-the-workbook"><b>You do the workbook lessons on your own, before each meeting.</b> The meeting itself is for discussing them — the sessions below are loosely structured around the lessons already completed, not a time to work through them together.</p>
-        <p class="muted" style="max-width:62ch" data-copy="mypath.p.these-are-the-videos">These are the videos your facilitator plays at each group meeting. The films are in production and land here this fall — the structure below is what to expect. Thinking of facilitating one? <a href="../groups/">Everything about facilitating a group →</a></p>
-        <div class="card series-card" data-render="series" style="margin-top:1.2rem"></div>
+        <div class="group-home">
+          <h2 data-render="group-heading">Your group</h2>
+          <div class="group-switch" data-render="switch" hidden></div>
+          <div data-render="group"></div>
+          <div class="path-cards" data-render="start" hidden></div>
+          <div class="group-more" data-render="more"></div>
+        </div>
       </div>
     </section>
 
@@ -98,18 +95,6 @@
             <p class="small muted" data-copy="mypath.p.every-edition-and-language">Every edition and language, always free.</p>
             <a class="btn btn--outline" href="../workbooks/" data-copy="mypath.a.get-the-pdf">Get the PDF</a>
         </div>
-      </div>
-    </section>
-
-    <!-- Ruling 2, 28 Sep: finishing a group loses nothing, so it asks nothing.
-         The group waits here, code still showing, one tap from coming back. -->
-    <section class="section section--paper" data-render="past-section" hidden>
-      <div class="wrap">
-        <details class="past-groups" data-render="past-details">
-          <summary><h2 data-copy="mypath.h2.past-groups">Past groups</h2> <span class="muted" data-render="past-count"></span></summary>
-          <p class="small muted" data-copy="mypath.p.groups-you-finished-with">Groups you’ve finished with. Nothing is lost — bring one back and it’s just as you left it.</p>
-          <div class="past-list" data-render="past"></div>
-        </details>
       </div>
     </section>
 
@@ -138,7 +123,7 @@
     loadSeries, groupState, myTicks, groupTicks, actOnGroup, tickMine, SESSION_VIDEO,
   } from '../js/groups.js';
   import { deriveSeries, pathView, roleFor } from '../js/group-engine.js';
-  import { seriesFlow, seriesName, seriesFraming, meetingLine, wireSeries, esc, FLOW_LEGEND } from '../js/series.js';
+  import { seriesFlow, seriesName, nextBox, wireSeries, esc } from '../js/series.js';
   import { mountCreateGroup } from '../js/group-create.js';
 
   const TOTAL_LESSONS = 12;
@@ -175,7 +160,9 @@
        shown, since it is the group they came for. */
     const held = await applyHeldGroupCode(u.id);
     if (held) choose(held.code);
-    renderGroup(u.id);
+    await renderGroup(u.id);
+    /* Arriving from "Create my group" on the Groups page: straight to it. */
+    if (location.hash === '#your-group') home.scrollIntoView({ block: 'start' });
   });
 
   /* Signed out: the code is parsed here, in the browser, so someone gets a
@@ -226,42 +213,40 @@
     catch { btn.disabled = false; }
   });
 
-  /* "Your groups" and "Your series" — one engine decides what this person
-     sees of each group (js/group-engine.js), one display draws it
-     (js/series.js). This script only fetches, hands over, and writes back
-     what was ticked. Several groups are several calls to the same engine:
-     each group's role comes from that group's own code record. */
-  const cardsSlot = document.querySelector('[data-render="group-cards"]');
-  const moreSlot = document.querySelector('[data-render="more-cards"]');
-  const seriesSlot = document.querySelector('[data-render="series"]');
-  const seriesSection = document.querySelector('[data-render="series-section"]');
-  const seriesFor = document.querySelector('[data-render="series-for"]');
-  const pastSection = document.querySelector('[data-render="past-section"]');
-  const pastDetails = document.querySelector('[data-render="past-details"]');
-  let ctx = null; // { userId, code } of the group whose series is on screen
+  /* "Your group" — one engine decides what this person sees of each group
+     (js/group-engine.js), one display draws it (js/series.js). This script
+     only fetches, hands over, and writes back what was ticked or set. Several
+     groups are several calls to the same engine: each group's role comes from
+     that group's own code record. */
+  const slot = (name) => document.querySelector(`[data-render="${name}"]`);
+  const groupSlot = slot('group');
+  const home = document.getElementById('your-group');
+  let ctx = null; // { userId, code } of the group on screen
 
-  /* Which group's series is shown. Held on this page only: js/groups.js is
-     the one place a group code is ever kept in the browser
-     (scripts/qa/one-held-code.sh), so a reload shows the first group. */
+  /* Which group is shown. Held on this page only: js/groups.js is the one
+     place a group code is ever kept in the browser
+     (scripts/qa/one-held-code.sh). With none chosen, the newest group shows —
+     so a group just created on the Groups page is the one you land on. */
   let chosen = null;
   function choose(code) { chosen = code; }
+  const newestFirst = (a, b) => String(b.joinedAt || '').localeCompare(String(a.joinedAt || ''));
 
-  wireSeries(seriesSlot, async (a) => {
+  wireSeries(groupSlot, async (a) => {
     if (!ctx) return;
     if (a.scope === 'group') await actOnGroup(ctx.code, a.stepId, a);
     else await tickMine(ctx.userId, ctx.code, a.stepId, a.value);
     await renderGroup(ctx.userId);
   });
 
+  const meetings = (view) => view.steps.filter((s) => s.kind === 'together').length;
+
   async function renderGroup(userId) {
     const all = await myGroups(userId);
     if (all === null) {
-      cardsSlot.innerHTML = '<p class="notice">We couldn’t load your groups just now. Please reload the page in a moment.</p>';
-      moreSlot.innerHTML = '';
-      seriesSection.hidden = true;
+      groupSlot.innerHTML = '<p class="notice">We couldn’t load your groups just now. Please reload the page in a moment.</p>';
       return;
     }
-    const active = all.filter((g) => g.status === 'active');
+    const active = all.filter((g) => g.status === 'active').sort(newestFirst);
     const past = all.filter((g) => g.status === 'past');
     if (!active.some((g) => g.code === chosen)) chosen = active[0]?.code || null;
 
@@ -279,103 +264,122 @@
       return { g, view, isChosen };
     }));
 
-    cardsSlot.innerHTML = groups.map(({ g }) => `<div class="card group-card" data-card="group" data-code="${esc(g.code)}"></div>`).join('');
-    cardsSlot.hidden = !groups.length;
-    groups.forEach((x) => CARDS.group(cardsSlot.querySelector(`[data-code="${x.g.code}"]`), { userId, ...x, many: groups.length > 1 }));
+    slot('group-heading').textContent = groups.length > 1 ? 'Your groups' : 'Your group';
 
-    /* Starting another group and joining one by code are always offered.
-       With no group yet they are the page (pathView('none')); once there is
-       one, they fold down so the group comes first. */
-    const more = pathView('none').cards;
-    moreSlot.innerHTML = more.map((c) => `<div class="card" data-card="${c}"></div>`).join('');
-    more.forEach((c) => CARDS[c](moreSlot.querySelector(`[data-card="${c}"]`), { userId, folded: groups.length > 0 }));
+    /* Several groups: one button each — its series, its code, and where it is. */
+    const sw = slot('switch');
+    sw.hidden = groups.length < 2;
+    sw.innerHTML = groups.map(({ g, view, isChosen }) => `
+      <button type="button" class="group-tab" data-choose="${esc(g.code)}" aria-pressed="${isChosen}">
+        <b>${meetings(view)} sessions · <span class="groupcode">${esc(g.code)}</span></b>
+        <small>${esc(view.panel.tag)} · ${view.next ? `Next: meeting ${view.next.n}` : 'All meetings done'}</small>
+      </button>`).join('');
 
     const shown = groups.find((x) => x.isChosen);
     ctx = shown ? { userId, code: shown.g.code } : null;
-    seriesSection.hidden = !(shown && shown.view.showSeries);
-    seriesSlot.innerHTML = shown ? `${seriesFraming(shown.view)}${seriesName(shown.view)}${FLOW_LEGEND}${seriesFlow(shown.view)}` : '';
-    seriesFor.hidden = !(shown && groups.length > 1);
-    if (shown) seriesFor.innerHTML = `For your group <span class="groupcode">${esc(shown.g.code)}</span>${shown.g.groupName ? ` · ${esc(shown.g.groupName)}` : ''}`;
+    groupSlot.innerHTML = shown ? groupHtml(shown) : '';
 
-    pastSection.hidden = !past.length;
-    document.querySelector('[data-render="past-count"]').textContent = past.length ? `· ${past.length}` : '';
-    document.querySelector('[data-render="past"]').innerHTML = past.map((g) => `
-      <div class="past-group">
-        <p><b>${esc((allSeries[g.seriesId] || g.series).name)}</b><br>
-          <span class="small muted">${g.groupName ? esc(g.groupName) + ' · ' : ''}Code <span class="groupcode">${esc(g.code)}</span></span></p>
-        <button class="btn btn--outline" data-bringback="${esc(g.code)}">${esc(pathView('member').panel.bringBack)}</button>
-      </div>`).join('');
+    /* No group yet: the two ways in are the section. Otherwise they fold
+       below the group, with Past groups beside them. */
+    const start = slot('start');
+    start.hidden = groups.length > 0;
+    start.innerHTML = groups.length ? '' : '<div class="card" data-card="create"></div><div class="card" data-card="join"></div>';
+    const more = slot('more');
+    more.innerHTML = `
+      ${groups.length ? `<details class="group-more-item" data-more="create"><summary>Start another group</summary><div data-card="create"></div></details>
+      <details class="group-more-item" data-more="join"><summary>Join a group with a code</summary><div data-card="join"></div></details>` : ''}
+      ${past.length ? `<details class="group-more-item"><summary>Past groups (${past.length})</summary>
+        <div class="past-list">${past.map((g) => `
+          <div class="past-group">
+            <p><b>${esc((allSeries[g.seriesId] || g.series).name)}</b><br>
+              <span class="small muted">${g.groupName ? esc(g.groupName) + ' · ' : ''}Code <span class="groupcode">${esc(g.code)}</span></span></p>
+            <button class="btn btn--outline" data-bringback="${esc(g.code)}">${esc(pathView('member').panel.bringBack)}</button>
+          </div>`).join('')}</div></details>` : ''}`;
+    const scope = groups.length ? more : start;
+    CARDS.create(scope.querySelector('[data-card="create"]'), { userId, folded: groups.length > 0 });
+    CARDS.join(scope.querySelector('[data-card="join"]'), { userId, folded: groups.length > 0 });
   }
 
-  /* Bring back: one tap, no dialog, and the group it brings back is shown. */
-  document.querySelector('[data-render="past"]').addEventListener('click', async (e) => {
-    const b = e.target.closest('[data-bringback]');
-    if (!b || !currentUserId) return;
-    b.disabled = true;
-    const userId = currentUserId;
-    await bringBackGroup(userId, b.dataset.bringback);
-    choose(b.dataset.bringback);
-    await renderGroup(userId);
-    document.querySelector(`[data-code="${b.dataset.bringback}"]`)?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  /* The chosen group: its code, the one next thing, then every step. */
+  function groupHtml({ g, view }) {
+    const p = view.panel;
+    return `
+      <div class="group-code">
+        <span class="groupcode groupcode--big">${esc(g.code)}</span>
+        ${p.copy ? `<button type="button" class="btn btn--outline btn--sm" data-copycode="${esc(g.code)}">${esc(p.copy)}</button>` : ''}
+      </div>
+      <p class="small muted group-sub">${esc(p.codeLine)} · ${seriesName(view, 'span')}</p>
+      ${nextBox(view)}
+      ${seriesFlow(view)}
+      <p class="group-finish"><button type="button" class="linkish" data-finish="${esc(g.code)}">${esc(p.finish)}</button></p>`;
+  }
+
+  /* One listener for the section's own buttons. */
+  home.addEventListener('click', async (e) => {
+    const pick = e.target.closest('[data-choose]');
+    if (pick && currentUserId) { choose(pick.dataset.choose); await renderGroup(currentUserId); return; }
+
+    const copy = e.target.closest('[data-copycode]');
+    if (copy) {
+      const code = copy.dataset.copycode;
+      let ok = false;
+      try { await navigator.clipboard.writeText(code); ok = true; } catch { /* fall back */ }
+      if (!ok) {
+        const r = document.createRange();
+        r.selectNodeContents(home.querySelector('.groupcode--big'));
+        getSelection().removeAllRanges(); getSelection().addRange(r);
+      }
+      copy.textContent = ok ? 'Copied' : 'Selected — press ⌘C';
+      setTimeout(() => (copy.textContent = view0Copy), 2500);
+      return;
+    }
+
+    /* Ruling 2: reversible, so no "are you sure". It moves to Past groups,
+       which opens so the person sees exactly where it went. */
+    const fin = e.target.closest('[data-finish]');
+    if (fin && currentUserId) {
+      fin.disabled = true;
+      await finishGroup(currentUserId, fin.dataset.finish);
+      choose(null);
+      await renderGroup(currentUserId);
+      [...home.querySelectorAll('.group-more-item')].pop()?.setAttribute('open', '');
+      return;
+    }
+
+    /* Bring back: one tap, no dialog, and the group it brings back is shown. */
+    const back = e.target.closest('[data-bringback]');
+    if (back && currentUserId) {
+      back.disabled = true;
+      await bringBackGroup(currentUserId, back.dataset.bringback);
+      choose(back.dataset.bringback);
+      await renderGroup(currentUserId);
+      home.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
   });
+  const view0Copy = pathView('facilitator').panel.copy;
+
+  /* A group just made or joined: show it, and put the cursor where its first
+     date goes. */
+  async function showNew(userId, code) {
+    choose(code);
+    await renderGroup(userId);
+    home.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    home.querySelector('.next-meet input')?.focus({ preventScroll: true });
+  }
 
   const CARDS = {
-    /* One group: which series, the code, and the next meeting on top. */
-    group(card, { userId, g, view, isChosen, many }) {
-      const n = view.next;
-      const next = n
-        ? `<div class="next-meet">
-            <p class="kicker">Next · meeting ${n.n}</p>
-            <p>${n.whenText || n.place || n.link ? meetingLine(n) : `<span class="muted">${esc(n.note)}</span>`}</p>
-          </div>`
-        : `<div class="next-meet"><p class="kicker">Every meeting is done</p><p class="muted">The videos stay here to re-watch whenever you like.</p></div>`;
-      card.classList.toggle('is-chosen', isChosen && many);
-      card.innerHTML = `<p class="kicker" style="margin-bottom:0.3rem">${view.panel.kicker}</p>
-        ${seriesName(view)}
-        <p class="small muted">${g.groupName ? esc(g.groupName) + ' · ' : ''}Code <span class="groupcode">${esc(g.code)}</span></p>
-        ${next}
-        ${isChosen ? `<p class="small">${view.panel.blurb}</p>` : ''}
-        <div class="dl-row">
-          ${many ? (isChosen
-            ? '<span class="pill">Its steps are shown below</span>'
-            : '<button class="btn btn--outline" data-choose>Show this group’s steps</button>') : ''}
-          <button class="btn" data-finish style="color:var(--plum)">${esc(view.panel.finish)}</button>
-        </div>`;
-      card.querySelector('[data-choose]')?.addEventListener('click', async () => {
-        choose(g.code);
-        await renderGroup(userId);
-        seriesSection.scrollIntoView({ block: 'start', behavior: 'smooth' });
-      });
-      /* Ruling 2: reversible, so no "are you sure". It moves to Past groups,
-         which opens so the person sees exactly where it went. */
-      card.querySelector('[data-finish]').addEventListener('click', async (e) => {
-        e.currentTarget.disabled = true;
-        await finishGroup(userId, g.code);
-        await renderGroup(userId);
-        pastDetails.open = true;
-      });
-    },
-
     /* Ruling 9: create a group inside My Path — the same one-question form
        as the Groups page, not a copy of it (js/group-create.js). */
     create(card, { userId, folded }) {
-      const body = `<p class="small">Pick your series and we’ll give you a group code straight away. You’ll run the group from here: meeting dates, and a tick for each meeting that opens the next step for everyone.</p>
-        <div data-slot="create"></div>`;
-      card.innerHTML = `<p class="kicker" style="margin-bottom:0.3rem">Leading a group?</p>
-        ${folded
-          ? `<details class="card-fold"><summary><h3>Start another group</h3></summary>${body}</details>`
-          : `<h3>Start a group</h3>${body}`}`;
+      card.innerHTML = `${folded ? '' : '<h3>Start a group</h3>'}<div data-slot="create"></div>`;
       mountCreateGroup(card.querySelector('[data-slot="create"]'), {
-        onCreated: async ({ code }) => { choose(code); await renderGroup(userId); },
+        onCreated: ({ code }) => showNew(userId, code),
       });
     },
 
     join(card, { userId, folded }) {
-      const body = `<p class="small">Your facilitator has it. <b>Entering it does three things:</b> it shows you which
-          series your group is following, it lets you rewatch any session video in your own time, and it
-          keeps your place in the workbook. It does not tell your facilitator — or anyone else — anything
-          about your workbook or what you have written. You can leave the group here whenever you like.</p>
-        ${folded ? '' : '<p class="small muted">If you’re not in a group, you can ignore this — nothing here is required.</p>'}
+      card.innerHTML = `${folded ? '' : '<h3>Join with a code</h3>'}
+        <p class="small">Your facilitator gives you the code. Joining never shares your workbook, or anything you write in it, with anyone.</p>
         <form class="form" data-join>
           <label>Group code
             <input name="code" placeholder="${CODE_SHAPE}" autocomplete="off" spellcheck="false" required>
@@ -383,10 +387,6 @@
           <button class="btn btn--primary" type="submit">Join my group</button>
           <div class="form-msg" hidden role="status"></div>
         </form>`;
-      card.innerHTML = `<p class="kicker" style="margin-bottom:0.3rem">Already meeting with a group?</p>
-        ${folded
-          ? `<details class="card-fold"><summary><h3>Join a group with a code</h3></summary>${body}</details>`
-          : `<h3>Enter your group code</h3>${body}`}`;
       const form = card.querySelector('[data-join]');
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -398,8 +398,7 @@
           msg.hidden = false;
           return;
         }
-        choose(found.code);
-        await renderGroup(userId);
+        await showNew(userId, found.code);
       });
     },
   };
