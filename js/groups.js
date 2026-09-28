@@ -17,7 +17,7 @@
 import { SERIES, PLAYLIST } from './data.js';
 import { store, withPatience } from './store.js';
 import { getCollection } from './content.js';
-import { applyGroupAction, applyMyTick, runsGroup, createdBy, FACILITATOR_SEES_MEMBER_TICKS } from './group-engine.js';
+import { applyGroupAction, applyMyTick, createdBy, facilitatorOf, FACILITATOR_SEES_MEMBER_TICKS } from './group-engine.js';
 
 /* No 0/O/1/I/L/S/5/2/Z — these get read aloud and written on whiteboards. */
 const ALPHABET = 'ACDEFGHJKMNPQRTUVWXY34679';
@@ -73,11 +73,13 @@ export const seriesIdFromFormValue = (value) =>
 
 /* A facilitator registering a group. Returns the code to show them.
 
-   `userId` is present because the form now sits behind sign-in (Kate 18 Sep,
-   Wyatt's ruling the same day). When it is, the facilitator is enrolled in
-   their OWN group through the same `members` record a participant gets — so
-   My Path shows them their code forever instead of the old "this is the only
-   time we show it to you". One path renders both. */
+   `userId` is present because the form sits behind sign-in (Kate 18 Sep,
+   Wyatt's ruling the same day). The facilitator is then enrolled in their
+   OWN group through the same membership a participant gets (enroll, below)
+   — so My Path shows them their code forever. What makes them its
+   facilitator is not that membership: it is the account id written onto
+   groupCodes/{code} here, the one record the engine and firestore.rules both
+   read (lane D, 28 Sep). */
 export async function registerGroup(fields, userId) {
   const seriesId = seriesIdFromFormValue(fields.series);
   const code = makeGroupCode(seriesId);
@@ -86,21 +88,14 @@ export async function registerGroup(fields, userId) {
   // A second, code-keyed record so a member's lookup can name the group.
   /* `facilitator` is the account id (a random string — no name, no email)
      that firestore.rules checks before letting anyone write the group's
-     dates and ticks. Written once, never changed. */
+     dates and ticks. Written once; only an editor can change it. */
   await store.set('groupCodes', code, {
     seriesId,
     groupName: fields.location || '',
     createdAt: record.submittedAt,
     ...(userId ? { facilitator: userId } : {}),
   });
-  if (userId) {
-    await store.set('members', userId, {
-      code, seriesId,
-      groupName: fields.location || '',
-      facilitator: true,
-      joinedAt: record.submittedAt,
-    });
-  }
+  if (userId) await enroll(userId, { code, seriesId, groupName: fields.location || '' });
   return { code, seriesId, series: SERIES[seriesId] };
 }
 
@@ -170,36 +165,105 @@ export async function applyHeldGroupCode(userId) {
   }
 }
 
+/* A code entered on My Path (or held from before there was an account).
+   Entering a code you already have brings that group back if it was
+   finished; it never makes a second copy. */
 export async function joinGroup(userId, raw) {
   const found = await lookupGroup(raw);
   if (!found) return null;
-  /* A facilitator who removed their group and types its code back in gets
-     it back as theirs — the engine decides from the code's own record. */
-  await store.set('members', userId, {
-    code: found.code,
-    seriesId: found.seriesId,
-    groupName: found.groupName,
-    joinedAt: new Date().toISOString(),
-    facilitator: createdBy(found.codeDoc, userId),
-  });
+  await enroll(userId, found);
   return found;
 }
 
-export async function memberGroup(userId) {
+/* ------------------------------------------------ memberships
+
+   Wyatt, 28 Sep: a person can be in several groups at once — lead one or
+   more, and follow others. So members/{uid} (which also holds the person's
+   name and newsletter choice — never clobbered) keeps a map keyed by code:
+
+     groups: { 'GFM-3-4NXT': { seriesId, groupName, status: 'active' | 'past',
+                              joinedAt, pastAt? } }
+
+   Before 28 Sep it held ONE group at its top level ({ code, seriesId,
+   groupName, joinedAt, facilitator }). That shape is still read, and
+   converted the first time it is — so nobody loses their group. The old
+   `facilitator` flag is dropped, not carried: who facilitates is
+   groupCodes/{code}.facilitator and nothing else. */
+const OLD_SHAPE = ['code', 'seriesId', 'groupName', 'joinedAt', 'facilitator'];
+
+/* Pure: any members doc, old or new, in the new shape. */
+export function membershipsOf(doc) {
+  const groups = { ...(doc?.groups || {}) };
+  const converted = !!doc && OLD_SHAPE.some((k) => k in doc);
+  if (doc?.code && SERIES[doc.seriesId] && !groups[doc.code]) {
+    groups[doc.code] = { seriesId: doc.seriesId, groupName: doc.groupName || '', status: 'active', joinedAt: doc.joinedAt || '' };
+  }
+  const rest = { ...(doc || {}) };
+  OLD_SHAPE.forEach((k) => delete rest[k]);
+  return { doc: { ...rest, groups }, converted };
+}
+
+/* Read, converting an old-shape record on the way (and saving the
+   conversion, so it happens once). A failed save still shows the groups. */
+async function readMember(userId) {
+  const raw = await withPatience(store.get('members', userId));
+  const { doc, converted } = membershipsOf(raw);
+  if (converted) await writeMember(userId, doc).catch(() => {});
+  return doc;
+}
+
+/* The whole document, written back exactly — so a converted record really
+   loses its old top-level fields (a merge could never delete them). */
+const writeMember = (userId, doc) => store.set('members', userId, doc, { replace: true });
+
+async function changeMembership(userId, code, change) {
+  const doc = await readMember(userId);
+  const next = change(doc.groups[code] || null);
+  const groups = { ...doc.groups };
+  if (next) groups[code] = next; else delete groups[code];
+  await writeMember(userId, { ...doc, groups });
+}
+
+/* The ONE way into a group, for whoever creates it and whoever joins it. */
+function enroll(userId, { code, seriesId, groupName }) {
+  return changeMembership(userId, code, (cur) => {
+    const back = { ...(cur || { seriesId, groupName: groupName || '', joinedAt: new Date().toISOString() }), status: 'active' };
+    delete back.pastAt;
+    return back;
+  });
+}
+
+/* Every group this person is in, active and past, oldest first. `null`
+   means the record could not be read (not "no groups"). */
+export async function myGroups(userId) {
   try {
-    const m = await withPatience(store.get('members', userId));
-    if (!m?.seriesId) return null;
-    return { ...m, series: SERIES[m.seriesId] };
+    const doc = await readMember(userId);
+    return Object.entries(doc.groups)
+      .filter(([, g]) => SERIES[g?.seriesId])
+      .map(([code, g]) => ({ code, ...g, status: g.status === 'past' ? 'past' : 'active', series: SERIES[g.seriesId] }))
+      .sort((a, b) => String(a.joinedAt).localeCompare(String(b.joinedAt)));
   } catch {
     return null;
   }
 }
 
-/* Leaving takes your lesson ticks with you; the group's own dates and
-   ticks stay, because they belong to everyone else in it. */
-export async function leaveGroup(userId) {
-  try { await store.remove('memberTicks', userId); } catch { /* none kept */ }
-  try { await store.remove('members', userId); } catch { /* already gone */ }
+/* Ruling 2, 28 Sep: "Finished with this group" moves it to Past groups;
+   "Bring back" returns it. Nothing is deleted either way — the code, the
+   group's state and your own ticks all stay — so neither asks first. */
+export const finishGroup = (userId, code) =>
+  changeMembership(userId, code, (cur) => cur && { ...cur, status: 'past', pastAt: new Date().toISOString() });
+export const bringBackGroup = (userId, code) =>
+  changeMembership(userId, code, (cur) => {
+    if (!cur) return null;
+    const back = { ...cur, status: 'active' };
+    delete back.pastAt;
+    return back;
+  });
+
+/* The group's own record — public, and the one place that says who runs it. */
+export async function codeRecord(code) {
+  try { return await withPatience(store.get('groupCodes', code)); }
+  catch { return null; }
 }
 
 /* ------------------------------------------------ the running group
@@ -211,8 +275,8 @@ export async function leaveGroup(userId) {
                        facilitator has ticked, and each meeting's date, time,
                        place and link. Members read it; only the facilitator
                        named on groupCodes/{code} may write it.
-   memberTicks/{uid}   one person's own lesson ticks, and the code they were
-                       ticked under. Only that person reads or writes it.
+   memberTicks/{uid}   one person's own lesson ticks, one set per group code.
+                       Only that person reads or writes it.
    content/series      the series themselves, editable (THE CONTRACT);
                        SERIES in data.js is the default. */
 
@@ -239,18 +303,26 @@ export async function actOnGroup(code, stepId, action) {
   return next;
 }
 
-/* Ticks kept under another code (an earlier group) are not this group's. */
+/* A person's own lesson ticks, one set per group:
+     memberTicks/{uid} = { groups: { [code]: { [stepId]: true } }, updatedAt }
+   Before 28 Sep one set was kept ({ code, ticks }); read and converted. */
+export function ticksOf(doc) {
+  const groups = { ...(doc?.groups || {}) };
+  if (doc?.code && doc?.ticks && !groups[doc.code]) groups[doc.code] = doc.ticks;
+  return groups;
+}
+
 export async function myTicks(userId, code) {
-  try {
-    const doc = await withPatience(store.get('memberTicks', userId));
-    return doc?.code === code ? doc.ticks || {} : {};
-  } catch { return {}; }
+  try { return ticksOf(await withPatience(store.get('memberTicks', userId)))[code] || {}; }
+  catch { return {}; }
 }
 
 export async function tickMine(userId, code, stepId, value) {
-  const ticks = applyMyTick(await myTicks(userId, code), stepId, value);
-  await store.set('memberTicks', userId, { code, ticks, updatedAt: new Date().toISOString() }, { replace: true });
-  return ticks;
+  const groups = ticksOf(await store.get('memberTicks', userId));
+  groups[code] = applyMyTick(groups[code], stepId, value);
+  if (!Object.keys(groups[code]).length) delete groups[code];
+  await store.set('memberTicks', userId, { groups, updatedAt: new Date().toISOString() }, { replace: true });
+  return groups[code] || {};
 }
 
 /* Ruling 5: only ever read while the switch is on. The live rules keep the
@@ -258,15 +330,57 @@ export async function tickMine(userId, code, stepId, value) {
    nothing on the real site. */
 export async function groupTicks(code) {
   if (!FACILITATOR_SEES_MEMBER_TICKS) return [];
-  try { return (await store.list('memberTicks')).filter((t) => t.code === code); }
-  catch { return []; }
+  try {
+    return (await store.list('memberTicks'))
+      .map((t) => ticksOf(t)[code])
+      .filter(Boolean)
+      .map((ticks) => ({ ticks }));
+  } catch { return []; }
 }
 
-/* Account deletion: everything the account stores in the group world. A
-   facilitator's group state goes too — "deleting removes your account and
-   everything it stores" (My Path) has to stay literally true. */
+/* Account deletion: everything the account stores in the group world —
+   every membership (auth.js removes members/{uid}), every tick, and the
+   shared state of every group this account facilitates, found the one way
+   facilitation is decided: the code's own record. "Deleting removes your
+   account and everything it stores" (My Path) has to stay literally true. */
 export async function eraseGroupData(userId) {
-  const m = await store.get('members', userId).catch(() => null);
-  if (m?.code && runsGroup(m)) await store.remove('groupState', m.code).catch(() => {});
+  const codes = new Set();
+  const listed = await store.list('groupCodes').catch(() => []);
+  listed.forEach((c) => { if (createdBy(c, userId)) codes.add(c.id); });
+  const mine = (await myGroups(userId)) || [];
+  await Promise.all(mine.map(async (g) => { if (createdBy(await codeRecord(g.code), userId)) codes.add(g.code); }));
+  await Promise.all([...codes].map((code) => store.remove('groupState', code).catch(() => {})));
   await store.remove('memberTicks', userId).catch(() => {});
+}
+
+/* ------------------------------------------------ /admin: the older groups
+
+   Groups created before September 28 were registered before the code's
+   record named its facilitator, so nobody could tick their meetings (the
+   bug Wyatt hit on GFM-3-4NXT). Each registration in groups/ carries the
+   account that created it; this names that account on the code's record.
+   Editors only (firestore.rules: groups/ is editor-read, groupCodes/ is
+   editor-update). Never guesses: a code with no registration, a
+   registration made signed out, or two accounts claiming one code is
+   listed, not assigned. Safe to run twice — a named code is left alone. */
+export async function repairFacilitators() {
+  const [codes, regs] = await Promise.all([store.list('groupCodes'), store.list('groups')]);
+  const report = { given: [], left: [], alreadyNamed: 0 };
+  for (const { id: code, ...rec } of codes) {
+    if (facilitatorOf(rec)) { report.alreadyNamed++; continue; }
+    const theirs = regs.filter((r) => r.code === code);
+    const accounts = [...new Set(theirs.map((r) => r.userId).filter(Boolean))];
+    if (accounts.length === 1) {
+      await store.set('groupCodes', code, { ...rec, facilitator: accounts[0] });
+      report.given.push({ code, groupName: rec.groupName || '' });
+    } else {
+      report.left.push({
+        code, groupName: rec.groupName || '',
+        why: accounts.length > 1 ? 'more than one account registered this code'
+          : theirs.length ? 'it was registered without an account, so there is no one to name'
+          : 'there is no registration for this code',
+      });
+    }
+  }
+  return report;
 }

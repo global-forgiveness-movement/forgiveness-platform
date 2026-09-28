@@ -571,3 +571,26 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .path-cards > .card { min-width: 0; }
 .path-cards .form, .path-cards .form label { min-width: 0; max-width: 100%; }
 .path-cards .form select, .path-cards .form input, .path-cards .form textarea, .path-cards .form .btn { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
+
+/* ---- lane D: many groups, past groups (my-path/index.html) ---- */
+.path-cards + .path-more { margin-top: 1rem; }
+.path-cards[hidden] + .path-more { margin-top: 0; }
+.group-card.is-chosen { border-color: var(--teal); box-shadow: 0 0 0 2px var(--teal); }
+.group-card .dl-row { margin-top: 0.6rem; }
+/* "Start another group" / "Join a group with a code": the whole heading is
+   the tap target, with a plain arrow saying it opens. */
+.card-fold > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
+.card-fold > summary::-webkit-details-marker { display: none; }
+.card-fold > summary h3 { margin: 0; }
+.card-fold > summary::after { content: '▾'; color: var(--teal-deep); font-size: 1rem; }
+.card-fold[open] > summary::after { content: '▴'; }
+.card-fold[open] > summary { margin-bottom: 0.6rem; }
+.past-groups > summary { list-style: none; cursor: pointer; display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; }
+.past-groups > summary::-webkit-details-marker { display: none; }
+.past-groups > summary h2 { margin: 0; }
+.past-groups > summary::after { content: '▾'; color: var(--teal-deep); }
+.past-groups[open] > summary::after { content: '▴'; }
+.past-groups[open] > summary { margin-bottom: 0.6rem; }
+.past-list { display: grid; gap: 0.8rem; max-width: 680px; }
+.past-group { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem 1rem; padding: 0.8rem 1rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); }
+.past-group p { margin: 0; min-width: 0; }

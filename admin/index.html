@@ -78,6 +78,7 @@
   } from '../js/content.js';
   import { esc } from '../js/blocks.js';
   import { listInbox, SUBMISSIONS } from '../js/inbox.js';
+  import { repairFacilitators } from '../js/groups.js';
 
   const $ = (sel, el = document) => el.querySelector(sel);
   const show = (name) => document.querySelectorAll('[data-view]').forEach((v) => (v.hidden = v.dataset.view !== name));
@@ -298,11 +299,42 @@
   async function renderMessagesTab() {
     $('[data-panel]').innerHTML = '<p class="muted small">Loading…</p>';
     const rows = await listInbox();
-    $('[data-panel]').innerHTML = `
+    $('[data-panel]').innerHTML = `${REPAIR_CARD}
       <p class="muted small" style="max-width:62ch">Everything people have sent through the site, newest first — messages from the Contact page and facilitators registering a Forgiveness Group. Nobody but an editor can read these, and nothing here is published.</p>
       ${rows.length
         ? rows.map(messageRow).join('')
         : '<p class="muted">Nothing yet. Messages from the Contact page and new group registrations will appear here.</p>'}`;
+    $('[data-repair]').addEventListener('click', runRepair);
+  }
+
+  /* Groups created before September 28 don't name who runs them on their
+     code's record, so their facilitator's ticks can't save. One button gives
+     each its facilitator back from its own registration (js/groups.js
+     repairFacilitators — it never guesses). Safe to press again. */
+  const REPAIR_CARD = `
+    <div class="card card--tint" style="margin:0 0 1.2rem;max-width:62ch">
+      <p class="small" style="margin:0 0 0.7rem">Groups created before September 28 don’t record who runs them, so their facilitator can’t tick meetings. This names the account that registered each one; anything it can’t match is listed, never guessed.</p>
+      <button class="btn btn--primary" type="button" data-repair>Give older groups back their facilitator</button>
+      <div data-repair-report role="status" style="margin-top:0.8rem"></div>
+    </div>`;
+
+  async function runRepair(e) {
+    const btn = e.currentTarget;
+    const out = $('[data-repair-report]');
+    btn.disabled = true;
+    out.innerHTML = '<p class="small muted" style="margin:0">Working…</p>';
+    try {
+      const r = await repairFacilitators();
+      const line = (g) => `<li><span class="groupcode">${esc(g.code)}</span>${g.groupName ? ` · ${esc(g.groupName)}` : ''}${g.why ? ` — ${esc(g.why)}` : ''}</li>`;
+      out.innerHTML = `
+        <p class="small" style="margin:0 0 0.4rem"><b>${r.given.length ? `Gave ${r.given.length} group${r.given.length === 1 ? '' : 's'} back ${r.given.length === 1 ? 'its' : 'their'} facilitator.` : 'No group needed a facilitator named.'}</b>
+          ${r.alreadyNamed} already named one.</p>
+        ${r.given.length ? `<ul class="small" style="margin:0 0 0.6rem">${r.given.map(line).join('')}</ul>` : ''}
+        ${r.left.length ? `<p class="small" style="margin:0 0 0.3rem"><b>Left alone (${r.left.length}):</b></p><ul class="small" style="margin:0">${r.left.map(line).join('')}</ul>` : ''}`;
+    } catch (err) {
+      out.innerHTML = `<p class="form-msg form-msg--err" style="margin:0">That didn’t finish: ${esc(err.message || String(err))}. Whatever it already fixed stays fixed — press it again to carry on.</p>`;
+    }
+    btn.disabled = false;
   }
 
   /* ---------------------------------------------- history */
