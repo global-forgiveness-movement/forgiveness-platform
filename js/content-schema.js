@@ -20,10 +20,10 @@ export const COLLECTIONS = {
   },
   videos: {
     label: 'Videos',
-    help: 'The films embedded around the site. Paste a YouTube or Vimeo embed address into “video address” to swap what plays in a slot. Don’t change the “slot” field — it says where on the site the video appears.',
+    help: 'The films embedded around the site. To swap what plays in a slot, paste its Vimeo or YouTube link into “video link” as it is — the page address from your browser, a share link, or an embed address all work. Don’t change the “slot” field — it says where on the site the video appears.',
     fields: [
       { key: 'key', label: 'Slot (where it appears — don’t change)', type: 'text' },
-      { key: 'src', label: 'Video address (embed URL)', type: 'url' },
+      { key: 'src', label: 'Video link', type: 'url', help: 'Paste a Vimeo or YouTube link as it is — the page address, a share link, or an embed address. The site works out the rest.' },
       { key: 'title', label: 'Title (for screen readers)', type: 'text' },
       { key: 'caption', label: 'Caption under the video', type: 'text' },
     ],
@@ -137,7 +137,7 @@ export const BLOCKS = {
   video: {
     label: 'Video',
     fields: [
-      { key: 'src', label: 'Video address (embed URL)', type: 'url' },
+      { key: 'src', label: 'Video link', type: 'url', help: 'Paste a Vimeo or YouTube link as it is — the page address, a share link, or an embed address. The site works out the rest.' },
       { key: 'caption', label: 'Caption', type: 'text' },
     ],
   },

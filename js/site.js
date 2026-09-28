@@ -3,9 +3,10 @@
    footer, hydrates video embeds from data.js, and counts workbook downloads.
    Written once, used everywhere — page files contain only their <main>. */
 
-import { NAV, FOOTER_COLS } from './data.js';
+import { NAV, FOOTER_COLS, BRAND } from './data.js';
 import { getVideos, getPages, fieldAttr } from './content.js';
 import { recordDownload } from './metrics.js';
+import { videoFrame } from './video.js';
 import { ensureGate, leaf } from './gate.js';
 
 export const STAMP = 'GFM-V1 · 2026-09-28b';
@@ -45,9 +46,10 @@ function buildHeader() {
          <a class="btn btn--outline" href="${href('join/')}">Create account</a>`;
   const head = el('header', { class: 'site-head' }, `
     <a class="site-brand" href="${href('')}">
-      ${leaf('#00887a')}
+      ${BRAND.gfm ? `<img class="brand-mark" src="${href(BRAND.gfm)}" alt="">` : leaf('#00887a')}
       <span class="t"><b>Global Forgiveness Movement</b>
       <span>Human Flourishing Program</span></span>
+      <img class="brand-seal" src="${href(BRAND.hfpSeal)}" alt="" width="40" height="40">
     </a>
     <nav class="site-nav" id="site-menu" aria-label="Main">${nav}</nav>
     <div class="site-auth" data-auth-slot>${authLinks}</div>
@@ -106,15 +108,16 @@ function buildFooter() {
 
 /* Video slots: <figure class="video" data-video="key"></figure> hydrates from
    the videos collection (editor-published version wins, committed default
-   otherwise). Swapping a placeholder for the real Vimeo file is a data edit. */
+   otherwise). Swapping a placeholder for the real Vimeo file is a data edit:
+   paste the Vimeo page link as it is — js/video.js turns it into the address
+   the film plays from. */
 async function hydrateVideos() {
   const videos = await getVideos();
   document.querySelectorAll('[data-video]').forEach((slot) => {
     const v = videos[slot.dataset.video];
     if (!v || slot.querySelector('iframe')) return;
     slot.innerHTML = `
-      <iframe src="${v.src}" title="${v.title}" loading="lazy"
-        allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>
+      ${videoFrame(v.src, v.title)}
       <figcaption ${fieldAttr('videos', v, 0, 'caption')}>${v.caption}</figcaption>`;
   });
 }

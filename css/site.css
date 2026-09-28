@@ -594,3 +594,23 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .past-list { display: grid; gap: 0.8rem; max-width: 680px; }
 .past-group { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem 1rem; padding: 0.8rem 1rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); }
 .past-group p { margin: 0; min-width: 0; }
+
+/* ---- lane E: Kate's email (the home intro, the header logos) ---- */
+/* The home intro: one plain sentence first (the workbook, alone or in a
+   group), full width; Kate's paragraph and the "stop and come back" aside
+   share the row beneath it, as the intro and aside did before. */
+.hero-sub .hero-lead { grid-column: 1 / -1; margin: 0 0 1rem; font-family: var(--font-head); font-weight: 600; font-size: clamp(1.15rem, 2.2vw, 1.35rem); line-height: 1.4; color: var(--navy); max-width: var(--measure); }
+.stats { margin-top: 1rem; }
+/* The partner's mark sits beside the site name, after a hairline (the GFM
+   mark leads). Its size is the one number to change. */
+.site-brand .brand-mark { width: 30px; height: 30px; flex: none; object-fit: contain; }
+.site-brand .brand-seal { width: 40px; height: 40px; flex: none; padding-left: 0.65rem; border-left: 1px solid var(--line); box-sizing: content-box; }
+/* On a phone the name stays on one line with the seal beside it: a smaller
+   seal, a tighter gap, and the name a touch smaller. */
+@media (max-width: 420px) {
+  .site-brand { gap: 0.45rem; }
+  .site-brand .t b { font-size: 0.94rem; }
+  .site-brand .t span { font-size: 0.68rem; }
+  .site-brand .brand-seal { width: 28px; height: 28px; padding-left: 0.45rem; }
+}
+.workbooks-basis { margin-top: 1.2rem; }
