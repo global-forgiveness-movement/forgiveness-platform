@@ -9,7 +9,7 @@ import { recordDownload } from './metrics.js';
 import { videoFrame } from './video.js';
 import { ensureGate, leaf } from './gate.js';
 
-export const STAMP = 'GFM-V1 · 2026-09-28c';
+export const STAMP = 'GFM-V1 · 2026-09-28d';
 
 /* Resolve everything relative to the site root (js/ → root), so pages work
    at any depth and on any host (github.io project path or a custom domain). */
@@ -46,9 +46,11 @@ function buildHeader() {
          <a class="btn btn--outline" href="${href('join/')}">Create account</a>`;
   const head = el('header', { class: 'site-head' }, `
     <a class="site-brand" href="${href('')}">
-      ${BRAND.gfm ? `<img class="brand-mark" src="${href(BRAND.gfm)}" alt="">` : leaf('#00887a')}
-      <span class="t"><b>Global Forgiveness Movement</b>
-      <span>Human Flourishing Program</span></span>
+      ${/* The GFM logo carries the name, so no words beside it (Wyatt, 28 Sep);
+           its alt text keeps the link named for screen readers. */ ''}
+      ${BRAND.gfm ? `<img class="brand-mark brand-mark--logo" src="${href(BRAND.gfm)}" alt="Global Forgiveness Movement — home">`
+        : `${leaf('#00887a')}<span class="t"><b>Global Forgiveness Movement</b>
+      <span>Human Flourishing Program</span></span>`}
       <img class="brand-seal" src="${href(BRAND.hfpSeal)}" alt="" width="40" height="40">
     </a>
     <nav class="site-nav" id="site-menu" aria-label="Main">${nav}</nav>

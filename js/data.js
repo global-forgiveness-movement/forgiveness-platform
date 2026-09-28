@@ -29,7 +29,7 @@ const COP = 'https://harvard.zoom.us/meeting/register/e5vX3r1TTfO_o95o6QfoBw#/re
    lands, put the file in assets/brand/ and name it here — one line. The HFP
    seal is the program's own mark, no Harvard shield (Richard, 25 Aug). */
 export const BRAND = {
-  gfm: null, // e.g. 'assets/brand/gfm-logo.png'
+  gfm: 'assets/brand/gfm-logo.png', // the GFM logo carries the name, so the header shows no words beside it (Wyatt, 28 Sep)
   hfpSeal: 'assets/brand/hfp-seal.png',
 };
 
