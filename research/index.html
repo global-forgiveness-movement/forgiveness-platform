@@ -30,7 +30,7 @@
       <div class="effects" data-render="effects" style="margin:1.2rem 0"></div>
       <p data-copy="research.p.what-it-does-not"><b>What it does not show:</b> the effects are definitively established only at a two-week follow-up. Improvements in depression and anxiety continued to four weeks, but because the waitlist group eventually received the same materials, the trial could not test how long the benefit lasts.</p>
       <p class="dl-row">
-        <a class="btn btn--primary" data-render="paper-link" target="_blank" rel="noopener">Read the paper</a>
+        <a class="btn btn--primary" data-render="paper-link" target="_blank" rel="noopener" data-copy="research.a.read-the-paper">Read the paper</a>
       </p>
     </div>
   </section>
@@ -80,7 +80,7 @@
 
 <script type="module">
   import { TRIAL, downloadFor } from '../js/data.js';
-  import { getCollection } from '../js/content.js';
+  import { getCollection, fieldAttr } from '../js/content.js';
 
   /* Same resolver the home page and /workbooks/ use — one source for the file. */
   const dl = downloadFor('reach', 'en', '../');
@@ -88,17 +88,20 @@
   if (dl && dlBtn) {
     dlBtn.href = dl.href;
     dlBtn.textContent = dl.label;
+    dlBtn.dataset.locked = 'file facts';   // format and size come from the file itself
     dlBtn.dataset.download = dl.tag;
     if (dl.direct) dlBtn.setAttribute('download', '');
   }
 
-  document.querySelector('[data-render="effects"]').innerHTML = TRIAL.effects
+  const effects = document.querySelector('[data-render="effects"]');
+  effects.dataset.locked = 'research claim';   // rule 12: trial figures stay traceable
+  effects.innerHTML = TRIAL.effects
     .map((e) => `<div class="effect"><b>${e.change}</b><span>${e.measure}</span><span class="muted">${e.unit} · ${e.ci}</span></div>`).join('');
   document.querySelector('[data-render="paper-link"]').href = TRIAL.paper;
 
   getCollection('publications').then((pubs) => {
     document.querySelector('[data-render="publications"]').innerHTML = pubs
-      .map((p) => `<div class="card"><h3 style="font-size:1rem">${p.title}</h3><p class="small muted" style="margin:0">${p.meta} · <a href="${p.doi}" target="_blank" rel="noopener">DOI →</a></p></div>`).join('');
+      .map((p, i) => `<div class="card"><h3 style="font-size:1rem" ${fieldAttr('publications', p, i, 'title')}>${p.title}</h3><p class="small muted" style="margin:0"><span ${fieldAttr('publications', p, i, 'meta')}>${p.meta}</span> · <a href="${p.doi}" target="_blank" rel="noopener" data-copy="research.pub.doi-link">DOI →</a></p></div>`).join('');
   });
 </script>
 <script type="module" src="../js/site.js"></script>

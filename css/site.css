@@ -468,3 +468,15 @@ hr.leafline { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
 .flow-key svg { width: 18px; height: 18px; }
 .flow-key--together { color: var(--teal-deep); }
 .flow-key--own { color: var(--plum); }
+
+/* ---- lane C: edit where it sits ---- */
+/* The Color button's mark, in every heading on every page (ruling 3, 28 Sep):
+   italic words in a heading render upright in the accent color. On the navy
+   band teal would sink, so there it is sage. */
+h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); }
+.section--navy :is(h1, h2, h3) :is(i, em) { color: var(--sage); }
+/* Words drawn from data are outlined exactly like words written in the page:
+   to an editor there is one kind of text. */
+[data-copy-editing] [data-field] { outline: 2px dashed rgba(0, 136, 122, 0.55); outline-offset: 3px; border-radius: 3px; cursor: text; }
+[data-copy-editing] [data-field]:focus { outline: 2px solid var(--teal); background: rgba(250, 184, 18, 0.12); }
+.copybar-btn[data-copy-act="accent"][disabled] { opacity: 0.4; }

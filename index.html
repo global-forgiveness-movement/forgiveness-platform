@@ -32,8 +32,8 @@
         <div class="door">
           <h3 data-copy="home.h3.do-it-solo">I’ll do it solo</h3>
           <p class="door-actions">
-            <a class="btn btn--primary btn--down" data-render="workbook-download" href="workbooks/">Download the workbook</a>
-            <span class="door-meta"><span data-render="workbook-size">Free PDF</span> · <a href="workbooks/">other languages</a></span>
+            <a class="btn btn--primary btn--down" data-render="workbook-download" href="workbooks/" data-copy="home.a.download-the-workbook">Download the workbook</a>
+            <span class="door-meta"><span data-render="workbook-size">Free PDF</span> · <a href="workbooks/" data-copy="home.a.other-languages">other languages</a></span>
           </p>
           <p data-copy="home.p.download-the-reach-forgiveness">Work through the free workbook at your own pace. No account, ever.</p>
           <p class="small" data-copy="home.p.prefer-the-screen-the">Prefer the screen? The interactive workbook keeps your place across twelve lessons — <a href="join/">make a free account</a> and it remembers where you got to. You can also <a href="workbook/">open it without an account</a>.</p>
@@ -42,7 +42,7 @@
           <h3 data-copy="home.h3.start-a-group">I want to start a group</h3>
           <p class="door-actions">
             <a class="btn btn--plum btn--go" href="groups/#tell-us" data-copy="home.a.create-your-group">Create your group</a>
-            <span class="door-meta"><a href="groups/">How Forgiveness Groups work</a></span>
+            <span class="door-meta"><a href="groups/" data-copy="home.a.how-forgiveness-groups-work">How Forgiveness Groups work</a></span>
           </p>
           <p data-copy="home.p.run-the-workbook-with">People do the lessons on their own, then meet to talk. We provide the videos.</p>
         </div>
@@ -74,7 +74,7 @@
       <h2 data-copy="home.h2.it-works-and-we">It works, and we tested it properly</h2>
       <p>In the largest randomized trial of an interpersonal forgiveness intervention to date, <b data-render="participants"></b> across <b data-render="countries"></b> — <span data-render="countries-list"></span> — worked through this workbook. Compared with a waitlist group, they showed meaningful reductions in unforgiveness, depression, and anxiety after two weeks.</p>
       <div class="effects" data-render="effects"></div>
-      <p style="margin-top:1rem"><a data-render="paper-link">Read the study in BMJ Public Health →</a></p>
+      <p style="margin-top:1rem"><a data-render="paper-link" data-copy="home.a.read-the-study">Read the study in BMJ Public Health →</a></p>
     </div>
   </section>
 
@@ -98,12 +98,17 @@
 </main>
 
 <script type="module">
-  import { TRIAL, REACH_STEPS, downloadFor } from './js/data.js';
-  import { getCollection } from './js/content.js';
+  import { TRIAL, downloadFor } from './js/data.js';
+  import { getCollection, fieldAttr } from './js/content.js';
+
+  /* Words that are facts rather than copy stay out of the editor's reach and
+     say why: the trial figures (every research claim traceable, rule 12) and
+     the file's own format and size. */
+  const lock = (sel, why) => document.querySelectorAll(sel).forEach((n) => (n.dataset.locked = why));
 
   getCollection('stats').then((stats) => {
     document.querySelector('[data-render="group-stats"]').innerHTML = stats
-      .map((s) => `<div class="stat"><b>${s.number}</b><span>${s.label}</span></div>`).join('');
+      .map((s, i) => `<div class="stat"><b ${fieldAttr('stats', s, i, 'number')}>${s.number}</b><span ${fieldAttr('stats', s, i, 'label')}>${s.label}</span></div>`).join('');
   });
 
   /* The first door hands over the file itself — same resolver /workbooks/ uses. */
@@ -117,6 +122,7 @@
     const sizeEl = document.querySelector('[data-render="workbook-size"]');
     if (sizeEl && dl.format) sizeEl.textContent = `Free ${dl.format} \u00b7 ${dl.size}`;
   }
+  lock('[data-render="workbook-size"]', 'file facts');
 
   document.querySelector('[data-render="participants"]').textContent = TRIAL.participants;
   document.querySelector('[data-render="countries"]').textContent = TRIAL.countries;
@@ -125,13 +131,18 @@
     .map((e) => `<div class="effect"><b>${e.change}</b><span>${e.measure}</span><span class="muted">${e.unit} · ${e.ci}</span></div>`).join('');
   const paper = document.querySelector('[data-render="paper-link"]');
   paper.href = TRIAL.paper;
+  lock('[data-render="participants"], [data-render="effects"]', 'research claim');
+  document.querySelector('[data-render="participants"]')?.closest('p')?.setAttribute('data-locked', 'research claim');
 
-  document.querySelector('[data-render="reach"]').innerHTML = REACH_STEPS
-    .map((s) => `<li><span class="letter">${s.letter}</span><b>${s.word}</b><span>${s.line}</span></li>`).join('');
+  /* The letters spell REACH; the words beside them are the editor's. */
+  getCollection('reach').then((steps) => {
+    document.querySelector('[data-render="reach"]').innerHTML = steps
+      .map((s, i) => `<li><span class="letter" data-locked="the REACH acronym">${s.letter}</span><b ${fieldAttr('reach', s, i, 'word')}>${s.word}</b><span ${fieldAttr('reach', s, i, 'line')}>${s.line}</span></li>`).join('');
+  });
 
   getCollection('testimonials').then((testimonials) => {
     document.querySelector('[data-render="testimonials"]').innerHTML = testimonials
-      .map((t) => `<blockquote class="quote"><p>“${t.quote}”</p><footer>${t.permissionConfirmed ? `${t.name} · ${t.role}` : t.role}</footer></blockquote>`).join('');
+      .map((t, i) => `<blockquote class="quote"><p>“<span ${fieldAttr('testimonials', t, i, 'quote')}>${t.quote}</span>”</p><footer>${t.permissionConfirmed ? `<span ${fieldAttr('testimonials', t, i, 'name')}>${t.name}</span> · ` : ''}<span ${fieldAttr('testimonials', t, i, 'role')}>${t.role}</span></footer></blockquote>`).join('');
   });
 </script>
 <script type="module" src="js/site.js"></script>

@@ -52,11 +52,13 @@
           perfect for trying the editor, not yet shared with the world.
         </div>
         <p class="muted small">Changes go live the moment you save. Every save is kept in History, so nothing is ever lost — edit freely.</p>
-        <!-- The words on the site's pages are edited ON the page (js/copy.js),
-             not here. Wyatt looked here first; so will Kate. Say where to go. -->
+        <!-- Every word on the site's pages is edited ON the page (js/copy.js),
+             not here (Wyatt, 28 Sep: "all text is editable where it sits").
+             Wyatt looked here first; so will Kate. Say where to go. -->
         <div class="card card--tint" style="margin:0 0 1.2rem;max-width:62ch">
           <h3 style="font-size:1rem;margin:0 0 0.3rem">Changing the words on a page?</h3>
-          <p class="small" style="margin:0 0 0.7rem">Headings, paragraphs and button labels are edited on the page itself. Open any page, press <b>Edit page text</b> in the bottom-right corner, click the outlined words and type. <b>Save</b> puts it live; every save appears under History below.</p>
+          <p class="small" style="margin:0 0 0.7rem">Every word is edited on the page itself — headings, paragraphs, buttons, and the lists too: testimonials, people, publications, events, workbook cards. Open any page, press <b>Edit page text</b> in the bottom-right corner, click the outlined words and type. <b>Save</b> puts it live; every save appears under History below.</p>
+          <p class="small" style="margin:0 0 0.7rem"><b>This page is for everything else:</b> adding, removing and reordering items in a list, setting video links, building new pages, reading messages, and bringing back an earlier version from History.</p>
           <p class="small" style="margin:0"><a href="../" target="_blank" rel="noopener">Open the home page to edit →</a></p>
         </div>
         <div class="adm-tabs" role="tablist" data-tabs></div>
@@ -153,28 +155,41 @@
     const schema = COLLECTIONS[name];
     activeListFields = schema.fields.filter((f) => f.type === 'list');
     const items = await getCollection(name);
+    /* Each item keeps everything this form doesn't show (a pill edited on the
+       page, a person's slug), so saving here never drops words set elsewhere. */
+    const itemControls = schema.fixed ? '' : `
+          <div class="adm-row"><span class="spacer"></span>
+            <button type="button" class="adm-mini" data-itemup aria-label="Move up">↑</button>
+            <button type="button" class="adm-mini" data-itemdown aria-label="Move down">↓</button>
+            <button type="button" class="adm-mini" data-removesub>remove</button></div>`;
     $('[data-panel]').innerHTML = `
       <p class="muted small" style="max-width:62ch">${esc(schema.help)}</p>
       <div data-items>${items.map((it) => `
-        <div class="adm-item" data-subitem>
-          <div class="form">${schema.fields.map((f) => fieldHTML(f, it[f.key])).join('')}</div>
-          <div class="adm-row"><span class="spacer"></span><button type="button" class="adm-mini" data-removesub>remove</button></div>
+        <div class="adm-item" data-subitem data-original="${esc(JSON.stringify(it))}">
+          <div class="form">${schema.fields.map((f) => fieldHTML(f, it[f.key])).join('')}</div>${itemControls}
         </div>`).join('')}
       </div>
-      <div class="adm-row">
+      ${schema.fixed ? '' : `<div class="adm-row">
         <button type="button" class="adm-mini" data-additem>+ add another</button>
-      </div>
+      </div>`}
       <div class="adm-save"><button class="btn btn--primary" data-savecoll>Save — goes live now</button>
         <span class="form-msg" hidden role="status" style="margin-left:0.6rem"></span></div>`;
-    $('[data-additem]').addEventListener('click', () => {
+    $('[data-additem]')?.addEventListener('click', () => {
       $('[data-items]').insertAdjacentHTML('beforeend', `
         <div class="adm-item" data-subitem>
-          <div class="form">${schema.fields.map((f) => fieldHTML(f, f.type === 'list' ? [] : '')).join('')}</div>
-          <div class="adm-row"><span class="spacer"></span><button type="button" class="adm-mini" data-removesub>remove</button></div>
+          <div class="form">${schema.fields.map((f) => fieldHTML(f, f.type === 'list' ? [] : '')).join('')}</div>${itemControls}
         </div>`);
     });
+    $('[data-items]').addEventListener('click', (e) => {
+      const item = e.target.closest('[data-subitem]');
+      if (e.target.matches('[data-itemup]') && item.previousElementSibling) item.previousElementSibling.before(item);
+      if (e.target.matches('[data-itemdown]') && item.nextElementSibling) item.nextElementSibling.after(item);
+    });
     $('[data-savecoll]').addEventListener('click', async () => {
-      const items = [...$('[data-items]').children].map((el) => readFields(el, schema.fields));
+      const items = [...$('[data-items]').children].map((el) => ({
+        ...JSON.parse(el.dataset.original || '{}'),
+        ...readFields(el, schema.fields),
+      }));
       await saveCollection(name, items, editor.email);
       flash('Saved — it’s live.');
     });

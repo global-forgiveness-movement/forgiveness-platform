@@ -45,12 +45,12 @@
       <div class="card" style="max-width:680px">
         <p class="kicker" style="margin-bottom:0.3rem" data-copy="workbooks.p.the-interactive-workbook-free">The interactive workbook · free account</p>
         <p data-copy="workbooks.p.the-same-twelve-lessons">The same twelve lessons, one gentle step at a time, with timers and a growing tree as you go. <b>Make a free account and it remembers where you got to</b>, on any device, so you can stop mid-lesson and come back.</p>
-        <p class="notice"><b>What you write is never sent to us.</b> Your answers are saved on your own device and stay there — account or no account. The only thing an account stores is <i>how far you have got</i>: which lesson you are on and which ones you have finished. Never a word of what you wrote.</p>
+        <p class="notice" data-locked="privacy promise"><b>What you write is never sent to us.</b> Your answers are saved on your own device and stay there — account or no account. The only thing an account stores is <i>how far you have got</i>: which lesson you are on and which ones you have finished. Never a word of what you wrote.</p>
         <div class="dl-row">
           <a class="btn btn--primary" href="../join/" data-copy="workbooks.a.create-a-free-account">Create a free account</a>
           <a class="btn btn--outline" href="../workbook/" data-copy="workbooks.a.open-it-without-an">Open it without an account</a>
         </div>
-        <p class="small muted" style="margin:0.8rem 0 0">Without an account it still works in full — your place is just kept in this browser, on this device.</p>
+        <p class="small muted" style="margin:0.8rem 0 0" data-locked="privacy promise">Without an account it still works in full — your place is just kept in this browser, on this device.</p>
       </div>
     </div>
   </section>
@@ -77,6 +77,7 @@
 
 <script type="module">
   import { WORKBOOKS, LANGUAGES, downloadFor } from '../js/data.js';
+  import { getWorkbooks, fieldAttr } from '../js/content.js';
 
   const langSelect = (id) => `
     <label class="visually-hidden" for="lang-${id}">Language</label>
@@ -84,29 +85,34 @@
       ${LANGUAGES.map(([code, name]) => `<option value="${code}">${name}</option>`).join('')}
     </select>`;
 
-  const card = (w) => `
+  /* A card's words are the editor's (the workbooks collection); its button is
+     the file's — label, format and size come from downloadFor() alone. */
+  const card = (w, i) => `
     <div class="card" id="${w.id}">
-      <p class="kicker">${w.badge}</p>
-      <h3>${w.title}</h3>
-      <p>${w.desc}</p>
-      <p class="dl-row">${w.pills.map((p) => `<span class="pill">${p}</span>`).join('')}</p>
+      <p class="kicker" ${fieldAttr('workbooks', w, i, 'badge')}>${w.badge}</p>
+      <h3 ${fieldAttr('workbooks', w, i, 'title')}>${w.title}</h3>
+      <p ${fieldAttr('workbooks', w, i, 'desc')}>${w.desc}</p>
+      <p class="dl-row">${w.pills.map((p, n) => `<span class="pill" ${fieldAttr('workbooks', w, i, `pills.${n}`)}>${p}</span>`).join('')}</p>
       <div class="dl-row">
         ${w.languages ? langSelect(w.id) : ''}
-        <a class="btn btn--primary" href="${w.url}" data-download="${w.id}:en" target="_blank" rel="noopener">Download PDF</a>
+        <a class="btn btn--primary" href="${w.url}" data-download="${w.id}:en" data-locked="file facts" target="_blank" rel="noopener">Download PDF</a>
       </div>
     </div>`;
 
+  const books = await getWorkbooks();
   document.querySelector('[data-render="workbooks-main"]').innerHTML =
-    WORKBOOKS.filter((w) => ['reach', 'church'].includes(w.id)).map(card).join('');
+    books.filter((w) => ['reach', 'church'].includes(w.id)).map(card).join('');
   document.querySelector('[data-render="workbooks-more"]').innerHTML =
-    WORKBOOKS.filter((w) => ['receive', 'activity'].includes(w.id)).map(card).join('');
+    books.filter((w) => ['receive', 'activity'].includes(w.id)).map(card).join('');
   /* These looked exactly like buttons and were inert spans — a Spanish speaker
      pressed one, nothing happened, and the reasonable conclusion was that the
      site is broken. Every language here has a hosted file, so they ARE links
      now, resolved through the same downloadFor() the buttons use. A language
      that ever loses its file degrades to the edition's landing page rather
      than to a dead pill. */
-  document.querySelector('[data-render="languages"]').innerHTML =
+  const langs = document.querySelector('[data-render="languages"]');
+  langs.dataset.locked = 'language names';
+  langs.innerHTML =
     LANGUAGES.map(([code, name]) => {
       const dl = downloadFor('reach', code, '../');
       const attrs = dl.direct ? ' download' : ' target="_blank" rel="noopener"';
