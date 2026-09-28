@@ -5,7 +5,7 @@
 
 import { store, withPatience } from './store.js';
 import {
-  TESTIMONIALS, VIDEOS, EVENTS, PUBLICATIONS, PEOPLE, GROUP_STATS,
+  TESTIMONIALS, VIDEOS, EVENTS, PUBLICATIONS, PEOPLE, GROUP_STATS, SERIES,
   WORKBOOKS, REACH_STEPS, GROUP_GUIDELINES,
 } from './data.js';
 
@@ -23,6 +23,7 @@ const DEFAULTS = {
   workbooks: WORKBOOKS.map((w) => ({ id: w.id, ...pick(w, WORKBOOK_WORDS) })),
   reach: REACH_STEPS,
   guidelines: GROUP_GUIDELINES.map((text) => ({ text })),
+  series: Object.values(SERIES),
 };
 
 export async function getCollection(name) {

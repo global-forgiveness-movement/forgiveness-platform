@@ -63,7 +63,7 @@ export const FOOTER_COLS = [
 /* Every video slot on the site. `src` is a placeholder embed of the clients'
    public YouTube playlist until the final Vimeo files land (Sept–Oct 2026);
    swapping one slot = editing one line here. */
-const PLAYLIST =
+export const PLAYLIST =
   'https://www.youtube-nocookie.com/embed/videoseries?list=PLwztLq8L6GzGM0KtjT74JTB-91uuo_dvE';
 
 export const VIDEOS = {

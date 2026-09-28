@@ -84,7 +84,16 @@
       <h2 data-copy="groups.h2.the-two-series">The two series</h2>
       <p style="max-width:62ch" data-copy="groups.p.a-series-is-a"><b>A series is a set of films.</b> At each meeting the facilitator plays that session’s video — about ten minutes of teaching and a guided activity — and the group talks afterwards. Choose the one that matches your workbook: <b>three sessions</b> for the REACH Forgiveness Workbook, <b>six sessions</b> for the REACH Forgiveness Workbook, Adapted for Churches.</p>
       <p class="muted" style="max-width:62ch" data-copy="groups.p.both-are-ways-of">Both are ways of getting a group through the tested workbook — the evidence attaches to the workbook, and the series inherit it. The lessons listed against each session are the ones your group completes <i>before</i> that meeting.</p>
-      <div class="grid grid--2" data-render="series" style="margin-top:1.2rem"></div>
+      <!-- Richard, 24 Sep: "make it a kind of drop down ... three session versus
+           six session ... they won't necessarily see both next to each other."
+           Two buttons, nothing chosen at first, one series at a time. -->
+      <div class="series-pick" data-render="series-key"></div>
+      <div class="series-choose" role="group" aria-label="Choose a series">
+        <button type="button" class="series-choice" data-pick="secular" aria-pressed="false"><b>3 sessions</b><span>REACH Forgiveness Workbook</span></button>
+        <button type="button" class="series-choice" data-pick="church" aria-pressed="false"><b>6 sessions</b><span>Adapted for Churches</span></button>
+      </div>
+      <p class="small muted series-hint" data-render="series-hint">Choose one to see it step by step.</p>
+      <div data-render="series"></div>
     </div>
   </section>
 
@@ -130,35 +139,20 @@
            Your name and email are already in your account. So one question
            issues the group; everything else Kate asked for is still asked, but
            it is optional and does not stand between a facilitator and a code. -->
-      <form class="form" id="groupForm" data-when="in" hidden>
-        <label>Which series will you use?
-          <select name="series">
-            <option value="secular">3-session series · REACH Forgiveness Workbook</option>
-            <option value="church">6-session series · church edition</option>
-          </select>
-        </label>
-        <button class="btn btn--primary" type="submit">Create my group</button>
-        <details class="group-extra">
-          <summary>Tell us more — optional</summary>
-          <p class="small muted" data-copy="groups.p.none-of-this-is">None of this is required. It helps us support you and understand where this work is taking root.</p>
-          <label>Where is your group? (city, country) <input name="location"></label>
-          <label>How many people do you expect? <input name="size" type="number" min="2" max="99"></label>
-          <label>Anything you’d like us to know? <textarea name="notes" rows="3"></textarea></label>
-        </details>
-        <div class="form-msg" hidden role="status"></div>
-      </form>
+      <div data-render="create-group" data-when="in" hidden></div>
     </div>
   </section>
 
 </main>
 
 <script type="module">
-  import { SERIES } from '../js/data.js';
-  import { seriesFlow, FLOW_LEGEND } from '../js/series.js';
+  import { deriveSeries, roleFor } from '../js/group-engine.js';
+  import { seriesFlow, seriesName, seriesFraming, FLOW_LEGEND } from '../js/series.js';
   import { getCollection, fieldAttr } from '../js/content.js';
-  import { registerGroup } from '../js/groups.js';
+  import { loadSeries } from '../js/groups.js';
+  import { mountCreateGroup, preselectSeries } from '../js/group-create.js';
   import { MODE } from '../js/store.js';
-  import { onAuth, currentUser } from '../js/auth.js';
+  import { onAuth } from '../js/auth.js';
 
   /* The eight guidelines, numbered — Kate's words, from the guidelines
      collection (defaults: GROUP_GUIDELINES in js/data.js). */
@@ -179,32 +173,33 @@
       .map((ev, i) => `<li><span class="n">${i + 1}</span><span><b ${fieldAttr('events', ev, i, 'title')}>${ev.title}</b><span><span ${fieldAttr('events', ev, i, 'date')}>${ev.date}</span>${ev.detail ? ` · <span ${fieldAttr('events', ev, i, 'detail')}>${ev.detail}</span>` : ''} · <a href="${ev.href}" target="_blank" rel="noopener" data-copy="groups.events.details-link">Details →</a></span></span></li>`).join('');
   });
 
-  const seriesCard = (s) => `
-    <div class="card">
-      <p class="kicker">${s.framing}</p>
-      <h3>${s.name}</h3>
-      <p class="small muted">Uses the ${s.workbook}. Sessions run 1–1.5 hours, guided by ~10 minutes of video.</p>
-      ${FLOW_LEGEND}
-      ${seriesFlow(s)}
-      <figure class="video" data-video="${s.videoKey}" style="margin-top:1rem"></figure>
-    </div>`;
+  /* The series, drawn by the one engine and the one display, as a visitor
+     sees it — this page is public, whoever is signed in. */
+  const role = roleFor({ surface: 'public' });
+  const allSeries = await loadSeries();
+  const slot = document.querySelector('[data-render="series"]');
+  document.querySelector('[data-render="series-key"]').innerHTML = FLOW_LEGEND;
 
-  document.querySelector('[data-render="series"]').innerHTML =
-    [SERIES.secular, SERIES.church].map(seriesCard).join('');
+  function show(id) {
+    const s = allSeries[id];
+    const view = deriveSeries({ series: s, role });
+    slot.innerHTML = `
+      <div class="card series-card">
+        ${seriesFraming(view)}
+        ${seriesName(view)}
+        <p class="small muted">Uses the ${s.workbook}. Sessions run 1–1.5 hours, guided by ~10 minutes of video.</p>
+        ${seriesFlow(view)}
+        <figure class="video" data-video="${s.videoKey}" style="margin-top:1rem"></figure>
+      </div>`;
+    document.querySelectorAll('[data-pick]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.pick === id)));
+    document.querySelector('[data-render="series-hint"]').hidden = true;
+    preselectSeries(document.querySelector('[data-render="create-group"]'), id);
+    window.dispatchEvent(new CustomEvent('gfm:videos'));
+  }
+  document.querySelectorAll('[data-pick]').forEach((b) => b.addEventListener('click', () => show(b.dataset.pick)));
 
-  const form = document.getElementById('groupForm');
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const msg = form.querySelector('.form-msg');
-    try {
-      const u = currentUser();
-      /* Name and email come from the account, not from six fields retyped. */
-      const fields = { ...Object.fromEntries(new FormData(form)), name: u?.name || '', email: u?.email || '' };
-      /* ONE write. registerGroup stores the submission and its code together;
-         an older submitGroupForm() call here wrote a second, codeless copy of
-         every facilitator into the same collection until 1 Sep. */
-      const { code, series } = await registerGroup(fields, u?.id);
-      form.reset();
+  mountCreateGroup(document.querySelector('[data-render="create-group"]'), {
+    onCreated: ({ code, series }, { msg }) => {
       msg.className = 'form-msg form-msg--ok';
       msg.innerHTML = `Sent — thank you.<br><br>
         <b>Your group code is <span class="groupcode">${code}</span></b><br>
@@ -215,11 +210,8 @@
         (MODE === 'demo'
           ? '<br><br><span class="small muted">Preview note: the backend isn’t connected yet, so this group lives in this browser only.</span>'
           : '');
-    } catch (err) {
-      msg.className = 'form-msg form-msg--err';
-      msg.textContent = 'That didn’t send. Please try again, or email us via the Contact page.';
-    }
-    msg.hidden = false;
+      msg.hidden = false;
+    },
   });
 </script>
 <script type="module" src="../js/site.js"></script>
