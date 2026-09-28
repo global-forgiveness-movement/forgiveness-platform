@@ -4,7 +4,7 @@
    Written once, used everywhere — page files contain only their <main>. */
 
 import { NAV, FOOTER_COLS } from './data.js';
-import { getVideos, getPages } from './content.js';
+import { getVideos, getPages, fieldAttr } from './content.js';
 import { recordDownload } from './metrics.js';
 import { ensureGate, leaf } from './gate.js';
 
@@ -115,7 +115,7 @@ async function hydrateVideos() {
     slot.innerHTML = `
       <iframe src="${v.src}" title="${v.title}" loading="lazy"
         allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>
-      <figcaption>${v.caption}</figcaption>`;
+      <figcaption ${fieldAttr('videos', v, 0, 'caption')}>${v.caption}</figcaption>`;
   });
 }
 

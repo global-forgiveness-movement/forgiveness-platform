@@ -64,19 +64,19 @@
 </main>
 
 <script type="module">
-  import { getCollection } from '../js/content.js';
+  import { getCollection, fieldAttr } from '../js/content.js';
   getCollection('people').then((people) => {
     document.querySelector('[data-render=people]').innerHTML = people
-      .map((p) => `<details class="person" name="person-bio">
+      .map((p, i) => `<details class="person" name="person-bio">
         <summary>
-          ${p.photo ? `<img class="por" src="../${p.photo}" alt="${p.name}, ${p.role}">` : `<span class="por">${p.initials}</span>`}
-          <span class="pn">${p.name}</span>
-          <span class="pr">${p.role}</span>
-          <span class="pm">Bio</span>
+          ${p.photo ? `<img class="por" src="../${p.photo}" alt="${p.name}, ${p.role}">` : `<span class="por" ${fieldAttr('people', p, i, 'initials')}>${p.initials}</span>`}
+          <span class="pn" ${fieldAttr('people', p, i, 'name')}>${p.name}</span>
+          <span class="pr" ${fieldAttr('people', p, i, 'role')}>${p.role}</span>
+          <span class="pm" data-copy="about.person.bio-label">Bio</span>
         </summary>
         <div class="pbio">
-          ${p.bio.split('\n\n').map((par) => `<p>${par}</p>`).join('')}
-          ${p.link ? `<p><a href="${p.link}" target="_blank" rel="noopener">Full profile →</a></p>` : ''}
+          <div ${fieldAttr('people', p, i, 'bio')} data-field-format="paragraphs">${p.bio.split('\n\n').map((par) => `<p>${par}</p>`).join('')}</div>
+          ${p.link ? `<p><a href="${p.link}" target="_blank" rel="noopener" data-copy="about.person.profile-link">Full profile →</a></p>` : ''}
         </div>
       </details>`).join('');
   });

@@ -153,16 +153,19 @@
 </main>
 
 <script type="module">
-  import { SERIES, GROUP_GUIDELINES } from '../js/data.js';
+  import { SERIES } from '../js/data.js';
   import { seriesFlow, FLOW_LEGEND } from '../js/series.js';
-  import { getCollection } from '../js/content.js';
+  import { getCollection, fieldAttr } from '../js/content.js';
   import { registerGroup } from '../js/groups.js';
   import { MODE } from '../js/store.js';
   import { onAuth, currentUser } from '../js/auth.js';
 
-  /* The eight guidelines, numbered, from the one copy in js/data.js. */
-  document.querySelector('[data-render="guidelines"]').innerHTML = GROUP_GUIDELINES
-    .map((g, i) => `<li><span class="n">${i + 1}</span><span><b>${g}</b></span></li>`).join('');
+  /* The eight guidelines, numbered — Kate's words, from the guidelines
+     collection (defaults: GROUP_GUIDELINES in js/data.js). */
+  getCollection('guidelines').then((list) => {
+    document.querySelector('[data-render="guidelines"]').innerHTML = list
+      .map((g, i) => `<li><span class="n">${i + 1}</span><span><b ${fieldAttr('guidelines', g, i, 'text')}>${g.text}</b></span></li>`).join('');
+  });
 
   /* Same two-state pattern My Path uses: nothing paints until the backend has
      answered, so a signed-in facilitator never sees the sign-in card flash. */
@@ -173,7 +176,7 @@
 
   getCollection('events').then((events) => {
     document.querySelector('[data-render="events"]').innerHTML = events
-      .map((ev, i) => `<li><span class="n">${i + 1}</span><span><b>${ev.title}</b><span>${ev.date}${ev.detail ? ' · ' + ev.detail : ''} · <a href="${ev.href}" target="_blank" rel="noopener">Details →</a></span></span></li>`).join('');
+      .map((ev, i) => `<li><span class="n">${i + 1}</span><span><b ${fieldAttr('events', ev, i, 'title')}>${ev.title}</b><span><span ${fieldAttr('events', ev, i, 'date')}>${ev.date}</span>${ev.detail ? ` · <span ${fieldAttr('events', ev, i, 'detail')}>${ev.detail}</span>` : ''} · <a href="${ev.href}" target="_blank" rel="noopener" data-copy="groups.events.details-link">Details →</a></span></span></li>`).join('');
   });
 
   const seriesCard = (s) => `

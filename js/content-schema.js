@@ -68,6 +68,36 @@ export const COLLECTIONS = {
       { key: 'label', label: 'What it counts', type: 'text' },
     ],
   },
+  /* Words only: each card's download button, file, format and size come from
+     WORKBOOKS in js/data.js, so editions are added in code, not here. */
+  workbooks: {
+    label: 'Workbook cards',
+    help: 'The cards on the Workbooks page. Their words can also be changed right on that page. Files and sizes aren’t set here — a new edition needs its file added to the site first.',
+    fixed: true,
+    fields: [
+      { key: 'id', label: 'Edition (don’t change)', type: 'text' },
+      { key: 'badge', label: 'Small line above the title', type: 'text' },
+      { key: 'title', label: 'Title', type: 'text' },
+      { key: 'desc', label: 'Description', type: 'textarea' },
+    ],
+  },
+  reach: {
+    label: 'REACH steps',
+    help: 'The five steps on the homepage. The letters spell REACH and stay as they are.',
+    fixed: true,
+    fields: [
+      { key: 'letter', label: 'Letter (don’t change)', type: 'text' },
+      { key: 'word', label: 'Word', type: 'text' },
+      { key: 'line', label: 'Line after it', type: 'text' },
+    ],
+  },
+  guidelines: {
+    label: 'Group guidelines',
+    help: 'The Forgiveness Group Guidelines on the Groups page, numbered in this order.',
+    fields: [
+      { key: 'text', label: 'Guideline', type: 'textarea' },
+    ],
+  },
 };
 
 /* Page blocks — the sections a new page can be built from. Each renders with

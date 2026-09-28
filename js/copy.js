@@ -12,11 +12,23 @@
    literally true, so they only change with the code. */
 
 import { store, withPatience } from './store.js';
-import { saveCopy, isEditor } from './content.js';
+import { saveCopy, saveFields, isEditor } from './content.js';
 
-const SLOTS = () => [...document.querySelectorAll('[data-copy]')];
-const defaults = new Map();   // key → committed HTML, captured before overrides
-let published = {};           // key → editor HTML currently live
+/* ONE editor for both kinds of words (Wyatt, 28 Sep: "all text is editable
+   where it sits, and the site handles the data structure backend"):
+   - data-copy="page.tag.words" — words written into the page's HTML, saved
+     to content/copy as above;
+   - data-field="collection/item/path" — words the site draws from a content
+     collection (testimonials, people, the workbook cards...), saved back into
+     that collection through saveFields (js/content.js), so /admin History
+     keeps and restores them like any other save.
+   The editor never asks which kind it is holding until the moment it saves.
+   Elements drawn after the bar mounts (collections load late) are picked up
+   as they appear. */
+const EDITABLE = '[data-copy], [data-field]';
+const SLOTS = () => [...document.querySelectorAll(EDITABLE)];
+const defaults = new Map();   // data-copy key → committed HTML, captured before overrides
+let published = {};           // data-copy key → editor HTML currently live
 
 /* ---------------------------------------------------------- sanitizing */
 /* Editors are trusted, but whatever they save renders for every visitor, so
@@ -50,35 +62,91 @@ export function sanitize(html) {
 }
 
 /* ------------------------------------------------------------ applying */
+/* A data-copy element takes its override the moment it exists — at load, or
+   later when a renderer draws it (the same label repeated on every card). */
+function adoptCopy(el) {
+  const key = el.dataset.copy;
+  if (!defaults.has(key)) defaults.set(key, el.innerHTML);
+  const html = published[key];
+  if (typeof html === 'string') el.innerHTML = sanitize(html);
+}
+
 export async function applyCopy() {
-  SLOTS().forEach((el) => defaults.set(el.dataset.copy, el.innerHTML));
   try {
     const doc = await withPatience(store.get('content', 'copy'));
     published = doc?.slots || {};
   } catch { published = {}; }
-  SLOTS().forEach((el) => {
-    const html = published[el.dataset.copy];
-    if (typeof html === 'string') el.innerHTML = sanitize(html);
-  });
+  document.querySelectorAll('[data-copy]').forEach(adoptCopy);
 }
+
+/* ------------------------------------------------------ reading a value */
+/* Most words are one run of text. A field marked data-field-format=
+   "paragraphs" (a bio) is several, stored with a blank line between. */
+function valueOf(el, html = el.innerHTML) {
+  if (el.dataset.fieldFormat !== 'paragraphs') return sanitize(html);
+  const tpl = document.createElement('template');
+  tpl.innerHTML = html;
+  const paras = [];
+  let loose = '';
+  const flush = () => { if (sanitize(loose)) paras.push(sanitize(loose)); loose = ''; };
+  tpl.content.childNodes.forEach((n) => {
+    if (n.nodeType === 1 && /^(P|DIV)$/.test(n.tagName)) { flush(); if (sanitize(n.innerHTML)) paras.push(sanitize(n.innerHTML)); }
+    else loose += n.nodeType === 1 ? n.outerHTML : n.textContent;
+  });
+  flush();
+  return paras.join('\n\n');
+}
+const sameText = (el) => (committed) => {
+  if (typeof committed !== 'string') return false;
+  const html = el.dataset.fieldFormat === 'paragraphs'
+    ? committed.split('\n\n').map((p) => `<p>${p}</p>`).join('') : committed;
+  return valueOf(el, html) === valueOf(el);
+};
 
 /* ------------------------------------------------------------- editing */
 let bar;
 let editing = false;
-let before = new Map();
+let before = new WeakMap();   // element → its HTML when editing began (or when it appeared)
+
+function makeEditable(el, on) {
+  if (on) {
+    el.setAttribute('contenteditable', 'true');
+    el.setAttribute('spellcheck', 'true');
+    if (!before.has(el)) before.set(el, el.innerHTML);
+  } else {
+    el.removeAttribute('contenteditable');
+    el.removeAttribute('spellcheck');
+  }
+}
 
 function setEditing(on) {
   editing = on;
   document.documentElement.toggleAttribute('data-copy-editing', on);
-  SLOTS().forEach((el) => {
-    if (on) { el.setAttribute('contenteditable', 'true'); el.setAttribute('spellcheck', 'true'); }
-    else { el.removeAttribute('contenteditable'); el.removeAttribute('spellcheck'); }
-  });
+  SLOTS().forEach((el) => makeEditable(el, on));
   render();
 }
 
-function changedKeys() {
-  return SLOTS().filter((el) => sanitize(el.innerHTML) !== sanitize(before.get(el.dataset.copy) ?? '')).map((el) => el.dataset.copy);
+function changed() {
+  return SLOTS().filter((el) => before.has(el) && valueOf(el) !== valueOf(el, before.get(el)));
+}
+
+/* The Color button (Wyatt, 28 Sep, ruling 3): it works in every heading on
+   every page, and is grayed out unless the selected words sit in one. */
+function selectedHeading() {
+  const sel = window.getSelection();
+  if (!sel || !sel.rangeCount || sel.isCollapsed) return null;
+  const node = sel.getRangeAt(0).commonAncestorContainer;
+  const el = node.nodeType === 1 ? node : node.parentElement;
+  const head = el?.closest('h1, h2, h3');
+  return head && el.closest(EDITABLE) ? head : null;
+}
+
+function syncColor() {
+  const btn = bar?.querySelector('[data-copy-act="accent"]');
+  if (!btn) return;
+  const ok = !!selectedHeading();
+  btn.disabled = !ok;
+  btn.title = ok ? 'Color the selected words' : 'Select words in a heading to color them';
 }
 
 function render(msg = '') {
@@ -87,30 +155,47 @@ function render(msg = '') {
     bar.innerHTML = `<button type="button" class="copybar-btn" data-copy-act="start">Edit page text</button>${msg ? `<span class="copybar-msg">${msg}</span>` : ''}`;
     return;
   }
-  const n = changedKeys().length;
+  const n = changed().length;
   bar.innerHTML = `
-    <span class="copybar-msg">Editing — click any outlined text. To color words in a headline, select them and press <b>Color</b>. ${msg ? `<b>${msg}</b> ` : ''}${n ? `<b>${n} unsaved change${n === 1 ? '' : 's'}</b>` : 'No changes yet.'}</span>
-    <button type="button" class="copybar-btn" data-copy-act="accent" title="Color the selected words in a headline">Color</button>
+    <span class="copybar-msg">Editing — click any outlined text. To color words in a heading, select them and press <b>Color</b>. ${msg ? `<b>${msg}</b> ` : ''}${n ? `<b>${n} unsaved change${n === 1 ? '' : 's'}</b>` : 'No changes yet.'}</span>
+    <button type="button" class="copybar-btn" data-copy-act="accent">Color</button>
     <button type="button" class="copybar-btn copybar-btn--primary" data-copy-act="save" ${n ? '' : 'disabled'}>Save — goes live</button>
     <button type="button" class="copybar-btn" data-copy-act="cancel">Cancel</button>`;
+  syncColor();
 }
 
 async function save(editorEmail) {
-  const keys = changedKeys();
-  if (!keys.length) return;
-  const next = { ...published };
-  keys.forEach((k) => {
-    const el = document.querySelector(`[data-copy="${CSS.escape(k)}"]`);
-    const html = sanitize(el.innerHTML);
-    // Typed back to the original? Then there is nothing to override.
-    if (html === sanitize(defaults.get(k) ?? '')) delete next[k];
-    else next[k] = html;
-    el.innerHTML = html;
+  const els = changed();
+  if (!els.length) return;
+  const nextCopy = { ...published };
+  let copyTouched = false;
+  const fields = [];
+  els.forEach((el) => {
+    const value = valueOf(el);
+    if (el.dataset.copy) {
+      const k = el.dataset.copy;
+      // Typed back to the original? Then there is nothing to override.
+      if (value === sanitize(defaults.get(k) ?? '')) delete nextCopy[k];
+      else nextCopy[k] = value;
+      copyTouched = true;
+    } else {
+      fields.push({ field: el.dataset.field, value, isDefault: sameText(el) });
+    }
   });
   bar.querySelector('[data-copy-act="save"]').disabled = true;
   try {
-    await saveCopy(next, editorEmail);
-    published = next;
+    if (copyTouched) await saveCopy(nextCopy, editorEmail);
+    if (fields.length) await saveFields(fields, editorEmail);
+    if (copyTouched) published = nextCopy;
+    /* The same words may sit in more than one place on the page (a label on
+       every card): all of them show what was saved. */
+    els.forEach((el) => {
+      const html = el.dataset.fieldFormat === 'paragraphs'
+        ? valueOf(el).split('\n\n').map((p) => `<p>${p}</p>`).join('') : valueOf(el);
+      const sel = el.dataset.copy ? `[data-copy="${CSS.escape(el.dataset.copy)}"]` : `[data-field="${CSS.escape(el.dataset.field)}"]`;
+      document.querySelectorAll(sel).forEach((twin) => { twin.innerHTML = html; });
+    });
+    before = new WeakMap();
     setEditing(false);
     render(`Saved — live now. Every version is kept in /admin → History.`);
   } catch (err) {
@@ -120,26 +205,20 @@ async function save(editorEmail) {
   }
 }
 
-/* Color a phrase in a headline. It toggles the phrase's italic, which the
-   stylesheet renders upright in the accent color (h1 i). A button rather
-   than Cmd+I: Safari keeps Cmd+I for "Email This Page", and a shortcut is
-   invisible anyway. Headlines only — in body text italic stays italic. */
+/* Color a phrase in a heading. It toggles the phrase's italic, which the
+   stylesheet renders upright in the accent color (h1 i, h2 i, h3 i). A button
+   rather than Cmd+I: Safari keeps Cmd+I for "Email This Page", and a shortcut
+   is invisible anyway. Headings only — in body text italic stays italic. */
 function accent() {
-  const sel = window.getSelection();
-  const node = sel && sel.rangeCount ? sel.getRangeAt(0).commonAncestorContainer : null;
-  const el = node && (node.nodeType === 1 ? node : node.parentElement);
-  const head = el && el.closest('h1[data-copy]');
-  if (!head || sel.isCollapsed) {
-    render('Select some words in a headline first.');
-    return;
-  }
+  if (!selectedHeading()) return;
   try { document.execCommand('styleWithCSS', false, false); } catch { /* older engines */ }
   document.execCommand('italic');
   render();
 }
 
 function cancel() {
-  SLOTS().forEach((el) => { if (before.has(el.dataset.copy)) el.innerHTML = before.get(el.dataset.copy); });
+  SLOTS().forEach((el) => { if (before.has(el)) el.innerHTML = before.get(el); });
+  before = new WeakMap();
   setEditing(false);
 }
 
@@ -160,7 +239,7 @@ function wireEditor(user) {
   bar.addEventListener('click', (e) => {
     const act = e.target.closest('[data-copy-act]')?.dataset.copyAct;
     if (act === 'start') {
-      before = new Map(SLOTS().map((el) => [el.dataset.copy, el.innerHTML]));
+      before = new WeakMap();
       setEditing(true);
     }
     if (act === 'save') save(user.email);
@@ -168,42 +247,82 @@ function wireEditor(user) {
     if (act === 'accent') accent();
   });
 
+  document.addEventListener('selectionchange', () => { if (editing) syncColor(); });
+
   /* While editing, a click on an editable link or button edits it rather than
      following it. Capture phase, so the site's own click handlers never see it. */
   document.addEventListener('click', (e) => {
-    if (editing && e.target.closest('[data-copy]')) e.preventDefault();
+    if (editing && e.target.closest(EDITABLE)) e.preventDefault();
   }, true);
 
   document.addEventListener('input', (e) => {
-    if (editing && e.target.closest('[data-copy]')) render();
+    if (editing && e.target.closest(EDITABLE)) render();
   });
 
-  /* Headings and button labels are one line; paragraphs may take Shift+Enter. */
   document.addEventListener('keydown', (e) => {
-    const el = editing && e.target.closest?.('[data-copy]');
-    if (!el || e.key !== 'Enter') return;
+    const el = editing && e.target.closest?.(EDITABLE);
+    if (!el) return;
+    /* Inside a <summary> (a bio card) the space bar would fold the card. */
+    if (e.key === ' ' && el.closest('summary')) {
+      e.preventDefault();
+      document.execCommand('insertText', false, ' ');
+      return;
+    }
+    /* Headings and labels are one line; paragraphs may take Shift+Enter, and
+       a multi-paragraph field (a bio) takes Enter for a new paragraph. */
+    if (e.key !== 'Enter') return;
+    if (el.dataset.fieldFormat === 'paragraphs') return;
     if (el.tagName === 'P' && e.shiftKey) return;
     e.preventDefault();
   });
 
   /* Paste arrives as plain text, so Word or Google Docs formatting can't ride in. */
   document.addEventListener('paste', (e) => {
-    if (!editing || !e.target.closest?.('[data-copy]')) return;
+    if (!editing || !e.target.closest?.(EDITABLE)) return;
     e.preventDefault();
     document.execCommand('insertText', false, e.clipboardData.getData('text/plain'));
   });
 }
 
-/* Called once per page by the shell. Visitors get the text; editors also get the bar. */
+/* Words drawn after load — a collection arriving, a series redrawn — join
+   in as they appear: page-text overrides land on them, and while editing
+   they are editable straight away. */
+function watchLateWords() {
+  new MutationObserver((records) => {
+    for (const r of records) {
+      r.addedNodes.forEach((n) => {
+        if (n.nodeType !== 1) return;
+        const found = [...(n.matches(EDITABLE) ? [n] : []), ...n.querySelectorAll(EDITABLE)];
+        found.forEach((el) => {
+          if (el.dataset.copy) adoptCopy(el);
+          if (editing && !el.isContentEditable) makeEditable(el, true);
+        });
+        if (found.length) onWords?.();
+      });
+    }
+  }).observe(document.body, { childList: true, subtree: true });
+}
+let onWords = null;
+
+/* Called once per page by the shell. Visitors get the text; editors also get
+   the bar — once the page has any words to edit, which on some pages is only
+   after a collection has drawn them. */
 export async function mountCopy() {
-  if (!document.querySelector('[data-copy]')) return;
   await applyCopy();
+  watchLateWords();
   try {
     const { onAuth } = await import('./auth.js');
     let mounted = false;
+    let who = null;
+    const tryMount = () => {
+      if (mounted || !who || !document.querySelector(EDITABLE)) return;
+      mounted = true;
+      wireEditor(who);
+    };
+    onWords = tryMount;
     onAuth(async (u) => {
       if (mounted || !u) return;
-      if (await isEditor(u)) { mounted = true; wireEditor(u); }
+      if (await isEditor(u)) { who = u; tryMount(); }
     });
   } catch { /* no auth, no editing — the page still reads fine */ }
 }

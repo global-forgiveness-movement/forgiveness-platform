@@ -6,7 +6,12 @@
 import { store, withPatience } from './store.js';
 import {
   TESTIMONIALS, VIDEOS, EVENTS, PUBLICATIONS, PEOPLE, GROUP_STATS,
+  WORKBOOKS, REACH_STEPS, GROUP_GUIDELINES,
 } from './data.js';
+
+/* Workbook cards: only their words are content. Files, sizes and links stay
+   in WORKBOOKS, read by downloadFor() alone — see getWorkbooks(). */
+const WORKBOOK_WORDS = ['badge', 'title', 'desc', 'pills'];
 
 const DEFAULTS = {
   testimonials: TESTIMONIALS,
@@ -15,6 +20,9 @@ const DEFAULTS = {
   publications: PUBLICATIONS,
   people: PEOPLE,
   stats: GROUP_STATS,
+  workbooks: WORKBOOKS.map((w) => ({ id: w.id, ...pick(w, WORKBOOK_WORDS) })),
+  reach: REACH_STEPS,
+  guidelines: GROUP_GUIDELINES.map((text) => ({ text })),
 };
 
 export async function getCollection(name) {
@@ -29,6 +37,76 @@ export async function getCollection(name) {
 export async function getVideos() {
   const list = await getCollection('videos');
   return Object.fromEntries(list.map((v) => [v.key, v]));
+}
+
+/* The workbook cards: every structural fact (files, sizes, languages, the
+   landing page) from WORKBOOKS, with an editor's words laid over the top.
+   Editions are fixed in code, so an added or removed item here changes
+   nothing — a new edition needs its files first. */
+export async function getWorkbooks() {
+  const edited = await getCollection('workbooks');
+  return WORKBOOKS.map((w) => {
+    const e = edited.find((x) => x.id === w.id);
+    return e ? { ...w, ...pick(e, WORKBOOK_WORDS) } : w;
+  });
+}
+
+function pick(obj, keys) {
+  return Object.fromEntries(keys.filter((k) => obj[k] !== undefined && obj[k] !== '').map((k) => [k, obj[k]]));
+}
+
+/* ------------------------------------------- words where they sit */
+/* THE CONTRACT (.planning/FLEET-2026-09-28.md): every word the site draws
+   from a collection carries data-field="<collection>/<itemKey>/<fieldPath>",
+   and the page editor (js/copy.js) saves it back through here. One way to
+   name an item, used by every renderer: */
+export const itemKey = (item, i) => String(item?.id ?? item?.key ?? i);
+export const fieldAttr = (name, item, i, path) =>
+  `data-field="${name}/${itemKey(item, i)}/${path}"`;
+
+const getPath = (obj, path) => path.split('.').reduce((o, k) => (o == null ? o : o[k]), obj);
+function setPath(obj, path, value) {
+  const keys = path.split('.');
+  const last = keys.pop();
+  const parent = keys.reduce((o, k) => (o[k] ??= {}), obj);
+  parent[last] = value;
+}
+
+/* Save words edited on the page. `changes` is [{ field, value, isDefault }]:
+   `field` a data-field address, `value` the cleaned text, `isDefault(v)` true
+   when v reads the same as the value the page was committed with. A field
+   typed back to its default takes the default again, and a collection that
+   is entirely default again stops being overridden at all — so a later
+   change to data.js shows through. Every write lands in History. */
+export async function saveFields(changes, editor) {
+  const byName = new Map();
+  for (const c of changes) {
+    const [name, key, ...rest] = c.field.split('/');
+    if (!(name in DEFAULTS)) throw new Error(`no collection "${name}" for ${c.field}`);
+    if (!byName.has(name)) byName.set(name, []);
+    byName.get(name).push({ ...c, key, path: rest.join('/') });
+  }
+  for (const [name, list] of byName) {
+    /* A strict read, never getCollection's patient fallback: saving on top of
+       the defaults because the store was slow would wipe other edits. */
+    const doc = await store.get('content', name);
+    const items = structuredClone(doc?.items?.length ? doc.items : DEFAULTS[name]);
+    for (const c of list) {
+      const i = items.findIndex((it, n) => itemKey(it, n) === c.key);
+      if (i < 0) throw new Error(`no item "${c.key}" in ${name}`);
+      const d = DEFAULTS[name].findIndex((it, n) => itemKey(it, n) === c.key);
+      const committed = d < 0 ? undefined : getPath(DEFAULTS[name][d], c.path);
+      setPath(items[i], c.path, committed !== undefined && c.isDefault(committed) ? committed : c.value);
+    }
+    if (JSON.stringify(items) === JSON.stringify(DEFAULTS[name])) {
+      if (doc) {
+        await keepHistory(name, doc, editor);
+        await store.remove('content', name);
+      }
+    } else {
+      await saveCollection(name, items, editor);
+    }
+  }
 }
 
 /* ------------------------------------------------------------ pages */
