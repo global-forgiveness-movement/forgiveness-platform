@@ -39,21 +39,31 @@ export const ROLES = ['visitor', 'none', 'member', 'facilitator'];
    sessions run one to one and a half hours. */
 export const MEETING_LENGTH_MS = 90 * 60 * 1000;
 
+/* WHO FACILITATES A GROUP — ONE fact, ONE place (lane D, 28 Sep): the
+   account named on groupCodes/{code}.facilitator. firestore.rules checks the
+   same field before it lets anyone write the group's dates and ticks, so the
+   page can never offer a tick the database will refuse. Nothing a person's
+   own membership says enters into it — groups made before September 28
+   named nobody there until /admin gave them back their facilitator.
+   scripts/qa/group-engine-onehelm.mjs goes red if anything else reads it. */
+export const facilitatorOf = (codeDoc) => (codeDoc && typeof codeDoc.facilitator === 'string' && codeDoc.facilitator) || null;
+
+/* Whether a group code names this account as the one who runs it. */
+export const createdBy = (codeDoc, userId) => !!userId && facilitatorOf(codeDoc) === userId;
+
 /* Who is looking. The public Groups page always shows the visitor's view,
-   signed in or not; My Path shows the viewer's own. */
-export function roleFor({ surface, user, membership }) {
+   signed in or not; My Path shows the viewer's own, one group at a time:
+   `membership` is this person's entry for the group, `codeDoc` that group's
+   groupCodes record. */
+export function roleFor({ surface, user, membership, codeDoc }) {
   if (surface === 'public' || !user) return 'visitor';
   if (!membership?.seriesId) return 'none';
-  return membership.facilitator ? 'facilitator' : 'member';
+  return createdBy(codeDoc, user.id) ? 'facilitator' : 'member';
 }
 
-/* Whether a group code was created by this account (groupCodes/{code}
-   names its facilitator's account id). */
-export const createdBy = (codeDoc, userId) => !!userId && codeDoc?.facilitator === userId;
-
-/* Whether this membership runs the group (writes its dates and ticks). */
-export const runsGroup = (membership) =>
-  CAN[roleFor({ surface: 'mypath', user: {}, membership })].tickGroup;
+/* Whether this account runs the group on this code record. */
+export const runsGroup = (codeDoc, userId) =>
+  CAN[roleFor({ surface: 'mypath', user: { id: userId }, membership: { seriesId: 'any' }, codeDoc })].tickGroup;
 
 /* The ordered steps of a series, before anyone's state is applied. The ids
    are the keys group state and ticks are stored under, so they must never
@@ -119,8 +129,16 @@ const PATH = {
 };
 export function pathView(role) {
   if (!ROLES.includes(role)) throw new Error(`unknown role: ${role}`);
-  return { role, ...PATH[role], panel: PANEL[role] || null };
+  return { role, ...PATH[role], panel: PANEL[role] ? { ...PANEL[role], ...FINISH } : null };
 }
+
+/* Ruling 2, 28 Sep: no scary warning. Finishing a group moves it to Past
+   groups, code still showing, one tap from coming back — nothing is lost, so
+   nothing asks "are you sure". The same words for whoever runs or follows it. */
+const FINISH = {
+  finish: 'Finished with this group',
+  bringBack: 'Bring back',
+};
 
 const GROUP_TICK_LABEL = {
   prep: 'Everyone has their workbook',
@@ -131,14 +149,10 @@ const PANEL = {
   member: {
     kicker: 'You’re following a group',
     blurb: 'Your group meets and talks; you do the lessons on your own, in your own time. Tick each set of lessons when you’ve done them — that tick is yours alone. Each meeting’s videos open here to re-watch once your group has met.',
-    leave: 'Leave this group',
-    leaveWarn: 'Stop following this group? Your workbook progress is not affected.',
   },
   facilitator: {
     kicker: 'The group you facilitate',
     blurb: 'Share the code with everyone in your group — it is saved here, so you never have to remember it. Add each meeting’s date and place below. When you tick a meeting, the next step opens for everyone, and that meeting’s videos open for them to re-watch.',
-    leave: 'Remove this group from My Path',
-    leaveWarn: 'Remove this group from My Path? We keep your registration, but the code stops showing here — write it down first.',
   },
 };
 
