@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>My Path — Global Forgiveness Movement</title>
-  <meta name="description" content="Your place in the workbook, your series, your materials.">
+  <meta name="description" content="Your place in the workbook, your group, your materials.">
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z' fill='%2300887a' transform='rotate(40 12 12)'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="../css/site.css">
@@ -125,11 +125,11 @@
   import {
     myGroups, joinGroup, finishGroup, bringBackGroup, codeRecord, CODE_SHAPE, holdGroupCode, heldGroupCode, heldCodeLine,
     groupCodeProblem, forgetGroupCode, applyHeldGroupCode,
-    loadSeries, groupState, myTicks, groupTicks, actOnGroup, tickMine, SESSION_VIDEO,
+    loadSeries, groupState, myTicks, groupTicks, actOnGroup, tickMine, SESSION_VIDEO, groupToAskAbout,
   } from '../js/groups.js';
   import { deriveSeries, pathView, roleFor } from '../js/group-engine.js';
   import { seriesFlow, seriesName, nextBox, wireSeries, esc } from '../js/series.js';
-  import { mountCreateGroup } from '../js/group-create.js';
+  import { mountCreateGroup, mountGroupDetails } from '../js/group-create.js';
 
   const TOTAL_LESSONS = 12;
 
@@ -283,6 +283,8 @@
     const shown = groups.find((x) => x.isChosen);
     ctx = shown ? { userId, code: shown.g.code } : null;
     groupSlot.innerHTML = shown ? groupHtml(shown) : '';
+    const ask = groupSlot.querySelector('[data-render="details"]');
+    if (ask) mountGroupDetails(ask, { code: shown.g.code, onDone: () => ask.remove() });
 
     /* No group yet: the two ways in are the section. Otherwise they fold
        below the group, with Past groups beside them. */
@@ -308,13 +310,20 @@
   /* The chosen group: its code, the one next thing, then every step. */
   function groupHtml({ g, view }) {
     const p = view.panel;
+    /* A group just created gets its optional questions beside its code, once. */
+    const asking = groupToAskAbout() === g.code;
     return `
-      <div class="group-code">
-        <span class="groupcode groupcode--big">${esc(g.code)}</span>
-        ${p.copy ? `<button type="button" class="btn btn--outline btn--sm" data-copycode="${esc(g.code)}">${esc(p.copy)}</button>` : ''}
+      <div class="group-top${asking ? ' is-asking' : ''}">
+        <div>
+          <div class="group-code">
+            <span class="groupcode groupcode--big">${esc(g.code)}</span>
+            ${p.copy ? `<button type="button" class="btn btn--outline btn--sm" data-copycode="${esc(g.code)}">${esc(p.copy)}</button>` : ''}
+          </div>
+          <p class="small muted group-sub">${esc(p.codeLine)} · ${seriesName(view, 'span')}</p>
+          ${nextBox(view)}
+        </div>
+        ${asking ? '<aside class="card group-details" data-render="details"></aside>' : ''}
       </div>
-      <p class="small muted group-sub">${esc(p.codeLine)} · ${seriesName(view, 'span')}</p>
-      ${nextBox(view)}
       ${seriesFlow(view)}
       <p class="group-finish"><button type="button" class="linkish" data-finish="${esc(g.code)}">${esc(p.finish)}</button></p>`;
   }

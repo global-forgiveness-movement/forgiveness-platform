@@ -59,7 +59,7 @@ export function groupCodeProblem(raw) {
   const clean = String(raw || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
   const body = clean.startsWith('GFM') ? clean.slice(3) : clean;
   if (!body) return `Type the code your facilitator gave you. It looks like ${CODE_SHAPE}.`;
-  if (!DIGIT_SERIES[body[0]]) return 'The number after “GFM” says which series your group uses, so it is always 3 or 6. Check that part with your facilitator.';
+  if (!DIGIT_SERIES[body[0]]) return 'The number after “GFM” says which version your group uses, so it is always 3 or 6. Check that part with your facilitator.';
   const block = body.slice(1);
   const odd = [...block].find((c) => !ALPHABET.includes(c));
   if (odd) return `Group codes never use “${odd}”, so one character is off. Check it with your facilitator.`;
@@ -96,7 +96,36 @@ export async function registerGroup(fields, userId) {
     ...(userId ? { facilitator: userId } : {}),
   });
   if (userId) await enroll(userId, { code, seriesId, groupName: fields.location || '' });
+  if (userId) askAboutGroup(code);
   return { code, seriesId, series: SERIES[seriesId] };
+}
+
+/* Richard, 28 Sep: the optional questions (where, how many, anything else)
+   come AFTER the code appears, beside it — not as a fold in the create form.
+   So a new group is marked "not yet asked" in this browser, My Path asks once
+   beside its code, and Send or Skip clears the mark. The answers arrive in
+   the /admin inbox as a follow-up to the registration (a second `groups`
+   entry: anyone may add one, only an editor may read it — firestore.rules
+   unchanged). */
+const ASK = 'gfm.askAboutGroup.v1';
+function askAboutGroup(code) {
+  try { localStorage.setItem(ASK, code); } catch { /* private window: we just won't ask */ }
+}
+export function groupToAskAbout() {
+  try { return localStorage.getItem(ASK); } catch { return null; }
+}
+export function doneAskingAboutGroup() {
+  try { localStorage.removeItem(ASK); } catch { /* nothing to clear */ }
+}
+export async function sendGroupDetails(code, fields, user) {
+  const parsed = parseGroupCode(code);
+  await store.add('groups', {
+    code, seriesId: parsed?.seriesId || '', followUp: true,
+    userId: user?.id || null, name: user?.name || '', email: user?.email || '',
+    location: String(fields.location || '').trim(), size: String(fields.size || '').trim(), notes: String(fields.notes || '').trim(),
+    submittedAt: new Date().toISOString(),
+  });
+  doneAskingAboutGroup();
 }
 
 /* A member entering a code. The parse decides; the lookup only adds detail. */

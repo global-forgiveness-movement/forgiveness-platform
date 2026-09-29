@@ -313,11 +313,6 @@ figure.video:empty { aspect-ratio: 16 / 9; }
 .dl-row { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
 .pill { display: inline-block; font-family: var(--font-head); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; padding: 0.25rem 0.7rem; border-radius: 999px; background: var(--cream-soft); color: var(--teal-deep); }
 .pill--plum { background: rgba(119, 0, 97, 0.12); color: var(--plum); }
-/* Optional extras on the group form — present, asked, but never in the way. */
-.group-extra { margin-top: 0.4rem; border-top: 1px solid var(--line); padding-top: 0.8rem; }
-.group-extra > summary { cursor: pointer; font-family: var(--font-head); font-size: 0.9rem; font-weight: 600; color: var(--teal-deep); }
-.group-extra > summary:hover { color: var(--plum); }
-.group-extra[open] > summary { margin-bottom: 0.6rem; }
 /* A pill that really is a control. Looks the same at rest — it always looked
    pressable; now it is — and answers the pointer. */
 a.pill--link { text-decoration: none; border: 1px solid transparent; transition: border-color 0.15s, background 0.15s; }
@@ -642,8 +637,8 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .next-meet .next-when { margin: 0 0 0.3rem; }
 .next-meet .flow-meet-form { margin-top: 0.2rem; }
 @media (min-width: 640px) {
-  .next-meet .flow-meet-form { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; }
-  .next-meet .flow-meet-form .btn { grid-column: 1 / -1; }
+  .group-top:not(.is-asking) .next-meet .flow-meet-form { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; }
+  .group-top:not(.is-asking) .next-meet .flow-meet-form .btn { grid-column: 1 / -1; }
 }
 .path-col .flow { margin-top: 1.2rem; }
 .group-finish { margin: 1rem 0 0; }
@@ -654,3 +649,10 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .group-more-item[open] > summary { margin-bottom: 0.8rem; }
 .group-more-item .form { max-width: 28rem; }
 .group-more-item .past-list { display: grid; gap: 0.6rem; }
+/* A new group's optional questions sit beside its code (Richard, 28 Sep);
+   below it on a phone. */
+.group-top.is-asking { display: grid; gap: 1rem 1.4rem; margin-bottom: 1rem; }
+@media (min-width: 760px) { .group-top.is-asking { grid-template-columns: minmax(0, 1fr) minmax(0, 20rem); align-items: start; } }
+.group-details h3 { font-size: 1.05rem; margin: 0 0 0.3rem; }
+.group-details .form { max-width: none; }
+.group-details .form input, .group-details .form textarea { width: 100%; box-sizing: border-box; }

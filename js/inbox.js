@@ -28,7 +28,9 @@ export const SUBMISSIONS = {
   },
   groups: {
     collection: 'groups',
-    label: 'Group registration',
+    /* A follow-up carries the optional answers given beside a new code on
+       My Path (Richard, 28 Sep) — same kind, same fields, its own name. */
+    label: (r) => (r.followUp ? 'More about a group' : 'Group registration'),
     detail: (r) => [
       ['Group code', r.code],
       ['Where', r.location],

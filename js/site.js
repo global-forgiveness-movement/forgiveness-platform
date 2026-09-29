@@ -9,7 +9,7 @@ import { recordDownload } from './metrics.js';
 import { videoFrame } from './video.js';
 import { ensureGate, leaf } from './gate.js';
 
-export const STAMP = 'GFM-V1 · 2026-09-28i';
+export const STAMP = 'GFM-V1 · 2026-09-29a';
 
 /* Resolve everything relative to the site root (js/ → root), so pages work
    at any depth and on any host (github.io project path or a custom domain). */
@@ -103,7 +103,7 @@ function buildFooter() {
     <div class="cols">${cols}</div>
     <div class="legal">
       <p>An initiative of the <a href="https://hfh.fas.harvard.edu/">Human Flourishing Program</a>.</p>
-      <p>The REACH workbooks are self-guided learning, not therapy, and not a replacement for professional mental-health support.</p>
+      <p>The REACH Forgiveness workbooks are self-guided learning, not therapy, and not a replacement for professional mental-health support.</p>
       <p>© 2026 Human Flourishing Program · <a href="${href('privacy/')}">Privacy</a> · <a href="${href('accessibility/')}">Accessibility</a> · <span class="stamp">${STAMP}</span></p>
     </div>`);
 }

@@ -362,7 +362,7 @@
       : '';
     return `<div class="adm-item">
       <div class="adm-block-head">
-        <span class="pill">${esc(spec.label)}</span>
+        <span class="pill">${esc(typeof spec.label === 'function' ? spec.label(r) : spec.label)}</span>
         <b>${esc(r.name || 'No name given')}</b>
         <span class="muted small">${esc(when)}</span>
         <span class="spacer" style="flex:1"></span>
