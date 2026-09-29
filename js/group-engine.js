@@ -140,6 +140,8 @@ const FINISH = {
   bringBack: 'Bring back',
 };
 
+const ACCOUNTS_TICK = 'prep-accounts';
+
 const GROUP_TICK_LABEL = {
   prep: 'Everyone has their workbook',
   meet: 'We met and played the videos',
@@ -212,12 +214,23 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
         note: g.byDate ? 'Done — the meeting time has passed.' : g.byLater ? 'Done — a later meeting is marked done.' : '',
       });
     }
+    /* Richard, 29 Sep call: a reminder that everyone has made a free account
+       (so they can join with the code). A tick of its own on the first step,
+       kept under its own key in the group state; it opens nothing. */
+    if (s.id === 'prep' && can.tickGroup) {
+      actions.push({ type: 'check', scope: 'group', target: ACCOUNTS_TICK, label: 'Everyone has made a free account',
+        checked: !!shared[ACCOUNTS_TICK]?.done, locked: false, note: 'So they can join with your code.' });
+    }
     if (!s.gate && can.tickMine) {
       actions.push({ type: 'check', scope: 'mine', label: 'I’ve done these lessons', checked: !!mine[s.id], locked: false,
         note: 'Only you see this tick.' });
     }
     if (s.kind === 'together' && can.setMeeting) {
-      actions.push({ type: 'meeting', when: st.when || '', place: st.place || '', link: st.link || '' });
+      /* `others`: the meetings a place or link typed here also fills, when
+         they have none of their own (29 Sep call: "type in the place and the
+         video call link in the first box then that auto populates"). */
+      const others = base.filter((b) => b.kind === 'together' && b.id !== s.id).map((b) => b.id);
+      actions.push({ type: 'meeting', when: st.when || '', place: st.place || '', link: st.link || '', others });
     }
 
     let tally = null;
@@ -267,11 +280,22 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
     : null;
   const current = can.inGroup ? (steps.find((s) => s.state === 'open') || null) : null;
 
+  /* 29 Sep call: every meeting's date is set before the group starts. Until
+     any is, whoever sets them is shown the whole plan at once — each
+     meeting's date and time, and one place or link for them all. */
+  const meetings = steps.filter((s) => s.kind === 'together');
+  const plan = can.setMeeting && !meetings.some((m) => shared[m.id]?.when)
+    ? { meetings: meetings.map((m) => ({ stepId: m.id, n: m.n, title: m.title })),
+        place: meetings.map((m) => shared[m.id]?.place).find(Boolean) || '',
+        link: meetings.map((m) => shared[m.id]?.link).find(Boolean) || '' }
+    : null;
+
   return {
     role,
     series: { id: series.id, name: series.name, framing: series.framing, workbook: series.workbook },
     steps,
     next,
+    plan,
     currentId: current?.id || null,
     finished: can.inGroup && steps.every((s) => s.kind !== 'together' || s.state === 'done'),
     ...pathView(role),
@@ -289,7 +313,22 @@ export function applyGroupAction(group, stepId, action) {
     cur.place = String(action.place || '').trim().slice(0, 140);
     cur.link = safeLink(action.link);
   }
-  steps[stepId] = cur;
+  if (stepId) steps[stepId] = cur;
+  /* A place or link fills every other meeting that has neither yet. */
+  const place = String(action.place || '').trim().slice(0, 140);
+  const link = safeLink(action.link);
+  const fill = (id) => {
+    const o = { ...(steps[id] || {}) };
+    if (!o.place && !o.link) { o.place = place; o.link = link; }
+    steps[id] = o;
+  };
+  if (action.type === 'meeting' && (place || link)) (action.others || []).forEach(fill);
+  /* The whole plan at once: each meeting's date, one place or link for all. */
+  if (action.type === 'schedule') {
+    for (const { stepId: id, when } of action.entries || []) {
+      steps[id] = { ...(steps[id] || {}), when: when || '', place, link };
+    }
+  }
   return { ...(group || {}), steps };
 }
 

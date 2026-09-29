@@ -9,7 +9,7 @@ import { recordDownload } from './metrics.js';
 import { videoFrame } from './video.js';
 import { ensureGate, leaf } from './gate.js';
 
-export const STAMP = 'GFM-V1 · 2026-09-29b';
+export const STAMP = 'GFM-V1 · 2026-09-29c';
 
 /* Resolve everything relative to the site root (js/ → root), so pages work
    at any depth and on any host (github.io project path or a custom domain). */
@@ -188,6 +188,8 @@ async function buildShell() {
   document.body.prepend(buildHeader());
   document.body.append(buildFooter());
   hydrateVideos();
+  /* The HFP seal, wherever a page asks for it (About and Home). */
+  document.querySelectorAll('img[data-render="hfp-seal-harvard"]').forEach((img) => { img.src = href(BRAND.hfpSealHarvard); });
   /* A page that draws video slots late (the Groups page series chooser)
      asks for the same hydration again rather than keeping its own. */
   window.addEventListener('gfm:videos', hydrateVideos);

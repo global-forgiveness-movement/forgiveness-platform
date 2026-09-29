@@ -94,5 +94,33 @@ console.log('The next meeting sits at the top');
 m = deriveSeries({ series: S, group: applyGroupAction(g, 'meet-2', { type: 'meeting', when: '2026-10-13T23:00:00.000Z', place: 'Library' }), role: 'member', now: NOW, video: V });
 ok(m.next && m.next.stepId === 'meet-2' && m.next.whenText.includes('October') && m.next.place === 'Library', `next: ${m.next?.whenText} · ${m.next?.place}`);
 
+console.log('Every meeting planned before the group starts (29 Sep call)');
+let pf = deriveSeries({ series: S, group: null, role: 'facilitator', now: NOW, video: V });
+const together = pf.steps.filter((s) => s.kind === 'together').map((s) => s.id);
+ok(pf.plan && pf.plan.meetings.length === together.length, `a new group asks for all ${together.length} meeting dates at once`);
+ok(deriveSeries({ series: S, group: null, role: 'member', now: NOW, video: V }).plan === null, 'a member is never asked to plan');
+const planned = applyGroupAction(null, null, { type: 'schedule', entries: together.map((id, i) => ({ stepId: id, when: `2026-10-${10 + 7 * i}T23:00:00.000Z` })), place: 'Library', link: '' });
+ok(together.every((id) => planned.steps[id].when && planned.steps[id].place === 'Library'), 'the plan sets every date, and one place for all');
+pf = deriveSeries({ series: S, group: planned, role: 'facilitator', now: NOW, video: V });
+ok(pf.plan === null, 'once any date is set, the plan gives way to the next meeting');
+
+console.log('A place typed once fills the other meetings (29 Sep call)');
+const firstAct = step(deriveSeries({ series: S, group: null, role: 'facilitator', now: NOW, video: V }), together[0]).actions.find((x) => x.type === 'meeting');
+ok(firstAct.others.length === together.length - 1, 'each meeting knows the others it fills');
+const filled = applyGroupAction({ steps: { [together[1]]: { place: 'Own room' } } }, together[0], { type: 'meeting', when: '', place: 'Church hall', link: '', others: firstAct.others });
+ok(filled.steps[together[0]].place === 'Church hall', 'the meeting typed in gets it');
+ok(filled.steps[together[1]].place === 'Own room', 'a meeting with its own place keeps it');
+ok(together.slice(2).every((id) => filled.steps[id].place === 'Church hall'), 'the rest are filled');
+
+console.log('The account reminder (Richard, 29 Sep call)');
+const prepF = step(deriveSeries({ series: S, group: null, role: 'facilitator', now: NOW, video: V }), 'prep');
+const acct = prepF.actions.find((x) => x.target === 'prep-accounts');
+ok(acct && !acct.checked, 'a facilitator is offered "Everyone has made a free account"');
+ok(!step(deriveSeries({ series: S, group: null, role: 'member', now: NOW, video: V }), 'prep').actions.some((x) => x.target), 'a member is not');
+const ticked = applyGroupAction(null, 'prep-accounts', { type: 'check', value: true });
+const after = deriveSeries({ series: S, group: ticked, role: 'facilitator', now: NOW, video: V });
+ok(step(after, 'prep').actions.find((x) => x.target === 'prep-accounts').checked, 'ticking it is remembered');
+ok(step(after, 'meet-1').state === 'upcoming', 'and it opens nothing — the workbook tick still gates');
+
 if (failed) { console.error(`\nRED — ${failed} failed.`); process.exit(1); }
 console.log('\ngreen — the engine holds for every role.');

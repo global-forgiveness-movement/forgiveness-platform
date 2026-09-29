@@ -612,8 +612,8 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .workbooks-basis { margin-top: 1.2rem; }
 
 /* The Harvard HFP seal at the foot of About. */
-.about-seal img { width: 160px; height: 160px; max-width: 100%; }
-@media (max-width: 760px) { .about-seal img { width: 128px; height: 128px; } }
+.seal-foot img { width: 160px; height: 160px; max-width: 100%; }
+@media (max-width: 760px) { .seal-foot img { width: 128px; height: 128px; } }
 
 /* ---- My Path: one section for your groups (Wyatt, 28 Sep) ----
    At a glance: which group, its code, the one next thing, then the steps. */
@@ -670,6 +670,22 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
   box-shadow: 0 8px 0 var(--btn-edge), 0 20px 32px -12px rgba(0, 92, 83, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.35); }
 .btn--juicy:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--btn-edge), 0 6px 12px -8px rgba(0, 92, 83, 0.6); }
 .wb-start-line { margin: 1.1rem auto 0.3rem; max-width: none; font-size: 1.05rem; color: var(--navy); }
-.wb-start-acct { margin: 0 auto; max-width: none; color: var(--muted); }
 @media (max-width: 480px) { .btn--juicy { font-size: 1.15rem; padding: 1.05rem 1.3rem; width: 100%; } .wb-start-panel { padding-inline: 1rem; } }
 @media (prefers-reduced-motion: reduce) { .btn--juicy, .btn--juicy:hover, .btn--juicy:active { transform: none; } }
+
+/* ---- Home: the two ways, in pictures (29 Sep call) ---- */
+.hero-sub .two-ways { grid-column: 1 / -1; align-self: start; align-items: start; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem 2rem; max-width: 46rem; margin: 0.4rem 0 0; }
+.two-ways figure { margin: 0; display: grid; gap: 0.6rem; justify-items: center; text-align: center; }
+.two-ways img { width: 100%; max-width: 240px; height: auto; }
+.two-ways figcaption { display: grid; gap: 0.25rem; max-width: 20rem; }
+.two-ways figcaption b { font-family: var(--font-head); font-size: 1.1rem; color: var(--navy); }
+.two-ways figcaption span { color: var(--ink); line-height: 1.5; }
+@media (max-width: 520px) { .hero-sub .two-ways { gap: 1rem; } .two-ways figcaption b { font-size: 1rem; } .two-ways figcaption span { font-size: 0.92rem; } }
+/* A group's own name, typed in place (29 Sep call). */
+.group-name { margin: 0 0 0.4rem; }
+.group-name input { width: 100%; max-width: 26rem; font: 600 1.25rem/1.3 var(--font-head); color: var(--navy); background: transparent;
+  border: 0; border-bottom: 1.5px dashed var(--line); border-radius: 0; padding: 0.2rem 0; }
+.group-name input::placeholder { color: var(--muted); font-weight: 500; }
+.group-name input:hover { border-bottom-color: var(--teal); }
+.group-name input:focus { outline: none; border-bottom: 2px solid var(--teal); }
+.flow-plan label { font-weight: 600; }

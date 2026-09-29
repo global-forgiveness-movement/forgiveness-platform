@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Create account — Global Forgiveness Movement</title>
-  <meta name="description" content="A free account so we can save your place. The workbook needs no account at all.">
+  <meta name="description" content="A free account for the interactive workbook and your Forgiveness Group. The PDF needs no account.">
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z' fill='%2300887a' transform='rotate(40 12 12)'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="../css/site.css">
@@ -15,21 +15,15 @@
     <div class="wrap grid grid--2" style="align-items:start">
 
       <div>
-        <p class="kicker" data-copy="join.p.free-account">Free account</p>
-        <h1 data-copy="join.h1.create-an-account-so">Create an account so we can save your place</h1>
+        <!-- 29 Sep call: "this whole account creation site should be simpler."
+             Three lines: what it is, what it keeps, what it never does. -->
+        <h1 data-copy="join.h1.create-your-free-account">Create your free account</h1>
         <!-- If they came from the My Path code box, say so — the code they
              typed is waiting, and this is the step that connects it. -->
         <p class="form-msg form-msg--ok" data-render="held-code" hidden></p>
-        <p data-copy="join.p.the-interactive-workbook-runs">The interactive workbook runs over many sittings. With an account you can stop halfway through a lesson and pick up in the same place later, on any device.</p>
-        <div class="card card--tint" style="margin-bottom:1rem">
-          <h3 style="font-size:1rem" data-copy="join.h3.what-you-get">What you get</h3>
-          <p class="small" style="margin:0" data-copy="join.p.your-place-in-the">Your place in the workbook saved across devices · the Forgiveness Group videos in your member area when it arrives this fall · your materials in one place.</p>
-        </div>
-        <div class="card card--tint">
-          <h3 style="font-size:1rem" data-copy="join.h3.what-we-don-t">What we don’t do</h3>
-          <p class="small" style="margin:0">We never sell or share your details. We don’t ask what you are forgiving, or who hurt you — and what you write in the workbook never leaves your device, signed in or not. You can delete your account whenever you like.</p>
-        </div>
-        <p class="small muted" style="margin-top:1rem" data-copy="join.p.just-want-the-workbook">Just want the workbook? The PDF is free and needs no account. <a href="../workbooks/">Download it here →</a></p>
+        <p data-copy="join.p.it-keeps-your-place">It keeps your place in the interactive workbook, and your Forgiveness Group on My Path.</p>
+        <p class="notice">What you write in the workbook never leaves your device. We never sell or share your details, and you can delete your account at any time.</p>
+        <p class="small muted" style="margin-top:1rem" data-copy="join.p.just-want-the-pdf">Just want the PDF? It needs no account. <a href="../workbooks/">Download it here →</a></p>
       </div>
 
       <div class="card">
@@ -77,8 +71,13 @@
 
   if (AUTH_MODE === 'demo') document.querySelector('[data-demo-note]').hidden = false;
 
-  /* Signed in — whether already or just now — this page's job is done. */
-  onAuth((u) => { if (u) location.replace('../my-path/'); });
+  /* Signed in — whether already or just now — this page's job is done. It
+     goes back where the visitor was headed: the interactive workbook when
+     that is what sent them here (?next=workbook), otherwise My Path. Only
+     names on this list are followed — never an address from the URL. */
+  const NEXT = { workbook: '../workbook/' };
+  const next = NEXT[new URLSearchParams(location.search).get('next')] || '../my-path/';
+  onAuth((u) => { if (u) location.replace(next); });
 
   /* My Path's "I already have an account" lands here as #signin. */
   let mode = location.hash === '#signin' ? 'signin' : 'signup';

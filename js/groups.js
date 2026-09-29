@@ -253,6 +253,13 @@ async function changeMembership(userId, code, change) {
   await writeMember(userId, { ...doc, groups });
 }
 
+/* A name a person gives their own group (29 Sep call), kept on their own
+   membership — so it is theirs alone, and the switcher can show it. */
+export function nameGroup(userId, code, label) {
+  const clean = String(label || '').trim().slice(0, 60);
+  return changeMembership(userId, code, (cur) => (cur ? { ...cur, label: clean } : cur));
+}
+
 /* The ONE way into a group, for whoever creates it and whoever joins it. */
 function enroll(userId, { code, seriesId, groupName }) {
   return changeMembership(userId, code, (cur) => {

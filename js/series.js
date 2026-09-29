@@ -57,7 +57,7 @@ export function meetingLine(m) {
 function actionHtml(step, a) {
   if (a.type === 'check') {
     return `<label class="flow-check${a.locked ? ' is-locked' : ''}">
-        <input type="checkbox" data-act="check" data-scope="${a.scope}" data-step="${step.id}"${a.checked ? ' checked' : ''}${a.locked ? ' disabled' : ''}>
+        <input type="checkbox" data-act="check" data-scope="${a.scope}" data-step="${a.target || step.id}"${a.checked ? ' checked' : ''}${a.locked ? ' disabled' : ''}>
         <span>${esc(a.label)}${a.note ? `<small>${esc(a.note)}</small>` : ''}</span>
       </label>`;
   }
@@ -68,9 +68,8 @@ function actionHtml(step, a) {
 /* THE meeting form — one, wherever a date and place are set: folded inside
    each meeting step, and laid open in the Next box when nothing is set yet
    (Wyatt, 28 Sep: "I don't even know where you add it"). */
-const isSet = (a) => !!(a.when || a.place || a.link);
 function meetingForm(stepId, a, { open = false } = {}) {
-  const form = `<form class="flow-meet-form" data-act="meeting" data-step="${stepId}">
+  const form = `<form class="flow-meet-form" data-act="meeting" data-step="${stepId}" data-others="${esc((a.others || []).join(' '))}">
       <label>Date and time <input type="datetime-local" name="when" value="${toLocalInput(a.when)}"></label>
       <label>Place <input name="place" maxlength="140" placeholder="e.g. Church hall, room 2" value="${esc(a.place)}"></label>
       <label>Or a video-call link <input name="link" inputmode="url" placeholder="https://…" value="${esc(a.link)}"></label>
@@ -78,14 +77,33 @@ function meetingForm(stepId, a, { open = false } = {}) {
     </form>`;
   if (open) return form;
   return `<details class="flow-meet">
-      <summary>${isSet(a) ? 'Change' : 'Set date and place'}</summary>
+      <summary>Change date and place</summary>
       ${form}
     </details>`;
 }
 
+/* Every meeting at once, before the group starts (29 Sep call): a date and
+   time for each, and one place or link that goes with all of them. */
+function planForm(plan) {
+  return `<form class="flow-meet-form flow-plan" data-act="schedule">
+      ${plan.meetings.map((m) => `<label>Meeting ${m.n} · ${esc(m.title)}
+        <input type="datetime-local" name="when:${m.stepId}"></label>`).join('')}
+      <label>Place <input name="place" maxlength="140" placeholder="e.g. Church hall, room 2" value="${esc(plan.place)}"></label>
+      <label>Or a video-call link <input name="link" inputmode="url" placeholder="https://…" value="${esc(plan.link)}"></label>
+      <button class="btn btn--primary" type="submit">Save</button>
+    </form>`;
+}
+
 /* The one thing to do next, at the top: the next meeting, and — for whoever
-   sets it — its date and place, right here. */
+   sets it — its date and place, right here. Before any date is set, that is
+   the whole plan. */
 export function nextBox(view) {
+  if (view.plan) {
+    return `<div class="next-meet">
+      <p class="kicker">Next · Plan your meetings</p>
+      ${planForm(view.plan)}
+    </div>`;
+  }
   const n = view.next;
   if (!n) {
     return `<div class="next-meet"><p class="kicker">Every meeting is done</p>
@@ -164,6 +182,20 @@ export function wireSeries(root, onAction) {
     busy(box, false);
   });
   root.addEventListener('submit', async (e) => {
+    const plan = e.target.closest('form[data-act="schedule"]');
+    if (plan) {
+      e.preventDefault();
+      const f = new FormData(plan);
+      const entries = [...f.keys()].filter((k) => k.startsWith('when:')).map((k) => {
+        const local = f.get(k);
+        return { stepId: k.slice(5), when: local ? new Date(local).toISOString() : '' };
+      });
+      busy(plan, true);
+      try { await onAction({ type: 'schedule', scope: 'group', stepId: null, entries, place: f.get('place'), link: f.get('link') }); }
+      catch { alert('That didn’t save. Please try again.'); }
+      busy(plan, false);
+      return;
+    }
     const form = e.target.closest('form[data-act="meeting"]');
     if (!form) return;
     e.preventDefault();
@@ -174,6 +206,7 @@ export function wireSeries(root, onAction) {
       await onAction({
         type: 'meeting', scope: 'group', stepId: form.dataset.step,
         when: local ? new Date(local).toISOString() : '', place: f.get('place'), link: f.get('link'),
+        others: (form.dataset.others || '').split(' ').filter(Boolean),
       });
     } catch { alert('That didn’t save. Please try again.'); }
     busy(form, false);

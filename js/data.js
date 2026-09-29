@@ -378,6 +378,8 @@ export const PUBLICATIONS = [
    email — factual attribution, which Richard's 25 Aug "no Harvard in site
    chrome" ruling expressly allows. The chrome itself stays HFP-only. */
 export const PEOPLE = [
+  /* Kate, 29 Sep call: Tyler, Kate and Richard make the first row; everyone
+     else follows in the order they had. */
   {
     slug: 'tyler-vanderweele',
     photo: 'assets/people/tyler-vanderweele.jpg',
@@ -387,6 +389,26 @@ export const PEOPLE = [
     line: 'Led the program’s side of the international trial and directs its research on flourishing.',
     bio: 'Tyler J. VanderWeele, Ph.D., is the John L. Loeb and Frances Lehman Loeb Professor of Epidemiology in the Departments of Epidemiology and Biostatistics at the Harvard T.H. Chan School of Public Health, and Director of the Human Flourishing Program and Co-Director of the Initiative on Health, Spirituality, and Religion at Harvard University.\n\nHe holds degrees from the University of Oxford, University of Pennsylvania, and Harvard University in mathematics, philosophy, theology, finance, and biostatistics. His methodological research is focused on theory and methods for distinguishing between association and causation in the biomedical and social sciences and, more recently, on psychosocial measurement theory. His empirical research spans psychiatric and social epidemiology; the science of happiness and flourishing; and the study of religion and health.\n\nHe is the recipient of the 2017 Presidents’ Award from the Committee of Presidents of Statistical Societies (COPSS). Dr. VanderWeele has published over 500 papers in peer-reviewed journals; is author of the books Explanation in Causal Inference (2015), Modern Epidemiology (2021), Measuring Well-Being (2021), Handbook of Religion and Health (2023), and A Theology of Health (2024); and writes a regular blog, posting on topics related to human flourishing.',
     link: 'https://hfh.fas.harvard.edu/team/tyler-vanderweele',
+  },
+  {
+    slug: 'kate-jackson-meyer',
+    photo: 'assets/people/kate-jackson-meyer.jpg',
+    initials: 'KJ',
+    name: 'Kate Jackson-Meyer',
+    role: 'Research Associate, Human Flourishing Program, Harvard University',
+    line: 'Leads the Global Forgiveness Movement. Her scholarship examines forgiveness and restoration in contexts of moral conflict and tragedy.',
+    bio: 'Kate Jackson-Meyer, Ph.D., is a Research Associate at the Human Flourishing Program at Harvard University and an Affiliate of the Harvard Medical School Center for Bioethics. Her research focuses on the role of forgiveness and restoration in supporting individual and communal flourishing, particularly in contexts of moral conflict and tragedy. Her work has been published in numerous outlets, including The American Journal of Bioethics and The Journal of Moral Theology. She is the author of Tragic Dilemmas in Christian Ethics (Georgetown University Press, 2022) and she serves on the editorial board of the Journal of the Society of Christian Ethics. She earned a Ph.D. in theological ethics from Boston College, an M.A.R. in ethics from Yale Divinity School, and a B.A. in biology and religion from the University of Southern California.',
+    link: 'https://hfh.fas.harvard.edu/team/kate-jackson-meyer',
+  },
+  {
+    slug: 'richard-cowden',
+    photo: 'assets/people/richard-cowden.jpg',
+    initials: 'RC',
+    name: 'Richard G. Cowden',
+    role: 'Research Scientist, Human Flourishing Program, Harvard University',
+    line: 'Co-authored the international trial, led development of the RECEIVE Divine Forgiveness Workbook, and co-adapted the current REACH Forgiveness workbooks.',
+    bio: 'Richard G. Cowden, Ph.D., is a social-personality psychologist and Research Scientist with the Human Flourishing Program at Harvard University and the Department of Epidemiology at the Harvard T.H. Chan School of Public Health. He is interested in a wide range of psychological, social, and religious/spiritual dynamics that shape adaptive functioning, personal growth, and well-being. Much of his current research agenda focuses on topics related to adversity (e.g., suffering), character strengths and virtues (e.g., forgiveness), and religion/spirituality (e.g., religious/spiritual struggles), and their implications for health and well-being in diverse cultures and contexts. He has written and contributed to numerous scholarly articles, book chapters, and books that address various aspects of human flourishing in a wide range of populations. Through interdisciplinary engagement, he is also involved in developing and disseminating interventions designed to promote human flourishing across various cultural contexts.',
+    link: 'https://hfh.fas.harvard.edu/team/richard-cowden',
   },
   {
     slug: 'isaiah-baldissera',
@@ -409,16 +431,6 @@ export const PEOPLE = [
     link: 'https://hfh.fas.harvard.edu/team/reece-brown',
   },
   {
-    slug: 'richard-cowden',
-    photo: 'assets/people/richard-cowden.jpg',
-    initials: 'RC',
-    name: 'Richard G. Cowden',
-    role: 'Research Scientist, Human Flourishing Program, Harvard University',
-    line: 'Co-authored the international trial, led development of the RECEIVE Divine Forgiveness Workbook, and co-adapted the current REACH Forgiveness workbooks.',
-    bio: 'Richard G. Cowden, Ph.D., is a social-personality psychologist and Research Scientist with the Human Flourishing Program at Harvard University and the Department of Epidemiology at the Harvard T.H. Chan School of Public Health. He is interested in a wide range of psychological, social, and religious/spiritual dynamics that shape adaptive functioning, personal growth, and well-being. Much of his current research agenda focuses on topics related to adversity (e.g., suffering), character strengths and virtues (e.g., forgiveness), and religion/spirituality (e.g., religious/spiritual struggles), and their implications for health and well-being in diverse cultures and contexts. He has written and contributed to numerous scholarly articles, book chapters, and books that address various aspects of human flourishing in a wide range of populations. Through interdisciplinary engagement, he is also involved in developing and disseminating interventions designed to promote human flourishing across various cultural contexts.',
-    link: 'https://hfh.fas.harvard.edu/team/richard-cowden',
-  },
-  {
     slug: 'cooper-harris',
     photo: 'assets/people/cooper-harris.jpg',
     initials: 'CH',
@@ -426,16 +438,6 @@ export const PEOPLE = [
     role: 'Graduate Assistant, Human Flourishing Program, Harvard University',
     line: 'Studying counseling at Boston University, with a focus on sport and performance psychology.',
     bio: 'Cooper Harris is currently pursuing his Master’s of Education in counseling with a focus on sport/performance psychology at Boston University. Harris graduated from the University of Rochester in 2025 with a Bachelor of Arts in psychology and religion. He was the president of the club baseball team, a member of the Medallion Program, worked with the Mindful University Project, and served as a Jewish learning fellow. Harris is also a student delegate for the Association of Applied Sport Psychology and was a psychology honors research student at the University of Rochester.',
-  },
-  {
-    slug: 'kate-jackson-meyer',
-    photo: 'assets/people/kate-jackson-meyer.jpg',
-    initials: 'KJ',
-    name: 'Kate Jackson-Meyer',
-    role: 'Research Associate, Human Flourishing Program, Harvard University',
-    line: 'Leads the Global Forgiveness Movement. Her scholarship examines forgiveness and restoration in contexts of moral conflict and tragedy.',
-    bio: 'Kate Jackson-Meyer, Ph.D., is a Research Associate at the Human Flourishing Program at Harvard University and an Affiliate of the Harvard Medical School Center for Bioethics. Her research focuses on the role of forgiveness and restoration in supporting individual and communal flourishing, particularly in contexts of moral conflict and tragedy. Her work has been published in numerous outlets, including The American Journal of Bioethics and The Journal of Moral Theology. She is the author of Tragic Dilemmas in Christian Ethics (Georgetown University Press, 2022) and she serves on the editorial board of the Journal of the Society of Christian Ethics. She earned a Ph.D. in theological ethics from Boston College, an M.A.R. in ethics from Yale Divinity School, and a B.A. in biology and religion from the University of Southern California.',
-    link: 'https://hfh.fas.harvard.edu/team/kate-jackson-meyer',
   },
   {
     slug: 'suzanne-ouyang',

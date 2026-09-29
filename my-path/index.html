@@ -125,7 +125,7 @@
   import {
     myGroups, joinGroup, finishGroup, bringBackGroup, codeRecord, CODE_SHAPE, holdGroupCode, heldGroupCode, heldCodeLine,
     groupCodeProblem, forgetGroupCode, applyHeldGroupCode,
-    loadSeries, groupState, myTicks, groupTicks, actOnGroup, tickMine, SESSION_VIDEO, groupToAskAbout,
+    loadSeries, groupState, myTicks, groupTicks, actOnGroup, tickMine, SESSION_VIDEO, groupToAskAbout, nameGroup,
   } from '../js/groups.js';
   import { deriveSeries, pathView, roleFor } from '../js/group-engine.js';
   import { seriesFlow, seriesName, nextBox, wireSeries, esc } from '../js/series.js';
@@ -276,7 +276,7 @@
     sw.hidden = groups.length < 2;
     sw.innerHTML = groups.map(({ g, view, isChosen }) => `
       <button type="button" class="group-tab" data-choose="${esc(g.code)}" aria-pressed="${isChosen}">
-        <b>${meetings(view)} sessions · <span class="groupcode">${esc(g.code)}</span></b>
+        <b>${g.label ? esc(g.label) : `${meetings(view)} sessions`} · <span class="groupcode">${esc(g.code)}</span></b>
         <small>${esc(view.panel.tag)} · ${view.next ? `Next: meeting ${view.next.n}` : 'All meetings done'}</small>
       </button>`).join('');
 
@@ -298,7 +298,7 @@
       ${past.length ? `<details class="group-more-item"><summary>Past groups (${past.length})</summary>
         <div class="past-list">${past.map((g) => `
           <div class="past-group">
-            <p><b>${esc((allSeries[g.seriesId] || g.series).name)}</b><br>
+            <p><b>${g.label ? esc(g.label) : esc((allSeries[g.seriesId] || g.series).name)}</b><br>
               <span class="small muted">${g.groupName ? esc(g.groupName) + ' · ' : ''}Code <span class="groupcode">${esc(g.code)}</span></span></p>
             <button class="btn btn--outline" data-bringback="${esc(g.code)}">${esc(pathView('member').panel.bringBack)}</button>
           </div>`).join('')}</div></details>` : ''}`;
@@ -315,6 +315,12 @@
     return `
       <div class="group-top${asking ? ' is-asking' : ''}">
         <div>
+          <!-- 29 Sep call: people name their own groups; the name is theirs
+               alone and shows on the switcher. -->
+          <form class="group-name" data-name-form>
+            <input name="label" value="${esc(g.label || '')}" maxlength="60" placeholder="Name this group" aria-label="Name this group (only you see it)" title="Only you see this name">
+            <button class="linkish" type="submit" hidden>Save</button>
+          </form>
           <div class="group-code">
             <span class="groupcode groupcode--big">${esc(g.code)}</span>
             ${p.copy ? `<button type="button" class="btn btn--outline btn--sm" data-copycode="${esc(g.code)}">${esc(p.copy)}</button>` : ''}
@@ -327,6 +333,26 @@
       ${seriesFlow(view)}
       <p class="group-finish"><button type="button" class="linkish" data-finish="${esc(g.code)}">${esc(p.finish)}</button></p>`;
   }
+
+  /* A group's name saves when the field is left or Enter is pressed. */
+  const saveName = async (form) => {
+    if (!currentUserId || !ctx) return;
+    const label = form.label.value.trim();
+    if (label === (form.dataset.saved ?? form.label.defaultValue)) return;
+    form.dataset.saved = label;
+    await nameGroup(currentUserId, ctx.code, label);
+    await renderGroup(currentUserId);
+  };
+  home.addEventListener('submit', (e) => {
+    const form = e.target.closest('[data-name-form]');
+    if (!form) return;
+    e.preventDefault();
+    saveName(form);
+  });
+  home.addEventListener('focusout', (e) => {
+    const form = e.target.closest?.('[data-name-form]');
+    if (form && e.target.name === 'label') saveName(form);
+  });
 
   /* One listener for the section's own buttons. */
   home.addEventListener('click', async (e) => {
