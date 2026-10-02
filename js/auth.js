@@ -95,6 +95,15 @@ const demo = {
   async resetPassword() {
     throw new Error('Demo mode has no email — password reset arrives with the real backend.');
   },
+  async checkResetLink() {
+    throw new Error('Demo mode has no email — password reset arrives with the real backend.');
+  },
+  async finishReset() {
+    throw new Error('Demo mode has no email — password reset arrives with the real backend.');
+  },
+  async applyEmailLink() {
+    throw new Error('Demo mode has no email.');
+  },
   async deleteAccount() {
     if (!user) return;
     await (await import('./groups.js')).eraseGroupData(user.id);
@@ -185,9 +194,38 @@ const firebase = {
     const { auth, a } = await fba();
     await a.signOut(auth);
   },
-  async resetPassword(email) {
+  /* The email's link opens /join/reset/ once the console's action URL points
+     there (see that page); until then Firebase's own page opens, and its
+     Continue button brings the person back here. `continueUrl` carries where
+     they were headed. A host the console hasn't authorized refuses a
+     continueUrl — the email still goes, just without the way back. */
+  async resetPassword(email, next) {
     const { auth, a } = await fba();
-    await a.sendPasswordResetEmail(auth, norm(email));
+    const back = new URL(`join/?${next ? `next=${encodeURIComponent(next)}&` : ''}reset=1#signin`, new URL('..', import.meta.url)).href;
+    try {
+      await a.sendPasswordResetEmail(auth, norm(email), { url: back });
+    } catch (err) {
+      if (!/unauthorized-continue-uri|invalid-continue-uri/.test(err?.code || '')) throw err;
+      await a.sendPasswordResetEmail(auth, norm(email));
+    }
+  },
+  /* The link's code → the address it resets, or a thrown expired/used error. */
+  async checkResetLink(code) {
+    const { auth, a } = await fba();
+    return a.verifyPasswordResetCode(auth, code);
+  },
+  /* Set the new password, then sign straight in with it — nobody should
+     type a password twice to get back to their work. */
+  async finishReset(code, email, password) {
+    const { auth, a } = await fba();
+    await a.confirmPasswordReset(auth, code, password);
+    await a.signInWithEmailAndPassword(auth, norm(email), password);
+  },
+  /* Firebase's other emails (confirm an address, undo an email change) land
+     on the same page; each is one call. */
+  async applyEmailLink(code) {
+    const { auth, a } = await fba();
+    await a.applyActionCode(auth, code);
   },
   async deleteAccount() {
     const { auth, a } = await fba();
@@ -206,7 +244,40 @@ export const signUp = (x) => impl.signUp(x);
 export const signIn = (x) => impl.signIn(x);
 export const signInGoogle = () => impl.signInGoogle();
 export const signOutUser = () => impl.signOut();
-export const resetPassword = (e) => impl.resetPassword(e);
+export const resetPassword = (e, next) => impl.resetPassword(e, next);
+export const checkResetLink = (code) => impl.checkResetLink(code);
+export const finishReset = (code, email, pw) => impl.finishReset(code, email, pw);
+export const applyEmailLink = (code) => impl.applyEmailLink(code);
+
+/* ONE place that turns Firebase's error codes into sentences a person can
+   act on. Every account form shows authMessage(err), never err.message —
+   "Firebase: Error (auth/missing-email)." is what /join/ used to say.
+   '' means "say nothing" (they closed the Google window themselves). */
+const AUTH_MESSAGES = {
+  'auth/missing-email': 'Type your email address first.',
+  'auth/invalid-email': 'That doesn’t look like an email address — check for a typo.',
+  'auth/invalid-credential': 'That email and password don’t match an account here.',
+  'auth/wrong-password': 'That email and password don’t match an account here.',
+  'auth/user-not-found': 'That email and password don’t match an account here.',
+  'auth/email-already-in-use': 'There’s already an account with that email — try signing in.',
+  'auth/weak-password': 'Choose a password of at least 8 characters.',
+  'auth/missing-password': 'Type a password.',
+  'auth/too-many-requests': 'Too many tries in a row. Wait a few minutes, then try again.',
+  'auth/network-request-failed': 'We couldn’t reach the server. Check your connection and try again.',
+  'auth/popup-blocked': 'Your browser blocked the Google window. Allow pop-ups for this site, then try again.',
+  'auth/popup-closed-by-user': '',
+  'auth/cancelled-popup-request': '',
+  'auth/user-disabled': 'This account has been switched off. Write to us through the Contact page.',
+  'auth/requires-recent-login': 'For your safety, this needs a fresh sign-in. Sign out, sign back in, then try again.',
+  'auth/expired-action-code': 'This reset link has expired — links last about an hour.',
+  'auth/invalid-action-code': 'This reset link has already been used, or was cut short when it was copied.',
+};
+export const authMessage = (err) => {
+  const code = err?.code || '';
+  if (code in AUTH_MESSAGES) return AUTH_MESSAGES[code];
+  if (code.startsWith('auth/')) return 'Something went wrong. Please try again.';
+  return err?.message || String(err);
+};
 export const deleteAccount = () => impl.deleteAccount();
 export const setDisplayName = (name) => impl.setDisplayName(String(name || '').trim());
 

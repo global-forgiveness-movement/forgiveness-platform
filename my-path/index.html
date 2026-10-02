@@ -120,7 +120,7 @@
 </main>
 
 <script type="module">
-  import { onAuth, signOutUser, deleteAccount, setDisplayName, firstName } from '../js/auth.js';
+  import { onAuth, signOutUser, deleteAccount, setDisplayName, firstName, authMessage } from '../js/auth.js';
   import { syncProgress } from '../js/progress-sync.js';
   import {
     myGroups, joinGroup, finishGroup, bringBackGroup, codeRecord, CODE_SHAPE, holdGroupCode, heldGroupCode, heldCodeLine,
@@ -460,7 +460,7 @@
       setTimeout(() => (location.href = '../'), 1800);
     } catch (err) {
       msg.className = 'form-msg form-msg--err';
-      msg.textContent = err.message || String(err);
+      msg.textContent = authMessage(err);
       msg.hidden = false;
     }
   });

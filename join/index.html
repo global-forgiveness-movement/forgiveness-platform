@@ -33,13 +33,18 @@
 
         <h2 data-mode-title style="font-size:1.3rem" data-copy="join.h2.create-your-account">Create your account</h2>
 
-        <button class="btn btn--outline" id="googleBtn" style="width:100%">Continue with Google</button>
-        <p class="center muted small" style="margin:0.8rem 0" data-copy="join.p.or">— or —</p>
+        <div data-not-forgot>
+          <button class="btn btn--outline" id="googleBtn" style="width:100%">Continue with Google</button>
+          <p class="center muted small" style="margin:0.8rem 0" data-copy="join.p.or">— or —</p>
+        </div>
+        <!-- Forgot mode: one field, one button. Google accounts have no
+             password here to forget, so they're pointed at the right door. -->
+        <p class="small" hidden data-forgot-only data-copy="join.p.forgot-intro">Type the email you signed up with and we’ll send you a link to choose a new password.</p>
 
         <form class="form" id="authForm">
           <label data-signup-only>Your name <input name="name" autocomplete="name"></label>
           <label>Email <input name="email" type="email" required autocomplete="email"></label>
-          <label>Password <input name="password" type="password" required minlength="8" autocomplete="new-password"></label>
+          <label data-not-forgot>Password <input name="password" type="password" required minlength="8" autocomplete="new-password"></label>
           <label class="check" data-signup-only>
             <input type="checkbox" name="newsletter">
             <span>Send me occasional emails about new resources and events. Optional and rare — the team writes by hand. Ask us to stop at any time.</span>
@@ -51,7 +56,8 @@
 
         <hr class="leafline" style="margin:1.2rem 0">
         <p class="small" data-mode-switch data-copy="join.p.already-have-an-account">Already have an account? <a href="#" id="toggleMode">Sign in</a></p>
-        <p class="small" hidden data-signin-only data-copy="join.p.forgot-your-password"><a href="#" id="forgotBtn">Forgot your password?</a></p>
+        <p class="small" hidden data-signin-only data-copy="join.p.forgot-your-password"><a href="#forgot" data-to="forgot">Forgot your password?</a></p>
+        <p class="small muted" hidden data-forgot-only data-copy="join.p.signed-up-with-google">Signed up with Google? There’s no password to reset — <a href="#signin" data-to="signin">go back</a> and choose “Continue with Google.”</p>
       </div>
 
     </div>
@@ -67,7 +73,7 @@
     heldSlot.innerHTML = heldCodeLine(held);
     heldSlot.hidden = false;
   }
-  import { signUp, signIn, signInGoogle, resetPassword, onAuth, AUTH_MODE } from '../js/auth.js';
+  import { signUp, signIn, signInGoogle, resetPassword, authMessage, onAuth, AUTH_MODE } from '../js/auth.js';
 
   if (AUTH_MODE === 'demo') document.querySelector('[data-demo-note]').hidden = false;
 
@@ -76,55 +82,85 @@
      that is what sent them here (?next=workbook), otherwise My Path. Only
      names on this list are followed — never an address from the URL. */
   const NEXT = { workbook: '../workbook/' };
-  const next = NEXT[new URLSearchParams(location.search).get('next')] || '../my-path/';
+  const params = new URLSearchParams(location.search);
+  const nextKey = NEXT[params.get('next')] ? params.get('next') : '';
+  const next = NEXT[nextKey] || '../my-path/';
   onAuth((u) => { if (u) location.replace(next); });
 
-  /* My Path's "I already have an account" lands here as #signin. */
-  let mode = location.hash === '#signin' ? 'signin' : 'signup';
+  /* Three modes on one card. My Path's "I already have an account" lands
+     here as #signin; a reset link that has run its course, as #forgot. */
+  const MODES = ['signup', 'signin', 'forgot'];
+  let mode = MODES.find((m) => location.hash === `#${m}`) || 'signup';
   const form = document.getElementById('authForm');
   const msg = form.querySelector('.form-msg');
+  const TITLE = { signup: 'Create your account', signin: 'Welcome back', forgot: 'Reset your password' };
+  const SUBMIT = { signup: 'Create account', signin: 'Sign in', forgot: 'Email me a reset link' };
 
   function render() {
-    const signup = mode === 'signup';
-    document.querySelector('[data-mode-title]').textContent = signup ? 'Create your account' : 'Welcome back';
-    document.querySelector('[data-submit]').textContent = signup ? 'Create account' : 'Sign in';
-    document.querySelectorAll('[data-signup-only]').forEach((n) => (n.hidden = !signup));
-    document.querySelectorAll('[data-signin-only]').forEach((n) => (n.hidden = signup));
-    document.querySelector('[data-mode-switch]').innerHTML = signup
-      ? 'Already have an account? <a href="#" id="toggleMode">Sign in</a>'
-      : 'New here? <a href="#" id="toggleMode">Create an account</a>';
-    form.password.autocomplete = signup ? 'new-password' : 'current-password';
+    document.querySelector('[data-mode-title]').textContent = TITLE[mode];
+    document.querySelector('[data-submit]').textContent = SUBMIT[mode];
+    const show = (sel, on) => document.querySelectorAll(sel).forEach((n) => (n.hidden = !on));
+    show('[data-signup-only]', mode === 'signup');
+    show('[data-signin-only]', mode === 'signin');
+    show('[data-forgot-only]', mode === 'forgot');
+    show('[data-not-forgot]', mode !== 'forgot');
+    form.password.required = mode !== 'forgot';
+    document.querySelector('[data-mode-switch]').innerHTML = {
+      signup: 'Already have an account? <a href="#signin" data-to="signin">Sign in</a>',
+      signin: 'New here? <a href="#signup" data-to="signup">Create an account</a>',
+      forgot: 'Remembered it? <a href="#signin" data-to="signin">Sign in</a>',
+    }[mode];
+    form.password.autocomplete = mode === 'signup' ? 'new-password' : 'current-password';
     msg.hidden = true;
   }
+  const go = (m) => { mode = m; history.replaceState(null, '', `#${m}`); render(); (form.email.value ? form.querySelector('[data-submit]') : form.email).focus(); };
   document.addEventListener('click', (e) => {
-    if (e.target.id === 'toggleMode') { e.preventDefault(); mode = mode === 'signup' ? 'signin' : 'signup'; render(); }
+    const to = e.target.closest('[data-to]')?.dataset.to;
+    if (MODES.includes(to)) { e.preventDefault(); go(to); }
   });
   render();
 
-  const fail = (err) => { msg.className = 'form-msg form-msg--err'; msg.textContent = err.message || String(err); msg.hidden = false; };
+  const say = (kind, text) => { msg.className = `form-msg form-msg--${kind}`; msg.textContent = text; msg.hidden = !text; };
+  /* A password that doesn't match is exactly when someone needs the way
+     out, so it's offered right there, with their email already filled in. */
+  const fail = (err) => {
+    say('err', authMessage(err));
+    if (mode === 'signin' && /invalid-credential|wrong-password|user-not-found/.test(err?.code || '')) {
+      msg.append(' ');
+      const a = Object.assign(document.createElement('a'), { href: '#forgot', textContent: 'Reset your password?' });
+      a.dataset.to = 'forgot';
+      msg.append(a);
+    }
+  };
+
+  /* Back from Firebase's own reset page (its Continue button), before the
+     console points the email at /join/reset/. */
+  if (params.get('reset')) say('ok', 'Your new password is set. Sign in with it below.');
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const f = Object.fromEntries(new FormData(form));
+    const btn = form.querySelector('[data-submit]');
+    btn.disabled = true;
     try {
       if (mode === 'signup') {
         await signUp({ name: f.name, email: f.email, password: f.password, newsletter: !!f.newsletter });
-      } else {
+      } else if (mode === 'signin') {
         await signIn({ email: f.email, password: f.password });
+      } else {
+        await resetPassword(f.email, nextKey);
+        /* Worded the same whether or not the address has an account —
+           Firebase doesn't say, and neither do we. */
+        say('ok', `If ${f.email.trim()} has an account here, a link to choose a new password is on its way. It can take a few minutes and sometimes lands in junk or spam. The link works for about an hour.`);
       }
-    } catch (err) { fail(err); }
+    } catch (err) {
+      if (mode === 'forgot' && err?.code === 'auth/user-not-found') {
+        say('err', 'There’s no account with that email. If you signed up with Google, go back and choose “Continue with Google.”');
+      } else fail(err);
+    } finally { btn.disabled = false; }
   });
 
   document.getElementById('googleBtn').addEventListener('click', () => signInGoogle().catch(fail));
-  document.getElementById('forgotBtn')?.addEventListener('click', async (e) => {
-    e.preventDefault();
-    try {
-      await resetPassword(form.email.value);
-      msg.className = 'form-msg form-msg--ok';
-      msg.textContent = 'Reset email sent — check your inbox.';
-      msg.hidden = false;
-    } catch (err) { fail(err); }
-  });
 </script>
 <script type="module" src="../js/site.js"></script>
 </body>

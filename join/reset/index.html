@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Choose a new password — Global Forgiveness Movement</title>
+  <meta name="description" content="Choose a new password for your Global Forgiveness Movement account.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z' fill='%2300887a' transform='rotate(40 12 12)'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../../css/site.css">
+</head>
+<body>
+<main>
+  <!-- Where the password-reset email lands. Firebase sends people to its own
+       page on firebaseapp.com until the console's action URL points here:
+       Authentication → Templates → Password reset → edit → "Customize action
+       URL" → https://globalforgiveness.org/join/reset/
+       That setting covers every Firebase email, so the other kinds (address
+       confirmation, undoing an email change) are handled below too. -->
+  <section class="section section--paper">
+    <div class="wrap" style="max-width:520px">
+      <div class="card">
+
+        <div data-state="checking">
+          <p class="muted">Checking your link…</p>
+        </div>
+
+        <form class="form" id="resetForm" data-state="choose" hidden>
+          <h1 style="font-size:1.6rem;margin:0">Choose a new password</h1>
+          <p style="margin:0">For <strong data-render="email"></strong>. Once it’s set, we’ll sign you straight in.</p>
+          <!-- The address, invisibly, so a password manager saves the new
+               password against the right account. -->
+          <input type="email" name="username" autocomplete="username" hidden>
+          <label>New password <input name="password" type="password" required minlength="8" autocomplete="new-password"></label>
+          <label class="check"><input type="checkbox" data-show> <span>Show password</span></label>
+          <p class="form-note" style="margin:0">At least 8 characters.</p>
+          <button class="btn btn--primary" type="submit">Save and sign in</button>
+          <div class="form-msg" hidden role="alert"></div>
+        </form>
+
+        <div data-state="done" hidden>
+          <h1 style="font-size:1.6rem">You’re all set</h1>
+          <p data-render="done-line"></p>
+          <p><a class="btn btn--primary" href="../../my-path/">Go to My Path</a></p>
+        </div>
+
+        <div data-state="broken" hidden>
+          <h1 style="font-size:1.6rem">This link didn’t work</h1>
+          <p class="form-msg form-msg--err" data-render="why"></p>
+          <p>There’s no harm done — ask for a fresh link and use the newest email.</p>
+          <p><a class="btn btn--primary" href="../#forgot">Send me a new link</a></p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+  import { checkResetLink, finishReset, applyEmailLink, authMessage, AUTH_MODE } from '../../js/auth.js';
+
+  const q = new URLSearchParams(location.search);
+  const code = q.get('oobCode');
+  const show = (name) => document.querySelectorAll('[data-state]').forEach((n) => (n.hidden = n.dataset.state !== name));
+  const put = (name, text) => (document.querySelector(`[data-render="${name}"]`).textContent = text);
+  const broken = (err) => { put('why', authMessage(err)); show('broken'); };
+
+  /* Where they were headed when they asked for the link. It rides in
+     Firebase's continueUrl; only names on this list are followed. */
+  const NEXT = { workbook: '../../workbook/' };
+  let next = '../../my-path/';
+  try { next = NEXT[new URL(q.get('continueUrl')).searchParams.get('next')] || next; } catch {}
+
+  async function otherAction(mode) {
+    /* Not a reset: the same console setting routes Firebase's other emails
+       here. Confirming or restoring an address is one call, then done. */
+    await applyEmailLink(code);
+    put('done-line', mode === 'verifyEmail' ? 'Your email address is confirmed.' : 'Your account’s email address is back to what it was.');
+    show('done');
+  }
+
+  if (!code) {
+    location.replace('../#forgot');   // arrived without a link — start the request
+  } else if (AUTH_MODE === 'demo') {
+    broken(new Error('Demo mode has no email — password reset arrives with the real backend.'));
+  } else if (q.get('mode') && q.get('mode') !== 'resetPassword') {
+    otherAction(q.get('mode')).catch(broken);
+  } else {
+    let email = '';
+    try {
+      email = await checkResetLink(code);
+      put('email', email);
+      document.querySelector('[name="username"]').value = email;
+      show('choose');
+      document.querySelector('[name="password"]').focus();
+    } catch (err) { broken(err); }
+
+    const form = document.getElementById('resetForm');
+    const msg = form.querySelector('.form-msg');
+    form.querySelector('[data-show]').addEventListener('change', (e) => {
+      form.password.type = e.target.checked ? 'text' : 'password';
+    });
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('button');
+      btn.disabled = true;
+      msg.hidden = true;
+      try {
+        await finishReset(code, email, form.password.value);
+        location.replace(next);
+      } catch (err) {
+        /* A link that expired while they were typing goes to the "new link"
+           card; anything else (a weak password, no connection) stays here. */
+        if (/action-code/.test(err?.code || '')) return broken(err);
+        msg.className = 'form-msg form-msg--err';
+        msg.textContent = authMessage(err);
+        msg.hidden = false;
+      } finally { btn.disabled = false; }
+    });
+  }
+</script>
+<script type="module" src="../../js/site.js"></script>
+</body>
+</html>
