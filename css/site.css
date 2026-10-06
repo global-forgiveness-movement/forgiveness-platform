@@ -206,7 +206,10 @@ button.btn { font-size: 1rem; }
 .door p { margin: 0 0 1rem; }
 .door .btn { align-self: flex-start; margin-top: auto; }
 /* Every door's action sits in the same place: directly under its heading. */
-.door-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem; margin: 1.6rem 0 1.4rem; }   /* more room under the title (Wyatt, 6 Oct) */
+.door-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+/* Room between the title and its button (Wyatt, 6 Oct). Scoped to .door so
+   it outranks `.door p`, which had been zeroing the top margin. */
+.door .door-actions { margin: 1.25rem 0 1.4rem; }
 .door-actions .btn { margin-top: 0; align-self: flex-start; }
 @media (min-width: 1040px) { .door-actions .btn { white-space: nowrap; } }
 .door-meta { font-size: 0.9rem; color: var(--muted); }
