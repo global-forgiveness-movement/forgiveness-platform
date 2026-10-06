@@ -331,18 +331,27 @@
     slot('group-heading').textContent = groups.length> 1 ? 'Your groups' : 'Your group';
     renderKit([...new Set(groups.flatMap(({ view }) => view.kit))]);
 
-    /* Several groups: one button each — its series, its code, and where it is. */
+    /* October 6 call (Richard): a tray. Each group is a row (its name, its
+       version, your role, the next meeting); only the open one shows its
+       dates and steps, right under its own row, so it is never unclear
+       whose meetings you are editing. Opening another closes this one. */
     const sw = slot('switch');
-    sw.hidden = groups.length < 2;
-    sw.innerHTML = groups.map(({ g, view, isChosen }) => `
-      <button type="button" class="group-tab" data-choose="${esc(g.code)}" aria-pressed="${isChosen}">
-        <b>${g.label ? esc(g.label) : `${meetings(view)} sessions · <span class="groupcode">${esc(g.code)}</span>`}</b>
-        <small>${esc(view.panel.tag)} · ${view.next ? `Next: meeting ${view.next.n}` : 'All meetings done'}</small>
-      </button>`).join('');
-
+    sw.hidden = true;
+    sw.innerHTML = '';
     const shown = groups.find((x) => x.isChosen);
     ctx = shown ? { userId, code: shown.g.code } : null;
-    groupSlot.innerHTML = shown ? groupHtml(shown) : '';
+    const head = ({ g, view, isChosen }) => `
+      <button type="button" class="tray-head" data-choose="${esc(g.code)}" aria-expanded="${isChosen}">
+        <b>${g.label ? esc(g.label) : `${meetings(view)} sessions · <span class="groupcode">${esc(g.code)}</span>`}</b>
+        <small>${esc(view.series.name)} · ${esc(view.panel.tag)} · ${view.next ? `Next: meeting ${view.next.n}` : 'All meetings done'}</small>
+      </button>`;
+    groupSlot.innerHTML = groups.length < 2
+      ? (shown ? groupHtml(shown) : '')
+      : groups.map((x) => `
+        <section class="tray${x.isChosen ? ' is-open' : ''}">
+          ${head(x)}
+          ${x.isChosen ? `<div class="tray-body">${groupHtml(x)}</div>` : ''}
+        </section>`).join('');
     const ask = groupSlot.querySelector('[data-render="details"]');
     if (ask) mountGroupDetails(ask, { code: shown.g.code, onDone: () => ask.remove() });
 

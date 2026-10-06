@@ -634,14 +634,21 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .path-col { max-width: none; }
 .path-col > h2 { margin-bottom: 0.8rem; }
 .path-col > h2.path-part { margin-top: 2rem; }
-.group-switch { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 1.2rem; }
-.group-tab { display: grid; gap: 0.15rem; text-align: left; cursor: pointer; font: inherit; color: var(--navy);
-  background: var(--white); border: 1.5px solid var(--line); border-radius: 14px; padding: 0.55rem 0.9rem; }
-.group-tab b { font-family: var(--font-head); font-weight: 600; font-size: 0.95rem; }
-.group-tab .groupcode { font-size: 0.95em; padding: 0; background: none; }
-.group-tab small { font-size: 0.8rem; color: var(--muted); }
-.group-tab[aria-pressed="true"] { background: var(--teal); border-color: var(--teal); color: #fff; }
-.group-tab[aria-pressed="true"] small, .group-tab[aria-pressed="true"] .groupcode { color: #fff; }
+/* My Path: the groups as a tray — one open at a time (October 6 call). */
+.tray { border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); margin: 0 0 0.7rem; overflow: hidden; }
+.tray.is-open { border-color: var(--teal); box-shadow: var(--shadow); }
+.tray-head { display: grid; gap: 0.15rem; width: 100%; text-align: left; cursor: pointer; font: inherit; color: var(--navy);
+  background: none; border: 0; padding: 0.9rem 2.6rem 0.9rem 1.1rem; position: relative; }
+.tray-head::after { content: ""; position: absolute; right: 1.1rem; top: 50%; width: 0.55rem; height: 0.55rem; border-right: 2px solid var(--teal); border-bottom: 2px solid var(--teal);
+  transform: translateY(-70%) rotate(45deg); transition: transform 0.2s ease; }
+.tray-head[aria-expanded="true"]::after { transform: translateY(-30%) rotate(-135deg); }
+.tray-head:hover { background: var(--cream-soft); }
+.tray-head b { font-family: var(--font-head); font-weight: 600; font-size: 1.05rem; }
+.tray-head .groupcode { font-size: 0.9em; padding: 0; background: none; }
+.tray-head small { font-size: 0.82rem; color: var(--muted); }
+.tray-body { padding: 0.2rem 1.1rem 1.1rem; border-top: 1px solid var(--line); animation: tray-open 0.25s ease; }
+@keyframes tray-open { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .tray-body { animation: none; } .tray-head::after { transition: none; } }
 .group-code { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 0.9rem; }
 .groupcode--big { font-size: clamp(1.5rem, 5vw, 2rem); letter-spacing: 0.06em; }
 .btn--sm { padding: 0.45rem 0.9rem; font-size: 0.88rem; }
@@ -675,7 +682,8 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 /* Kate, 6 Oct: the headline, the two pictures and their words, centered. */
 .hero-lede--center { text-align: center; }
 .hero-lede--center > * { margin-left: auto; margin-right: auto; }
-.hero-lede .hero-h1--line { font-size: clamp(1.6rem, 3.6vw, 2.35rem); line-height: 1.22; max-width: 34ch; }
+/* The line under Kate's tagline (October 6 call). */
+.hero-lede .hero-lead { font-size: clamp(1.1rem, 2.2vw, 1.3rem); line-height: 1.5; color: var(--ink); max-width: 38rem; margin: 0.2rem auto 0; }
 .two-ways { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem 2.5rem; max-width: 44rem; margin: 1.2rem auto 0; align-items: start; }
 .two-ways figure { margin: 0; display: grid; gap: 0.6rem; justify-items: center; text-align: center; }
 .two-ways img { width: 100%; max-width: 260px; height: auto; }
@@ -745,3 +753,5 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 /* Locked words, while editing: visibly fixed, with the reason on hover. */
 [data-copy-editing] [data-locked] { outline: 1.5px dotted rgba(91, 107, 102, 0.6); outline-offset: 3px; border-radius: 3px; cursor: not-allowed; position: relative; }
 [data-copy-editing] [data-locked]::after { content: "🔒"; position: absolute; top: -0.7em; right: -0.5em; font-size: 0.7rem; line-height: 1; pointer-events: none; }
+/* In a tray the row already names the version; don't say it twice. */
+.tray-body .group-sub { display: none; }

@@ -21,8 +21,13 @@
            workbook's own botanical style, with no people in them (Kate: "not
            so people-y"; Wyatt, 6 Oct). -->
       <div class="hero-lede hero-lede--center">
-        <p class="kicker" data-copy="home.p.the-human-flourishing-program">The Human Flourishing Program</p>
-        <h1 class="hero-h1--line" data-copy="home.p.we-have-an-evidence-based">We have an evidence-based workbook, the REACH Forgiveness Workbook, that you can complete alone or in a group.</h1>
+        <!-- October 6 call: Kate's tagline is the headline, the evidence-based
+             line a paragraph under it, then the pictures. The headline keeps
+             its key, which holds Kate's saved tagline; the line has its own
+             key, so neither can overwrite the other again. The small label
+             above the headline is gone (Wyatt: eyebrows add words). -->
+        <h1 data-copy="home.p.we-have-an-evidence-based">Your <i>forgiveness journey</i> starts here</h1>
+        <p class="hero-lead" data-copy="home.p.an-evidence-based-workbook-you">We have an evidence-based workbook, the REACH Forgiveness Workbook, that you can complete alone or in a group.</p>
         <div class="two-ways">
           <figure>
             <img src="assets/illustrations/on-your-own.webp" alt="" width="720" height="557">
@@ -98,20 +103,13 @@
     <div class="wrap">
       <p class="kicker" data-copy="home.p.the-evidence">The evidence</p>
       <h2 data-copy="home.h2.the-reach-forgiveness-workbook">The REACH Forgiveness Workbook works.</h2>
-      <!-- Kate, 6 Oct, proposed a two-sentence section linking to Research.
-           Wyatt, 6 Oct: "a little shorter, but we don't want to remove all
-           the good" — so her sentence leads (a NEW key, her words; ask her
-           for the source of "flourishing"), the trial's figures stay, and the
-           country list and the waitlist sentence move to Research only. -->
-      <!-- Wyatt, 6 Oct: "Our study" links to the paper, and the separate
-           "Read the study" link goes. A NEW key whose default is Kate's own
-           saved wording of October 6, word for word, with the link added —
-           her saved text on the old key could not carry a link the code adds. -->
-      <p data-copy="home.p.our-study-of-the"><a data-render="paper-link" href="https://doi.org/10.1136/bmjph-2023-000072">Our study</a> of the REACH Forgiveness Workbook shows that the workbook decreases anxiety, decreases depression, and increases flourishing.</p>
-      <!-- Only the trial's figures are fixed; the words around them are Kate's
-           to edit (Wyatt, 6 Oct). -->
+      <!-- October 6 call: the trial first (Richard: lead with it), then what it
+           showed, with "Our study" linking to the paper and "increases
+           flourishing" to the Human Flourishing Program's own page on its
+           flourishing measure (Kate). The result tiles moved to Research. Only
+           the trial's figures are fixed; every other word is Kate's to edit. -->
       <p><span data-copy="home.span.in-the-largest-randomized">In the largest randomized trial of an interpersonal forgiveness intervention to date,</span> <span data-locked="research claim"><b data-render="participants"></b> across <b data-render="countries"></b></span> <span data-copy="home.span.worked-through-this-workbook">worked through this workbook.</span></p>
-      <div class="effects" data-render="effects"></div>
+      <p data-copy="home.p.our-study-of-the"><a data-render="paper-link" href="https://doi.org/10.1136/bmjph-2023-000072">Our study</a> of the REACH Forgiveness Workbook shows that the workbook decreases anxiety, decreases depression, and <a href="https://hfh.fas.harvard.edu/measuring-flourishing" target="_blank" rel="noopener">increases flourishing</a>.</p>
       <p class="dl-row"><a class="btn btn--outline" href="research/" data-copy="home.a.see-the-research">See the research</a></p>
     </div>
   </section>
@@ -172,11 +170,8 @@
 
   document.querySelector('[data-render="participants"]').textContent = TRIAL.participants;
   document.querySelector('[data-render="countries"]').textContent = TRIAL.countries;
-  document.querySelector('[data-render="effects"]').innerHTML = TRIAL.effects
-    .map((e) => `<div class="effect"><b>${e.change}</b><span>${e.measure}</span><span class="muted">${e.unit} · ${e.ci}</span></div>`).join('');
   const paperLink = document.querySelector('[data-render="paper-link"]');
   if (paperLink) paperLink.href = TRIAL.paper;
-  lock('[data-render="effects"]', 'research claim');
   /* The letters spell REACH; the words beside them are the editor's. */
   getCollection('reach').then((steps) => {
     document.querySelector('[data-render="reach"]').innerHTML = steps
