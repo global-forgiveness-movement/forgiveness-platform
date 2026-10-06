@@ -119,10 +119,28 @@ function makeEditable(el, on) {
   }
 }
 
+/* Words that are deliberately NOT editable say so while editing (Wyatt,
+   6 Oct: "sometimes some text is NOT editable... why?"). Each lock names its
+   reason in data-locked; this turns that into a plain sentence on hover. */
+const LOCK_WHY = {
+  'research claim': 'Fixed: a figure from the published trial, so it always matches the paper.',
+  'file facts': 'Fixed: the file’s own format and size.',
+  'privacy promise': 'Fixed: a privacy promise. It changes only with the code that keeps it true.',
+  'the REACH acronym': 'Fixed: the letters spell REACH.',
+  'language names': 'Fixed: the names of the languages the workbook is in.',
+};
+function explainLocks(on) {
+  document.querySelectorAll('[data-locked]').forEach((el) => {
+    if (on) el.setAttribute('title', LOCK_WHY[el.dataset.locked] || `Fixed: ${el.dataset.locked}.`);
+    else el.removeAttribute('title');
+  });
+}
+
 function setEditing(on) {
   editing = on;
   document.documentElement.toggleAttribute('data-copy-editing', on);
   SLOTS().forEach((el) => makeEditable(el, on));
+  explainLocks(on);
   render();
 }
 

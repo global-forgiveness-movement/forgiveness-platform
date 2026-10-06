@@ -741,3 +741,7 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .flow-bullets li { display: list-item; }
 .flow-bullets .groupcode { font-size: 1rem; letter-spacing: 0.04em; margin-inline: 0.2rem; }
 .flow-bullets .btn--sm { margin-left: 0.3rem; vertical-align: middle; }
+
+/* Locked words, while editing: visibly fixed, with the reason on hover. */
+[data-copy-editing] [data-locked] { outline: 1.5px dotted rgba(91, 107, 102, 0.6); outline-offset: 3px; border-radius: 3px; cursor: not-allowed; position: relative; }
+[data-copy-editing] [data-locked]::after { content: "🔒"; position: absolute; top: -0.7em; right: -0.5em; font-size: 0.7rem; line-height: 1; pointer-events: none; }
