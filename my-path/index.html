@@ -266,29 +266,53 @@
     box.innerHTML = `<p class="kicker" style="margin-bottom:0.3rem">For facilitators</p>${rows}`;
   }
 
-  async function renderGroup(userId) {
-    const all = await myGroups(userId);
-    if (all === null) {
+  /* What this page already knows (Wyatt, 6 Oct: "a HUGE lag when I click
+     between my two groups", and a rename that ended in "couldn't load").
+     A group's code record never changes once written, the versions change
+     only in /admin, so both are read once per visit. Each group's state and
+     your own ticks are kept from their last read. Switching groups draws
+     from here and reads only what is missing; anything that changes a
+     group (a tick, a date) reads fresh. Only the newest draw may paint, so
+     two at once can't trip over each other, and a read that fails keeps
+     the groups already on screen rather than replacing them with an error. */
+  const known = { groups: null, series: null, codes: new Map(), states: new Map(), ticks: new Map() };
+  let drawNo = 0;
+
+  async function renderGroup(userId, { fresh = true } = {}) {
+    const mine = ++drawNo;
+    let all = (fresh || !known.groups) ? await myGroups(userId) : known.groups;
+    if (all === null) all = known.groups;
+    if (mine !== drawNo) return;
+    if (!all) {
       groupSlot.innerHTML = '<p class="notice">We couldn’t load your groups just now. Please reload the page in a moment.</p>';
       return;
     }
+    known.groups = all;
     const active = all.filter((g) => g.status === 'active').sort(newestFirst);
     const past = all.filter((g) => g.status === 'past');
     if (!active.some((g) => g.code === chosen)) chosen = active[0]?.code || null;
 
-    const allSeries = await loadSeries();
+    known.series ??= await loadSeries();
+    const allSeries = known.series;
     const user = { id: userId };
     const groups = await Promise.all(active.map(async (g) => {
       const isChosen = g.code === chosen;
+      const needState = fresh || !known.states.has(g.code);
+      const needTicks = isChosen && (fresh || !known.ticks.has(g.code));
       const [codeDoc, group, me, ticks] = await Promise.all([
-        codeRecord(g.code), groupState(g.code),
-        isChosen ? myTicks(userId, g.code) : null,
+        known.codes.get(g.code) || codeRecord(g.code),
+        needState ? groupState(g.code) : known.states.get(g.code),
+        needTicks ? myTicks(userId, g.code) : (known.ticks.get(g.code) || null),
         isChosen ? groupTicks(g.code) : [],
       ]);
+      if (codeDoc) known.codes.set(g.code, codeDoc);
+      known.states.set(g.code, group);
+      if (isChosen && me) known.ticks.set(g.code, me);
       const role = roleFor({ surface: 'mypath', user, membership: g, codeDoc });
       const view = deriveSeries({ series: allSeries[g.seriesId], group, me, ticks, role, now: new Date(), video: SESSION_VIDEO });
       return { g, view, isChosen };
     }));
+    if (mine !== drawNo) return;
 
     slot('group-heading').textContent = groups.length> 1 ? 'Your groups' : 'Your group';
     renderKit([...new Set(groups.flatMap(({ view }) => view.kit))]);
@@ -298,7 +322,7 @@
     sw.hidden = groups.length < 2;
     sw.innerHTML = groups.map(({ g, view, isChosen }) => `
       <button type="button" class="group-tab" data-choose="${esc(g.code)}" aria-pressed="${isChosen}">
-        <b>${g.label ? esc(g.label) : `${meetings(view)} sessions`} · <span class="groupcode">${esc(g.code)}</span></b>
+        <b>${g.label ? esc(g.label) : `${meetings(view)} sessions · <span class="groupcode">${esc(g.code)}</span>`}</b>
         <small>${esc(view.panel.tag)} · ${view.next ? `Next: meeting ${view.next.n}` : 'All meetings done'}</small>
       </button>`).join('');
 
@@ -362,8 +386,11 @@
     const label = form.label.value.trim();
     if (label === (form.dataset.saved ?? form.label.defaultValue)) return;
     form.dataset.saved = label;
-    await nameGroup(currentUserId, ctx.code, label);
-    await renderGroup(currentUserId);
+    const code = ctx.code;
+    await nameGroup(currentUserId, code, label);
+    const g = known.groups?.find((x) => x.code === code);
+    if (g) g.label = label;
+    await renderGroup(currentUserId, { fresh: false });
   };
   home.addEventListener('submit', (e) => {
     const form = e.target.closest('[data-name-form]');
@@ -379,7 +406,7 @@
   /* One listener for the section's own buttons. */
   home.addEventListener('click', async (e) => {
     const pick = e.target.closest('[data-choose]');
-    if (pick && currentUserId) { choose(pick.dataset.choose); await renderGroup(currentUserId); return; }
+    if (pick && currentUserId) { choose(pick.dataset.choose); await renderGroup(currentUserId, { fresh: false }); return; }
 
     const copy = e.target.closest('[data-copycode]');
     if (copy) {

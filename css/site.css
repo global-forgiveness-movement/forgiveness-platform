@@ -206,7 +206,7 @@ button.btn { font-size: 1rem; }
 .door p { margin: 0 0 1rem; }
 .door .btn { align-self: flex-start; margin-top: auto; }
 /* Every door's action sits in the same place: directly under its heading. */
-.door-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem; margin: 1.1rem 0 1.4rem; }
+.door-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem; margin: 1.6rem 0 1.4rem; }   /* more room under the title (Wyatt, 6 Oct) */
 .door-actions .btn { margin-top: 0; align-self: flex-start; }
 @media (min-width: 1040px) { .door-actions .btn { white-space: nowrap; } }
 .door-meta { font-size: 0.9rem; color: var(--muted); }
@@ -233,6 +233,13 @@ button.btn { font-size: 1rem; }
    accent color instead — how an editor highlights a phrase. */
 h1 i, h1 em { font-style: normal; color: var(--teal); }
 .doors { margin: 1.8rem 0 0; }
+/* Wyatt, 6 Oct: the three buttons sit at one height, whatever each title's
+   length. The cards share rows (title · button · text · small print). */
+@media (min-width: 720px) {
+  .doors { grid-template-rows: repeat(4, auto); row-gap: 0; }
+  .doors > .door { display: grid; grid-row: span 4; grid-template-rows: subgrid; align-content: start; row-gap: 0; }
+  .doors > .door > h3 { align-self: end; }
+}
 .video.video--feature { max-width: 60rem; margin: 0 auto; }
 
 /* ------------------------------------------------ stats */
@@ -673,7 +680,7 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .two-ways figcaption b { font-family: var(--font-head); font-size: 1.1rem; color: var(--navy); }
 .two-ways figcaption span { color: var(--ink); line-height: 1.5; }
 /* The definition, moved above the video (Kate, 6 Oct). */
-.wrap > .definition { font-family: var(--font-head); font-weight: 600; font-size: clamp(1.35rem, 3vw, 1.9rem); line-height: 1.3; color: var(--navy); text-align: center; max-width: 30ch; margin: 0 auto 1.4rem; }
+.wrap > .definition { font-family: var(--font-head); font-weight: 600; font-size: clamp(1.35rem, 3vw, 1.9rem); line-height: 1.3; color: var(--navy); text-align: center; max-width: 60rem; margin: 0 auto 1.4rem; }   /* as wide as the video below it (Wyatt, 6 Oct) */
 .definition i { font-style: normal; color: var(--teal); }
 /* The same pictures, three in a row: what happens in a Forgiveness Group. */
 .two-ways--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 62rem; gap: 1.2rem 2rem; margin-block: 1.6rem; }
@@ -683,11 +690,13 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 @media (max-width: 520px) { .two-ways { gap: 1rem; } .two-ways figcaption b { font-size: 1rem; } .two-ways figcaption span { font-size: 0.92rem; } }
 /* A group's own name, typed in place (29 Sep call). */
 .group-name { margin: 0 0 0.4rem; }
-.group-name input { width: 100%; max-width: 26rem; font: 600 1.25rem/1.3 var(--font-head); color: var(--navy); background: transparent;
-  border: 0; border-bottom: 1.5px dashed var(--line); border-radius: 0; padding: 0.2rem 0; }
+/* Wyatt, 6 Oct: it has to read as a box you can type in. */
+.group-name input { width: 100%; max-width: 26rem; box-sizing: border-box; font: 600 1.15rem/1.3 var(--font-head); color: var(--navy);
+  background: var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300887a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'/%3E%3Cpath d='M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z'/%3E%3C/svg%3E") no-repeat right 0.8rem center / 1.1rem;
+  border: 1.5px solid var(--line); border-radius: var(--radius); padding: 0.6rem 2.6rem 0.6rem 0.9rem; }
 .group-name input::placeholder { color: var(--muted); font-weight: 500; }
-.group-name input:hover { border-bottom-color: var(--teal); }
-.group-name input:focus { outline: none; border-bottom: 2px solid var(--teal); }
+.group-name input:hover { border-color: var(--teal); }
+.group-name input:focus { outline: 3px solid var(--mustard); outline-offset: 1px; border-color: var(--teal); }
 .flow-plan label { font-weight: 600; }
 
 /* Workbooks (Kate, 6 Oct): the three ways to do the workbook, one row. Each
