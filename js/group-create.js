@@ -73,9 +73,12 @@ export function mountCreateGroup(slot, { series, onCreated } = {}) {
       const created = await registerGroup(fields, u?.id);
       form.reset();
       await onCreated?.(created, { form, msg });
-    } catch {
+    } catch (err) {
+      /* The database's own reason rides along, small, so a failure can be
+         diagnosed from one screenshot (Wyatt, 6 Oct). */
+      console.error('create group failed:', err);
       msg.className = 'form-msg form-msg--err';
-      msg.textContent = 'That didn’t send. Please try again, or email us via the Contact page.';
+      msg.innerHTML = `That didn’t go through. Please try again, or write to us from the Contact page.<br><small>(${String(err?.code || err?.message || err).replace(/[<>&]/g, '')})</small>`;
       msg.hidden = false;
     }
     btn.disabled = false;

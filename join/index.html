@@ -70,7 +70,10 @@
      goes back where the visitor was headed: the interactive workbook when
      that is what sent them here (?next=workbook), otherwise My Path. Only
      names on this list are followed — never an address from the URL. */
-  const NEXT = { workbook: '../workbook/' };
+  /* Wyatt, 6 Oct: "Create your group" on Home goes straight to making an
+     account, then to My Path with the create form open — not halfway down
+     another page. */
+  const NEXT = { workbook: '../workbook/', group: '../my-path/#new-group' };
   const params = new URLSearchParams(location.search);
   const nextKey = NEXT[params.get('next')] ? params.get('next') : '';
   const next = NEXT[nextKey] || '../my-path/';

@@ -234,8 +234,12 @@ export function membershipsOf(doc) {
 
 /* Read, converting an old-shape record on the way (and saving the
    conversion, so it happens once). A failed save still shows the groups. */
-async function readMember(userId) {
-  const raw = await withPatience(store.get('members', userId));
+/* `ms`: how long to wait. Drawing a page gives up quickly and keeps what it
+   has; a read that comes before a WRITE (joining, creating, renaming) waits
+   for the database instead — giving up there threw away the change itself
+   (Wyatt, 6 Oct: "Create my group" ended in "That didn't send"). */
+async function readMember(userId, ms) {
+  const raw = await withPatience(store.get('members', userId), ms);
   const { doc, converted } = membershipsOf(raw);
   if (converted) await writeMember(userId, doc).catch(() => {});
   return doc;
@@ -246,7 +250,7 @@ async function readMember(userId) {
 const writeMember = (userId, doc) => store.set('members', userId, doc, { replace: true });
 
 async function changeMembership(userId, code, change) {
-  const doc = await readMember(userId);
+  const doc = await readMember(userId, 15000);
   const next = change(doc.groups[code] || null);
   const groups = { ...doc.groups };
   if (next) groups[code] = next; else delete groups[code];

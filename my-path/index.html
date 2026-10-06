@@ -173,6 +173,14 @@
     await Promise.all([progress, groupsDrawn]);
     /* Arriving from "Create my group" on the Groups page: straight to it. */
     if (location.hash === '#your-group') home.scrollIntoView({ block: 'start' });
+    /* Arriving to start a group (Home's "Create your group", via a new
+       account): the create form, open, the version picker ready. */
+    if (location.hash === '#new-group') {
+      home.querySelector('[data-more="create"]')?.setAttribute('open', '');
+      const pick = home.querySelector('[data-card="create"] select');
+      (pick?.closest('[data-card]') || home).scrollIntoView({ block: 'center' });
+      pick?.focus({ preventScroll: true });
+    }
   });
 
   /* Signed out: the code is parsed here, in the browser, so someone gets a
