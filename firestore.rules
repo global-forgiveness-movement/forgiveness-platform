@@ -2,9 +2,10 @@ rules_version = '2';
 
 /* Firestore security rules for the GFM platform.
 
-   NOT deployed by anything in this repo — GitHub Pages serves static files
-   only. Paste these into the Firebase console (Firestore → Rules) when the
-   project is created, or deploy with `firebase deploy --only firestore:rules`.
+   GitHub Pages never deploys these: pushing to main does not change them.
+   Deploy from the repo root with `npx firebase-tools deploy --only
+   firestore:rules` (firebase.json and .firebaserc point it at gfm-platform),
+   or paste them into the Firebase console (Firestore → Rules → Publish).
 
    The shape follows what js/store.js actually reads and writes. Every
    collection the site touches is listed; anything not listed is denied by the
