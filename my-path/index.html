@@ -323,7 +323,7 @@
       known.states.set(g.code, group);
       if (isChosen && me) known.ticks.set(g.code, me);
       const role = roleFor({ surface: 'mypath', user, membership: g, codeDoc });
-      const view = deriveSeries({ series: allSeries[g.seriesId], group, me, ticks, role, now: new Date(), video: SESSION_VIDEO });
+      const view = deriveSeries({ series: allSeries[g.seriesId], group, me, ticks, role, now: new Date(), video: SESSION_VIDEO, code: g.code });
       return { g, view, isChosen };
     }));
     if (mine !== drawNo) return;
@@ -381,11 +381,8 @@
             <input name="label" value="${esc(g.label || '')}" maxlength="60" placeholder="Name this group" aria-label="Name this group (only you see it)" title="Only you see this name">
             <button class="linkish" type="submit" hidden>Save</button>
           </form>
-          <div class="group-code">
-            <span class="groupcode groupcode--big">${esc(g.code)}</span>
-            ${p.copy ? `<button type="button" class="btn btn--outline btn--sm" data-copycode="${esc(g.code)}">${esc(p.copy)}</button>` : ''}
-          </div>
-          <p class="small muted group-sub">${esc(p.codeLine)} · ${seriesName(view, 'span')}</p>
+          <!-- The code moved into step 1 (Wyatt, 6 Oct); the version stays here. -->
+          <p class="small muted group-sub">${seriesName(view, 'span')}</p>
           ${nextBox(view)}
         </div>
         ${asking ? '<aside class="card group-details" data-render="details"></aside>' : ''}
@@ -429,7 +426,7 @@
       try { await navigator.clipboard.writeText(code); ok = true; } catch { /* fall back */ }
       if (!ok) {
         const r = document.createRange();
-        r.selectNodeContents(home.querySelector('.groupcode--big'));
+        r.selectNodeContents(copy.closest('li')?.querySelector('.groupcode') || copy);
         getSelection().removeAllRanges(); getSelection().addRange(r);
       }
       copy.textContent = ok ? 'Copied' : 'Selected — press ⌘C';

@@ -734,3 +734,10 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .loading::before { content: ""; width: 0.9rem; height: 0.9rem; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--teal); animation: spin 0.9s linear infinite; flex: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .loading::before { animation: none; } }
+
+/* The group's code, a bullet in step 1 (Wyatt, 6 Oct) — smaller than the
+   group's own name above it. */
+.flow-bullets { margin: 0.2rem 0 0.4rem; padding-left: 1.2rem; }
+.flow-bullets li { display: list-item; }
+.flow-bullets .groupcode { font-size: 1rem; letter-spacing: 0.04em; margin-inline: 0.2rem; }
+.flow-bullets .btn--sm { margin-left: 0.3rem; vertical-align: middle; }

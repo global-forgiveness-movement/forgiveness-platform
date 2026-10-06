@@ -173,7 +173,7 @@ const PANEL = {
    role     one of ROLES (from roleFor)
    now      a Date; passed in so the engine stays pure and testable
    video    the placeholder source for every session slot (ruling 8) */
-export function deriveSeries({ series, group = null, me = null, ticks = [], role, now = new Date(), video = '' }) {
+export function deriveSeries({ series, group = null, me = null, ticks = [], role, now = new Date(), video = '', code = '' }) {
   if (!ROLES.includes(role)) throw new Error(`unknown role: ${role}`);
   const can = CAN[role];
   const shared = (can.inGroup && group?.steps) || {};
@@ -262,6 +262,11 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
        film are for the whole series, so they sit under Your materials (kit,
        below), not in each meeting. */
     if (s.id === 'prep') materials.push({ kind: 'link', label: 'Get the Workbook Editions', href: 'workbooks/' });
+    /* Wyatt, 6 Oct: the group's code lives in step 1, as a bullet — handing
+       it out is part of getting everyone started. Copy is the leader's. */
+    if (s.id === 'prep' && can.inGroup && code) {
+      materials.unshift({ kind: 'code', code, label: PANEL[role]?.codeLine || '', copy: PANEL[role]?.copy || '' });
+    }
 
     return {
       id: s.id, kind: s.kind, n: s.n, tag: s.tag,

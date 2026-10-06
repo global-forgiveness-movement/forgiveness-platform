@@ -143,7 +143,8 @@ function stepHtml(view, s, base) {
   const extras = [
     s.meeting ? `<p class="flow-when">${meetingLine(s.meeting)}</p>` : '',
     videoHtml(s.video),
-    s.materials.length ? `<p class="flow-materials">${s.materials.map((m) => materialHtml(m, base)).join('')}</p>` : '',
+    s.materials.filter((m) => m.kind === 'code').map((m) => `<ul class="flow-bullets"><li>${esc(m.label)} <span class="groupcode">${esc(m.code)}</span>${m.copy ? ` <button type="button" class="btn btn--outline btn--sm" data-copycode="${esc(m.code)}">${esc(m.copy)}</button>` : ''}</li></ul>`).join(''),
+    s.materials.some((m) => m.kind !== 'code') ? `<p class="flow-materials">${s.materials.filter((m) => m.kind !== 'code').map((m) => materialHtml(m, base)).join('')}</p>` : '',
     s.tally ? `<p class="flow-tally">${s.tally.done} of ${s.tally.of} have ticked these lessons</p>` : '',
     s.actions.map((a) => actionHtml(s, a)).join(''),
   ].join('');
