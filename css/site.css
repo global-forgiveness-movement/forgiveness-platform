@@ -725,3 +725,9 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .join-title { font-size: clamp(1.5rem, 3vw, 1.9rem); margin: 0 0 1rem; }
 .join-switch { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem; }
 .join-card .form { max-width: none; }
+
+/* "Loading…" where an answer is on its way (Wyatt, 6 Oct). */
+.loading { margin: 0; color: var(--muted); font-size: 0.95rem; display: flex; align-items: center; gap: 0.6rem; }
+.loading::before { content: ""; width: 0.9rem; height: 0.9rem; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--teal); animation: spin 0.9s linear infinite; flex: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .loading::before { animation: none; } }

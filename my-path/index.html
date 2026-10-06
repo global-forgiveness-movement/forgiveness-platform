@@ -64,7 +64,8 @@
         <!-- Wyatt, 28 Sep: the workbook under its own heading, the same size
              as "Your groups", so the page reads as two parts. -->
         <h2 class="path-part" data-copy="mypath.h2.your-forgiveness">Your forgiveness</h2>
-        <div class="card" data-render="progress-card"></div>
+        <!-- Wyatt, 6 Oct: say it's loading, never show an empty box. -->
+        <div class="card" data-render="progress-card"><p class="loading" role="status">Loading your workbook…</p></div>
        </div>
       </div>
     </section>
@@ -81,7 +82,7 @@
         <div class="path-col">
           <h2 data-render="group-heading">Your group</h2>
           <div class="group-switch" data-render="switch" hidden></div>
-          <div data-render="group"></div>
+          <div data-render="group"><p class="loading" role="status">Loading your groups…</p></div>
           <div class="path-cards" data-render="start" hidden></div>
           <div class="group-more" data-render="more"></div>
         </div>
@@ -158,13 +159,18 @@
     document.querySelector('[data-render="firstname"]').textContent = first ? `, ${first}` : '';
     document.querySelector('[data-render="email"]').textContent = `Signed in as ${u.name || u.email}`;
     document.querySelector('[data-render="name-ask"]').hidden = !!u.name;
-    const p = await syncProgress(u.id);
-    document.querySelector('[data-render="progress-card"]').innerHTML = progressCard(p);
+    /* The workbook and the groups load side by side — neither waits for the
+       other (each box says "Loading…" until its own answer arrives). */
+    const progress = syncProgress(u.id).then((p) => {
+      document.querySelector('[data-render="progress-card"]').innerHTML = progressCard(p);
+    });
     /* A code they typed before they had an account, attached now — and
        shown, since it is the group they came for. */
-    const held = await applyHeldGroupCode(u.id);
-    if (held) choose(held.code);
-    await renderGroup(u.id);
+    const groupsDrawn = applyHeldGroupCode(u.id).then(async (held) => {
+      if (held) choose(held.code);
+      await renderGroup(u.id);
+    });
+    await Promise.all([progress, groupsDrawn]);
     /* Arriving from "Create my group" on the Groups page: straight to it. */
     if (location.hash === '#your-group') home.scrollIntoView({ block: 'start' });
   });
