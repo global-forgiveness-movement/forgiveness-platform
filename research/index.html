@@ -62,9 +62,12 @@
   <section class="section section--paper">
     <div class="wrap center">
       <h2 data-copy="research.h2.the-workbook-they-used">The workbook the trial’s participants used is the one on this site</h2>
-      <p style="max-width:56ch;margin:0 auto 1.4rem" data-copy="research.p.free-about-two-to">Free, about two to three hours, no account needed.</p>
+      <!-- Kate, 6 Oct: the research backs every version, so this sends people
+           to all three on the Workbooks page, not to one PDF. New line (a new
+           key), flagged for Kate. -->
+      <p style="max-width:56ch;margin:0 auto 1.4rem" data-copy="research.p.free-in-three-versions">Free, in three versions: interactive, a PDF, and a PDF adapted for churches.</p>
       <p class="dl-row" style="justify-content:center">
-        <a class="btn btn--primary" data-render="workbook-download" href="../workbooks/">Get the workbook</a>
+        <a class="btn btn--primary btn--go" href="../workbooks/" data-copy="research.a.see-the-workbooks">See the workbooks</a>
         <a class="btn btn--outline" href="../groups/" data-copy="research.a.run-it-with-a">Run it with a group</a>
       </p>
     </div>
@@ -73,19 +76,8 @@
 </main>
 
 <script type="module">
-  import { TRIAL, downloadFor } from '../js/data.js';
+  import { TRIAL } from '../js/data.js';
   import { getCollection, fieldAttr } from '../js/content.js';
-
-  /* Same resolver the home page and /workbooks/ use — one source for the file. */
-  const dl = downloadFor('reach', 'en', '../');
-  const dlBtn = document.querySelector('[data-render="workbook-download"]');
-  if (dl && dlBtn) {
-    dlBtn.href = dl.href;
-    dlBtn.textContent = dl.label;
-    dlBtn.dataset.locked = 'file facts';   // format and size come from the file itself
-    dlBtn.dataset.download = dl.tag;
-    if (dl.direct) dlBtn.setAttribute('download', '');
-  }
 
   const effects = document.querySelector('[data-render="effects"]');
   effects.dataset.locked = 'research claim';   // rule 12: trial figures stay traceable

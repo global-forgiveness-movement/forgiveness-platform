@@ -6,12 +6,12 @@
 import { store, withPatience } from './store.js';
 import {
   TESTIMONIALS, VIDEOS, EVENTS, PUBLICATIONS, PEOPLE, GROUP_STATS, SERIES,
-  WORKBOOKS, REACH_STEPS, GROUP_GUIDELINES,
+  WORKBOOKS, REACH_STEPS, GROUP_GUIDELINES, FACILITATOR_KIT,
 } from './data.js';
 
 /* Workbook cards: only their words are content. Files, sizes and links stay
    in WORKBOOKS, read by downloadFor() alone — see getWorkbooks(). */
-const WORKBOOK_WORDS = ['badge', 'title', 'desc', 'pills'];
+const WORKBOOK_WORDS = ['badge', 'name', 'desc', 'pills'];
 
 const DEFAULTS = {
   testimonials: TESTIMONIALS,
@@ -24,6 +24,7 @@ const DEFAULTS = {
   reach: REACH_STEPS,
   guidelines: GROUP_GUIDELINES.map((text) => ({ text })),
   series: Object.values(SERIES),
+  facilitatorKit: FACILITATOR_KIT,
 };
 
 export async function getCollection(name) {

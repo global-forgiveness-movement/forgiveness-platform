@@ -25,8 +25,8 @@ $big"
 
 # Portable to bash 3.2 (macOS): a case, not an associative array.
 allow() { case "$1" in
-  contact/index.html) echo 5;; groups/index.html) echo 10;; my-path/index.html) echo 7;;
-  research/index.html) echo 1;; workbooks/index.html) echo 1;; *) echo 0;; esac; }
+  contact/index.html) echo 5;; groups/index.html) echo 0;; my-path/index.html) echo 1;;
+  research/index.html) echo 1;; *) echo 0;; esac; }
 for f in $(git ls-files '*.html' | grep -v '^plan/\|^workbook/\|^admin/'); do
   n=$(grep -o 'style="[^"]*max-width' "$f" | wc -l | tr -d ' ' || true)
   max=$(allow "$f")

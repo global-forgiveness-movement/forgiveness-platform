@@ -51,12 +51,10 @@
     <section class="section section--paper">
       <div class="wrap">
        <div class="path-col">
-        <p class="kicker" data-copy="mypath.p.my-path">My Path</p>
         <h1>Welcome back<span data-render="firstname"></span></h1>
-        <p class="muted" data-copy="mypath.p.there-s-no-hurry">There’s no hurry. Pick up whenever you’re ready.</p>
         <!-- Only for an account we have no name for (A36). Asked once, kept on
              the profile, never shown again. -->
-        <div class="card" style="max-width:680px;margin-bottom:1rem" data-render="name-ask" hidden>
+        <div class="card" style="margin-bottom:1rem" data-render="name-ask" hidden>
           <h3 style="font-size:1.05rem">What should we call you?</h3>
           <form class="form" id="nameForm" style="max-width:340px">
             <label>Your name <input name="name" autocomplete="name" required maxlength="80"></label>
@@ -93,12 +91,16 @@
     <section class="section section--paper">
       <div class="wrap">
         <h2 data-copy="mypath.h2.your-materials">Your materials</h2>
-        <!-- The facilitator guide now sits inside each meeting's box, shown to
-             the facilitator only (Kate, 24 Sep: members don't need it). -->
-        <div class="card" style="max-width:680px">
+        <!-- Kate, 6 Oct: ONE facilitator manual per edition and ONE film for
+             the whole series, here at the foot, for facilitators only
+             (members don't need them — Kate, 24 Sep). The engine says who
+             gets which (view.kit); /admin → Facilitator materials holds the
+             links. -->
+        <div class="card kit-card" data-render="kit"  hidden></div>
+        <div class="card">
             <h3 style="font-size:1rem" data-copy="mypath.h3.reach-forgiveness-workbook">REACH Forgiveness Workbook</h3>
             <p class="small muted" data-copy="mypath.p.every-edition-and-language">Every edition and language, always free.</p>
-            <a class="btn btn--outline" href="../workbooks/" data-copy="mypath.a.get-the-pdf">Get the PDF</a>
+            <a class="btn btn--outline" href="../workbooks/" data-copy="mypath.a.get-the-pdf">Get the Workbook Editions</a>
         </div>
       </div>
     </section>
@@ -129,24 +131,21 @@
   } from '../js/groups.js';
   import { deriveSeries, pathView, roleFor } from '../js/group-engine.js';
   import { seriesFlow, seriesName, nextBox, wireSeries, esc } from '../js/series.js';
+  import { videoFrame } from '../js/video.js';
+  import { getCollection, fieldAttr } from '../js/content.js';
   import { mountCreateGroup, mountGroupDetails } from '../js/group-create.js';
 
   const TOTAL_LESSONS = 12;
 
+  /* Wyatt, 6 Oct: "we want someone to WANT to pick their work back up, not
+     drown in text." The name of the thing, how far they are, one big button
+     — the same button that started it on the Workbooks page. */
   function progressCard(p) {
     const done = p.completed.length;
-    if (!p.progress && !done) {
-      return `<p class="kicker" style="margin-bottom:0.3rem">The interactive workbook</p>
-        <h3>Ready when you are</h3>
-        <p class="small">Twelve lessons, one gentle step at a time. Start with fifteen minutes — your place is saved as you go.</p>
-        <a class="btn btn--primary" href="../workbook/">Begin lesson 1</a>`;
-    }
-    const pct = Math.round((done / TOTAL_LESSONS) * 100);
-    const at = p.progress ? `You’re in lesson ${p.progress.lesson}.` : 'Ready to continue.';
-    return `<p class="kicker" style="margin-bottom:0.3rem">The interactive workbook</p>
-      <h3>Continue where you left off</h3>
-      <p class="small">${at} ${done} of ${TOTAL_LESSONS} lessons complete · ${pct}%. There’s no hurry.</p>
-      <a class="btn btn--primary" href="../workbook/">Continue</a>`;
+    const started = !!(p.progress || done);
+    return `<h3 class="wb-title">The interactive workbook</h3>
+      <p class="small">${done} of ${TOTAL_LESSONS} lessons complete</p>
+      <a class="btn btn--juicy btn--go" href="../workbook/">${started ? 'Continue' : 'Begin'}</a>`;
   }
 
   let currentUserId = null;
@@ -245,6 +244,28 @@
 
   const meetings = (view) => view.steps.filter((s) => s.kind === 'together').length;
 
+  /* The facilitator's materials, for whichever editions this person leads. */
+  async function renderKit(ids) {
+    const box = slot('kit');
+    box.hidden = !ids.length;
+    if (!ids.length) { box.innerHTML = ''; return; }
+    const kit = await getCollection('facilitatorKit');
+    const item = (id) => { const i = kit.findIndex((k) => k.id === id); return [kit[i], i]; };
+    const rows = ids.map((id) => {
+      const [k, i] = item(id);
+      if (!k) return '';
+      const label = `<b ${fieldAttr('facilitatorKit', k, i, 'label')}>${k.label}</b>`;
+      if (id === 'film') {
+        const frame = k.link ? videoFrame(k.link, k.label) : '';
+        return frame ? `<div class="kit-item">${label}<figure class="video" style="margin-top:0.5rem">${frame}</figure></div>`
+          : `<div class="kit-item">${label} <span class="pill pill--plum">Arrives soon</span></div>`;
+      }
+      return k.link ? `<div class="kit-item">${label} <a class="btn btn--outline" href="${esc(k.link)}" target="_blank" rel="noopener">Open the manual</a></div>`
+        : `<div class="kit-item">${label} <span class="pill pill--plum">Arrives soon</span></div>`;
+    }).join('');
+    box.innerHTML = `<p class="kicker" style="margin-bottom:0.3rem">For facilitators</p>${rows}`;
+  }
+
   async function renderGroup(userId) {
     const all = await myGroups(userId);
     if (all === null) {
@@ -269,7 +290,8 @@
       return { g, view, isChosen };
     }));
 
-    slot('group-heading').textContent = groups.length > 1 ? 'Your groups' : 'Your group';
+    slot('group-heading').textContent = groups.length> 1 ? 'Your groups' : 'Your group';
+    renderKit([...new Set(groups.flatMap(({ view }) => view.kit))]);
 
     /* Several groups: one button each — its series, its code, and where it is. */
     const sw = slot('switch');
@@ -289,7 +311,7 @@
     /* No group yet: the two ways in are the section. Otherwise they fold
        below the group, with Past groups beside them. */
     const start = slot('start');
-    start.hidden = groups.length > 0;
+    start.hidden = groups.length> 0;
     start.innerHTML = groups.length ? '' : '<div class="card" data-card="create"></div><div class="card" data-card="join"></div>';
     const more = slot('more');
     more.innerHTML = `
@@ -303,8 +325,8 @@
             <button class="btn btn--outline" data-bringback="${esc(g.code)}">${esc(pathView('member').panel.bringBack)}</button>
           </div>`).join('')}</div></details>` : ''}`;
     const scope = groups.length ? more : start;
-    CARDS.create(scope.querySelector('[data-card="create"]'), { userId, folded: groups.length > 0 });
-    CARDS.join(scope.querySelector('[data-card="join"]'), { userId, folded: groups.length > 0 });
+    CARDS.create(scope.querySelector('[data-card="create"]'), { userId, folded: groups.length> 0 });
+    CARDS.join(scope.querySelector('[data-card="join"]'), { userId, folded: groups.length> 0 });
   }
 
   /* The chosen group: its code, the one next thing, then every step. */

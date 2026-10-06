@@ -12,26 +12,16 @@
 <body>
 <main>
   <section class="section section--paper">
-    <div class="wrap grid grid--2" style="align-items:start">
-
-      <div>
-        <!-- 29 Sep call: "this whole account creation site should be simpler."
-             Three lines: what it is, what it keeps, what it never does. -->
-        <h1 data-copy="join.h1.create-your-free-account">Create your free account</h1>
-        <!-- If they came from the My Path code box, say so — the code they
-             typed is waiting, and this is the step that connects it. -->
+    <!-- Wyatt, 6 Oct: "this page should just say 'Create your free account'
+         with the text boxes." One card, nothing beside it. -->
+    <div class="wrap">
+      <div class="card join-card">
         <p class="form-msg form-msg--ok" data-render="held-code" hidden></p>
-        <p data-copy="join.p.it-keeps-your-place">It keeps your place in the interactive workbook, and your Forgiveness Group on My Path.</p>
-        <p class="notice">What you write in the workbook never leaves your device. We never sell or share your details, and you can delete your account at any time.</p>
-        <p class="small muted" style="margin-top:1rem" data-copy="join.p.just-want-the-pdf">Just want the PDF? It needs no account. <a href="../workbooks/">Download it here →</a></p>
-      </div>
-
-      <div class="card">
         <div class="notice" data-demo-note hidden style="margin-bottom:1rem">
           Preview note: the account backend isn’t connected yet, so accounts here live in this browser only. Every flow works; it just doesn’t leave your machine.
         </div>
 
-        <h2 data-mode-title style="font-size:1.3rem" data-copy="join.h2.create-your-account">Create your account</h2>
+        <h1 class="join-title" data-mode-title>Create your free account</h1>
 
         <div data-not-forgot>
           <button class="btn btn--outline" id="googleBtn" style="width:100%">Continue with Google</button>
@@ -47,7 +37,7 @@
           <label data-not-forgot>Password <input name="password" type="password" required minlength="8" autocomplete="new-password"></label>
           <label class="check" data-signup-only>
             <input type="checkbox" name="newsletter">
-            <span>Send me occasional emails about new resources and events. Optional and rare — the team writes by hand. Ask us to stop at any time.</span>
+            <span>Email me about new resources (optional)</span>
           </label>
           <button class="btn btn--primary" type="submit" data-submit>Create account</button>
           <div class="form-msg" hidden role="alert"></div>
@@ -55,11 +45,10 @@
         </form>
 
         <hr class="leafline" style="margin:1.2rem 0">
-        <p class="small" data-mode-switch data-copy="join.p.already-have-an-account">Already have an account? <a href="#" id="toggleMode">Sign in</a></p>
+        <div class="join-switch" data-mode-switch></div>
         <p class="small" hidden data-signin-only data-copy="join.p.forgot-your-password"><a href="#forgot" data-to="forgot">Forgot your password?</a></p>
         <p class="small muted" hidden data-forgot-only data-copy="join.p.signed-up-with-google">Signed up with Google? There’s no password to reset — <a href="#signin" data-to="signin">go back</a> and choose “Continue with Google.”</p>
       </div>
-
     </div>
   </section>
 </main>
@@ -93,7 +82,7 @@
   let mode = MODES.find((m) => location.hash === `#${m}`) || 'signup';
   const form = document.getElementById('authForm');
   const msg = form.querySelector('.form-msg');
-  const TITLE = { signup: 'Create your account', signin: 'Welcome back', forgot: 'Reset your password' };
+  const TITLE = { signup: 'Create your free account', signin: 'Welcome back', forgot: 'Reset your password' };
   const SUBMIT = { signup: 'Create account', signin: 'Sign in', forgot: 'Email me a reset link' };
 
   function render() {
@@ -106,9 +95,10 @@
     show('[data-not-forgot]', mode !== 'forgot');
     form.password.required = mode !== 'forgot';
     document.querySelector('[data-mode-switch]').innerHTML = {
-      signup: 'Already have an account? <a href="#signin" data-to="signin">Sign in</a>',
-      signin: 'New here? <a href="#signup" data-to="signup">Create an account</a>',
-      forgot: 'Remembered it? <a href="#signin" data-to="signin">Sign in</a>',
+      /* Wyatt, 6 Oct: signing in is a real button, not a link in a sentence. */
+      signup: '<span class="small muted">Already have an account?</span> <a class="btn btn--outline" href="#signin" data-to="signin">Sign in</a>',
+      signin: '<span class="small muted">New here?</span> <a class="btn btn--outline" href="#signup" data-to="signup">Create a free account</a>',
+      forgot: '<span class="small muted">Remembered it?</span> <a class="btn btn--outline" href="#signin" data-to="signin">Sign in</a>',
     }[mode];
     form.password.autocomplete = mode === 'signup' ? 'new-password' : 'current-password';
     msg.hidden = true;
@@ -117,6 +107,12 @@
   document.addEventListener('click', (e) => {
     const to = e.target.closest('[data-to]')?.dataset.to;
     if (MODES.includes(to)) { e.preventDefault(); go(to); }
+  });
+  /* The header's Sign in lands here as #signin (Kate, 6 Oct: one click, not
+     two) — and works when you're already on this page. */
+  window.addEventListener('hashchange', () => {
+    const m = MODES.find((x) => location.hash === `#${x}`);
+    if (m && m !== mode) { mode = m; render(); }
   });
   render();
 

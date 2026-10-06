@@ -112,7 +112,7 @@ export const VIDEOS = {
    trial numbers down in the evidence section). */
 export const GROUP_STATS = [
   { number: '6–12', label: 'people in a Forgiveness Group' },
-  { number: '1–1.5 hrs', label: 'per meeting, guided by ~10 min of video' },
+  { number: '1 hour', label: 'per meeting, guided by ~10 min of video' },
   { number: '6', label: 'languages the workbook speaks' },
 ];
 
@@ -200,11 +200,21 @@ export const LANGUAGES = [
   ['pt', 'Português (Brasil)'],
 ];
 
+/* `name`, not `title` (Kate, 6 Oct): her three names for the workbooks
+   ("Interactive / Downloadable REACH Forgiveness Workbook / … Adapted for
+   Churches") supersede the titles saved before, the way a new data-copy key
+   does — an old saved `title` is simply never read again. */
+/* Where the header's two account links go — ONE place, read by the header
+   as it first paints (js/site.js) and again once sign-in is known
+   (js/auth.js). Kate, 6 Oct: Sign in opens on signing in, not on making an
+   account. */
+export const ACCOUNT_LINKS = { signIn: 'join/#signin', signUp: 'join/' };
+
 export const WORKBOOKS = [
   {
     id: 'reach',
     badge: 'Recommended · The tested edition',
-    title: 'REACH Forgiveness Workbook',
+    name: 'Downloadable REACH Forgiveness Workbook',
     desc: 'A self-guided workbook designed to take two to three hours. It was tested in a randomized trial with over 4,500 participants across 6 sites in 5 countries. You can download it, print it, share it, and translate it for your community. It is free, and it will stay free.',
     pills: ['2–3 hours', 'Secular', '6 languages', 'Group-ready'],
     languages: true,
@@ -222,7 +232,7 @@ export const WORKBOOKS = [
   {
     id: 'church',
     badge: 'For churches & Christian groups',
-    title: 'REACH Forgiveness Workbook, Adapted for Churches',
+    name: 'Downloadable REACH Forgiveness Workbook Adapted for Churches',
     desc: 'The same five steps, framed within Christian faith. Adds scripture engagement and lectio divina, prayer integration, and the offering of forgiveness to God. Built in sections of about an hour each — the basis of the 6-session series.',
     pills: ['Christian', 'Group-ready'],
     languages: false,
@@ -234,7 +244,7 @@ export const WORKBOOKS = [
   {
     id: 'receive',
     badge: 'Christian · 3–4 hours',
-    title: 'RECEIVE Divine Forgiveness Workbook',
+    name: 'RECEIVE Divine Forgiveness Workbook',
     desc: 'A different direction of forgiveness. Where REACH Forgiveness is about forgiving another person, RECEIVE Divine Forgiveness is for Christians who believe God forgives them but find it hard to feel it. Seven steps, from remembering God’s love through to a plan for keeping hold of it.',
     pills: ['7 steps', 'Christian'],
     languages: false,
@@ -246,7 +256,7 @@ export const WORKBOOKS = [
   {
     id: 'activity',
     badge: 'For communities',
-    title: 'Community-Wide Forgiveness Activity Book',
+    name: 'Community-Wide Forgiveness Activity Book',
     desc: 'For anyone running forgiveness work at the scale of a campus, a congregation, or a town — activities you can adapt and combine into a campaign.',
     pills: ['Campaign-scale'],
     languages: false,
@@ -316,6 +326,16 @@ export const SERIES = {
     ],
   },
 };
+
+/* What a group's facilitator gets (Kate, 6 Oct): ONE facilitator manual for
+   the whole series, one per edition, and ONE facilitator film, shared by both
+   editions for now. Not per meeting. Links are pasted in /admin → Facilitator
+   materials; an empty link reads "arrives soon". */
+export const FACILITATOR_KIT = [
+  { id: 'manual-secular', label: 'Facilitator manual · REACH Forgiveness Workbook', link: '' },
+  { id: 'manual-church', label: 'Facilitator manual · Adapted for Churches', link: '' },
+  { id: 'film', label: 'How to facilitate a Forgiveness Group (film)', link: '' },
+];
 
 export const PUBLICATIONS = [
   {

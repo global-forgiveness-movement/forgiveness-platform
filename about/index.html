@@ -76,6 +76,9 @@
 
 <script type="module">
   import { getCollection, fieldAttr } from '../js/content.js';
+  /* The first line is Tyler, Kate and Richard (29 Sep call), and everyone
+     else starts on the second — Isaiah first there (Kate, 6 Oct). A break
+     after the third person, so a wide screen can't pull a fourth up. */
   getCollection('people').then((people) => {
     document.querySelector('[data-render=people]').innerHTML = people
       .map((p, i) => `<details class="person" name="person-bio">
@@ -89,7 +92,7 @@
           <div ${fieldAttr('people', p, i, 'bio')} data-field-format="paragraphs">${p.bio.split('\n\n').map((par) => `<p>${par}</p>`).join('')}</div>
           ${p.link ? `<p><a href="${p.link}" target="_blank" rel="noopener" data-copy="about.person.profile-link">Full profile →</a></p>` : ''}
         </div>
-      </details>`).join('');
+      </details>${i === 2 ? '<span class="people-break" aria-hidden="true"></span>' : ''}`).join('');
   });
 </script>
 <script type="module" src="../js/site.js"></script>

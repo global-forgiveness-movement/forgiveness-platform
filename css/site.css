@@ -33,12 +33,12 @@
   --radius-soft: 26px;
   --shadow: 0 10px 30px rgba(0, 61, 87, 0.10);
   --pad: clamp(1.1rem, 4vw, 2rem);
-  /* The page's two widths, decided here and nowhere else (Richard, 24 Sep:
-     "use the whole sort of right side of the page ... easier for older folk
-     to read"). --page is how wide the content spans; --measure is the one
-     centered column running text sits in (about 70 characters). */
-  --page: 1200px;
-  --measure: 40rem;
+  /* ONE column, site-wide (Wyatt, 6 Oct): on desktop every heading, paragraph,
+     card row and grid on a page shares the same left and right edges — no
+     narrower centered sub-column inside a wider one. --page is that column
+     (padding included); --measure now simply means "the column". */
+  --page: 66rem;
+  --measure: 100%;
 }
 
 * { box-sizing: border-box; }
@@ -198,16 +198,17 @@ button.btn { font-size: 1rem; }
 .door {
   display: flex; flex-direction: column; gap: 0.4rem;
   background: var(--white); border: 2px solid var(--line); border-radius: var(--radius-soft);
-  padding: 1.8rem 1.6rem;
+  padding: 2.4rem 1.4rem 2.2rem;   /* Wyatt, 6 Oct: less cramped */
 }
 .door:hover { border-color: var(--teal); }
 .door .kicker { margin: 0 0 0.2rem; }
 .door h3 { font-size: 1.35rem; margin: 0; }
-.door p { margin: 0 0 0.8rem; }
+.door p { margin: 0 0 1rem; }
 .door .btn { align-self: flex-start; margin-top: auto; }
 /* Every door's action sits in the same place: directly under its heading. */
-.door-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; margin: 0.5rem 0 1rem; }
+.door-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem; margin: 1.1rem 0 1.4rem; }
 .door-actions .btn { margin-top: 0; align-self: flex-start; }
+@media (min-width: 1040px) { .door-actions .btn { white-space: nowrap; } }
 .door-meta { font-size: 0.9rem; color: var(--muted); }
 .door-meta a { color: var(--teal-deep); }
 /* The one question the three doors answer. */
@@ -321,6 +322,7 @@ a.pill--link:hover, a.pill--link:focus-visible { background: var(--white); borde
 /* ------------------------------------------------ people */
 .people { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 1.1rem; }
 .person { flex: 0 1 230px; min-width: 0; text-align: center; }
+.people-break { flex-basis: 100%; height: 0; }
 .person summary { cursor: pointer; list-style: none; }
 .person summary::-webkit-details-marker { display: none; }
 .person .por { width: 112px; height: 112px; border-radius: 50%; margin: 0 auto 0.7rem; display: grid; place-content: center; background: var(--sage); color: var(--navy); font-family: var(--font-head); font-weight: 700; font-size: 1.6rem; }
@@ -440,6 +442,9 @@ hr.leafline { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
 .copybar-btn[disabled] { opacity: 0.45; cursor: default; }
 [data-copy-editing] [data-copy] { outline: 2px dashed rgba(0, 136, 122, 0.55); outline-offset: 3px; border-radius: 3px; cursor: text; }
 [data-copy-editing] [data-copy]:focus { outline: 2px solid var(--teal); background: rgba(250, 184, 18, 0.12); }
+/* A passage an editor emptied takes no room — except while editing, so it can be filled again. */
+html:not([data-copy-editing]) [data-copy]:empty { display: none; }
+[data-copy-editing] [data-copy]:empty { display: block; min-height: 1.5em; }
 
 /* ------------------------------------------------ series rhythm (js/series.js)
    Together = a solid, filled card with a teal edge and a two-person mark.
@@ -477,21 +482,17 @@ hr.leafline { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
    column at --measure, left-aligned inside it. Grids, galleries and videos keep
    the full --page width. A block that sets its own narrower max-width still
    centers on the same axis. .center wraps center their text as before. */
-.wrap:not(.grid) > :where(h1, h2, h3, p, ul:not([class]), ol:not([class]), .kicker, .notice, .card, .form, .sessions, .effects, .evidence-note, .dl-row, .measure) {
+.wrap:not(.grid) > :where(h1, h2, h3, p, ul:not([class]), ol:not([class]), .kicker, .notice, .card, .form, .sessions, .effects, .dl-row, .measure) {
   max-width: var(--measure);
   margin-inline: auto;
 }
 .wrap > .doors-ask { max-width: none; margin-inline: 0; }
 .effects { margin-block: 1.2rem; }
-.reach { max-width: none; padding: 0; margin: 1.4rem 0; }
+/* Wyatt, 6 Oct: the five steps sit inside the text column, edge to edge with the paragraphs. */
+.reach { max-width: var(--measure); padding: 0; margin: 1.4rem auto; gap: 0.6rem; }
+.reach li { padding-inline: 0.5rem; }
 @media (max-width: 520px) { .effects { grid-template-columns: minmax(0, 1fr); } }
 
-/* The evidence is about the workbook (Kate, 24 Sep). One line, said the same
-   on the home page and the Groups page — one data-copy key for both. */
-.evidence-note { border-left: 3px solid var(--sage); padding-left: 1rem; color: var(--ink); }
-.evidence-note--aside { font-size: 0.98rem; margin: 0 0 1em; }
-.evidence-note--aside .kicker { margin-bottom: 0.25rem; }
-.evidence-note--aside p:last-child { margin: 0; }
 
 /* My Path, signed out: code first, then the account. */
 .wrap .precode { max-width: 28rem; margin: 0 auto 1.4rem; text-align: left; }
@@ -548,8 +549,9 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .flow-meet-form .btn { justify-self: start; }
 
 /* The Groups page chooser (Richard, 24 Sep): nothing chosen at first. */
-.series-choose { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem; margin-top: 1rem; max-width: 40rem; }
-.series-choice { display: grid; gap: 0.15rem; text-align: left; padding: 0.85rem 1rem; border-radius: var(--radius); border: 2px solid var(--teal); background: #fff; color: var(--navy); font: inherit; cursor: pointer; }
+.series-choose { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem; margin: 1rem auto 0; max-width: 40rem; }
+.series-choice { justify-items: center; text-align: center; }
+.series-choice { display: grid; gap: 0.15rem; padding: 0.85rem 1rem; border-radius: var(--radius); border: 2px solid var(--teal); background: #fff; color: var(--navy); font: inherit; cursor: pointer; }
 .series-choice b { font-family: var(--font-head); font-size: 1.1rem; }
 .series-choice span { font-size: 0.85rem; color: var(--muted); }
 .series-choice[aria-pressed="true"] { background: var(--teal); color: #fff; }
@@ -560,7 +562,8 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 
 /* My Path: "Your group" cards and the next meeting on top. */
 .path-cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); }
-.next-meet { margin: 0.8rem 0; padding: 0.75rem 0.9rem; border-radius: var(--radius); background: rgba(0, 136, 122, 0.10); border-left: 4px solid var(--teal); }
+/* Kate, 6 Oct: the next meeting stands out — a warm mustard box, not another teal one. */
+.next-meet { margin: 0.8rem 0; padding: 1rem 1.1rem; border-radius: var(--radius); background: rgba(250, 184, 18, 0.22); border: 1px solid rgba(250, 184, 18, 0.6); border-left: 6px solid var(--mustard); }
 .next-meet .kicker { margin: 0 0 0.2rem; }
 .next-meet p:last-child { margin: 0; }
 .path-cards > .card { min-width: 0; }
@@ -586,7 +589,7 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .past-groups > summary::after { content: '▾'; color: var(--teal-deep); }
 .past-groups[open] > summary::after { content: '▴'; }
 .past-groups[open] > summary { margin-bottom: 0.6rem; }
-.past-list { display: grid; gap: 0.8rem; max-width: 680px; }
+.past-list { display: grid; gap: 0.8rem; }
 .past-group { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem 1rem; padding: 0.8rem 1rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); }
 .past-group p { margin: 0; min-width: 0; }
 
@@ -618,7 +621,7 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 /* ---- My Path: one section for your groups (Wyatt, 28 Sep) ----
    At a glance: which group, its code, the one next thing, then the steps. */
 /* ONE column for My Path's signed-in parts, so every heading shares an edge. */
-.path-col { max-width: 46rem; margin-inline: auto; }
+.path-col { max-width: none; }
 .path-col > h2 { margin-bottom: 0.8rem; }
 .path-col > h2.path-part { margin-top: 2rem; }
 .group-switch { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 1.2rem; }
@@ -657,30 +660,27 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .group-details .form { max-width: none; }
 .group-details .form input, .group-details .form textarea { width: 100%; box-sizing: border-box; }
 
-/* ---- Workbooks: the interactive workbook first, one big button (Wyatt, 29 Sep) ---- */
-.wrap > .wb-start-panel { max-width: var(--measure); margin: 1.4rem auto 1.8rem; text-align: center; padding: clamp(1.6rem, 5vw, 2.8rem) var(--pad);
-  border-radius: var(--radius-soft); background:
-    radial-gradient(120% 140% at 0% 0%, rgba(250, 184, 18, 0.28), transparent 55%),
-    radial-gradient(120% 140% at 100% 100%, rgba(119, 0, 97, 0.14), transparent 55%),
-    linear-gradient(135deg, rgba(0, 136, 122, 0.16), rgba(143, 188, 173, 0.22)); }
-.btn--juicy { color: #fff; max-width: 100%; white-space: normal; font-size: clamp(1.2rem, 4vw, 1.7rem); font-weight: 700; padding: 1.25rem 2.6rem; border-radius: 999px;
-  background: linear-gradient(120deg, #11b3a0 0%, var(--teal) 45%, #006d62 100%); --btn-edge: #005C53;
-  box-shadow: 0 5px 0 var(--btn-edge), 0 14px 28px -10px rgba(0, 92, 83, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.35); }
-.btn--juicy:hover { transform: translateY(-3px); filter: saturate(1.15) brightness(1.06);
-  box-shadow: 0 8px 0 var(--btn-edge), 0 20px 32px -12px rgba(0, 92, 83, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.35); }
-.btn--juicy:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--btn-edge), 0 6px 12px -8px rgba(0, 92, 83, 0.6); }
-.wb-start-line { margin: 1.1rem auto 0.3rem; max-width: none; font-size: 1.05rem; color: var(--navy); }
-@media (max-width: 480px) { .btn--juicy { font-size: 1.15rem; padding: 1.05rem 1.3rem; width: 100%; } .wb-start-panel { padding-inline: 1rem; } }
-@media (prefers-reduced-motion: reduce) { .btn--juicy, .btn--juicy:hover, .btn--juicy:active { transform: none; } }
 
 /* ---- Home: the two ways, in pictures (29 Sep call) ---- */
-.hero-sub .two-ways { grid-column: 1 / -1; align-self: start; align-items: start; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem 2rem; max-width: 46rem; margin: 0.4rem 0 0; }
+/* Kate, 6 Oct: the headline, the two pictures and their words, centered. */
+.hero-lede--center { text-align: center; }
+.hero-lede--center > * { margin-left: auto; margin-right: auto; }
+.hero-lede .hero-h1--line { font-size: clamp(1.6rem, 3.6vw, 2.35rem); line-height: 1.22; max-width: 34ch; }
+.two-ways { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem 2.5rem; max-width: 44rem; margin: 1.2rem auto 0; align-items: start; }
 .two-ways figure { margin: 0; display: grid; gap: 0.6rem; justify-items: center; text-align: center; }
-.two-ways img { width: 100%; max-width: 240px; height: auto; }
+.two-ways img { width: 100%; max-width: 260px; height: auto; }
 .two-ways figcaption { display: grid; gap: 0.25rem; max-width: 20rem; }
 .two-ways figcaption b { font-family: var(--font-head); font-size: 1.1rem; color: var(--navy); }
 .two-ways figcaption span { color: var(--ink); line-height: 1.5; }
-@media (max-width: 520px) { .hero-sub .two-ways { gap: 1rem; } .two-ways figcaption b { font-size: 1rem; } .two-ways figcaption span { font-size: 0.92rem; } }
+/* The definition, moved above the video (Kate, 6 Oct). */
+.wrap > .definition { font-family: var(--font-head); font-weight: 600; font-size: clamp(1.35rem, 3vw, 1.9rem); line-height: 1.3; color: var(--navy); text-align: center; max-width: 30ch; margin: 0 auto 1.4rem; }
+.definition i { font-style: normal; color: var(--teal); }
+/* The same pictures, three in a row: what happens in a Forgiveness Group. */
+.two-ways--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 62rem; gap: 1.2rem 2rem; margin-block: 1.6rem; }
+.two-ways--3 img { max-width: 220px; }
+@media (max-width: 760px) { .two-ways--3 { grid-template-columns: minmax(0, 1fr); max-width: 22rem; } }
+.series-card .flow-legend { margin: 0.4rem 0 0.8rem; }
+@media (max-width: 520px) { .two-ways { gap: 1rem; } .two-ways figcaption b { font-size: 1rem; } .two-ways figcaption span { font-size: 0.92rem; } }
 /* A group's own name, typed in place (29 Sep call). */
 .group-name { margin: 0 0 0.4rem; }
 .group-name input { width: 100%; max-width: 26rem; font: 600 1.25rem/1.3 var(--font-head); color: var(--navy); background: transparent;
@@ -689,3 +689,30 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .group-name input:hover { border-bottom-color: var(--teal); }
 .group-name input:focus { outline: none; border-bottom: 2px solid var(--teal); }
 .flow-plan label { font-weight: 600; }
+
+/* Workbooks (Kate, 6 Oct): the three ways to do the workbook, one row. Each
+   card's button sits at its foot, so the three line up. */
+.wb-row > .card, .wb-row .wb-card { display: flex; flex-direction: column; }
+.wb-row .card > .dl-row:last-child { margin-top: auto; padding-top: 0.6rem; }
+.wb-card--interactive { border: 2px solid var(--teal); }
+/* My Path: the facilitator's manual and film (Kate, 6 Oct). */
+.kit-card { border-left: 4px solid var(--plum); margin-bottom: 1rem; }
+.kit-item { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; padding: 0.6rem 0; border-top: 1px solid var(--line); }
+.kit-item:first-of-type { border-top: 0; }
+.kit-item > figure { flex-basis: 100%; }
+
+/* THE button that opens the interactive workbook — on Workbooks and on My
+   Path alike (Wyatt, 6 Oct: "match the button they pressed"). */
+.btn--juicy { color: #fff; max-width: 100%; white-space: normal; font-size: clamp(1.1rem, 2.4vw, 1.4rem); font-weight: 700; padding: 1rem 2.2rem; border-radius: 999px;
+  background: linear-gradient(120deg, #11b3a0 0%, var(--teal) 45%, #006d62 100%); --btn-edge: #005C53;
+  box-shadow: 0 5px 0 var(--btn-edge), 0 14px 28px -10px rgba(0, 92, 83, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.35); }
+.btn--juicy:hover { transform: translateY(-3px); filter: saturate(1.15) brightness(1.06);
+  box-shadow: 0 8px 0 var(--btn-edge), 0 20px 32px -12px rgba(0, 92, 83, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.35); }
+.btn--juicy:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--btn-edge), 0 6px 12px -8px rgba(0, 92, 83, 0.6); }
+@media (prefers-reduced-motion: reduce) { .btn--juicy, .btn--juicy:hover, .btn--juicy:active { transform: none; } }
+.wb-title { font-size: clamp(1.4rem, 3vw, 1.8rem); margin: 0 0 0.3rem; }
+/* /join/: one card, alone on the page (Wyatt, 6 Oct). */
+.wrap > .join-card { max-width: 30rem; margin-inline: auto; }
+.join-title { font-size: clamp(1.5rem, 3vw, 1.9rem); margin: 0 0 1rem; }
+.join-switch { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem; }
+.join-card .form { max-width: none; }

@@ -4,6 +4,7 @@
 
 import { store, MODE, withPatience } from './store.js';
 import { firebaseConfig } from './firebase-config.js';
+import { ACCOUNT_LINKS } from './data.js';
 
 export const AUTH_MODE = MODE; // 'firebase' | 'demo'
 
@@ -159,6 +160,20 @@ const firebase = {
         } catch { /* no name to recover — My Path will ask */ }
       }
       announce(next);
+      /* The account's email, kept on its own members record (Kate, 6 Oct:
+         "how do we get their email addresses?"), so /admin's People list can
+         show it. Accounts made before this, and Google sign-ins, get it here
+         — once per browser session, a merge that touches nothing else. */
+      if (u?.email) {
+        const k = `gfm.emailSaved.${u.uid}`;
+        let saved = false;
+        try { saved = sessionStorage.getItem(k) === u.email; } catch { /* storage off */ }
+        if (!saved) {
+          store.set('members', u.uid, { email: norm(u.email) })
+            .then(() => { try { sessionStorage.setItem(k, u.email); } catch { /* fine */ } })
+            .catch(() => {});
+        }
+      }
     });
   },
   async signUp({ name, email, password, newsletter }) {
@@ -169,7 +184,7 @@ const firebase = {
     try {
       cred = await a.createUserWithEmailAndPassword(auth, norm(email), password);
       if (name) await a.updateProfile(cred.user, { displayName: name });
-      await store.set('members', cred.user.uid, { name, newsletter: !!newsletter, createdAt: new Date().toISOString() });
+      await store.set('members', cred.user.uid, { name, email: norm(email), newsletter: !!newsletter, createdAt: new Date().toISOString() });
     } finally {
       signingUp = false;
       if (cred) announce({ ...fromFb(cred.user), name });
@@ -297,7 +312,7 @@ setTimeout(() => { if (!resolved) announce(null); }, 2500);
 export function mountAuth(slot) {
   if (!slot) return;
   const root = new URL('..', import.meta.url);
-  const href = (p) => new URL(p, root).pathname;
+  const href = (p) => { const u = new URL(p, root); return u.pathname + u.hash; };
   /* A device whose last answer was signed-in gets a calm blank slot until
      the real answer, not sign-in links about to swap. A signed-out visitor
      keeps the static links untouched, immediately. */
@@ -309,8 +324,8 @@ export function mountAuth(slot) {
     slot.innerHTML = u
       ? `<a class="btn btn--quiet" href="${href('my-path/')}">My Path${firstName(u) ? ` · ${firstName(u)}` : ''}</a>
          <button class="signout" type="button" data-signout>Sign out</button>`
-      : `<a class="signin" href="${href('join/')}">Sign in</a>
-         <a class="btn btn--outline" href="${href('join/')}">Create account</a>`;
+      : `<a class="signin" href="${href(ACCOUNT_LINKS.signIn)}">Sign in</a>
+         <a class="btn btn--outline" href="${href(ACCOUNT_LINKS.signUp)}">Create account</a>`;
   });
   /* Delegated, so it survives every re-render of the slot above. */
   slot.addEventListener('click', async (e) => {

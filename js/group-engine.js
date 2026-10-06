@@ -35,9 +35,9 @@ export const FACILITATOR_SEES_MEMBER_TICKS = false;
 
 export const ROLES = ['visitor', 'none', 'member', 'facilitator'];
 
-/* A meeting counts as over this long after it starts. The Groups page says
-   sessions run one to one and a half hours. */
-export const MEETING_LENGTH_MS = 90 * 60 * 1000;
+/* A meeting counts as over this long after it starts. Meetings are one hour
+   (Kate, 6 Oct — it was one to one and a half). */
+export const MEETING_LENGTH_MS = 60 * 60 * 1000;
 
 /* WHO FACILITATES A GROUP — ONE fact, ONE place (lane D, 28 Sep): the
    account named on groupCodes/{code}.facilitator. firestore.rules checks the
@@ -258,8 +258,10 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
     }
 
     const materials = [];
-    if (s.id === 'prep') materials.push({ kind: 'link', label: 'Get the free PDF', href: 'workbooks/' });
-    if (s.kind === 'together' && can.guide) materials.push({ kind: 'soon', label: 'Facilitator guide for this meeting — arrives soon' });
+    /* Kate, 6 Oct: "Get the Workbook Editions". The facilitator's manual and
+       film are for the whole series, so they sit under Your materials (kit,
+       below), not in each meeting. */
+    if (s.id === 'prep') materials.push({ kind: 'link', label: 'Get the Workbook Editions', href: 'workbooks/' });
 
     return {
       id: s.id, kind: s.kind, n: s.n, tag: s.tag,
@@ -297,6 +299,9 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
     next,
     plan,
     currentId: current?.id || null,
+    /* Which facilitator materials this viewer gets: the manual for this
+       edition and the one film — or none. */
+    kit: can.guide ? [`manual-${series.id}`, 'film'] : [],
     finished: can.inGroup && steps.every((s) => s.kind !== 'together' || s.state === 'done'),
     ...pathView(role),
   };

@@ -15,8 +15,10 @@ rules_version = '2';
    - The two public forms — contact messages and group registrations — collect
      names and email addresses. Both are write-only from the public: anyone may
      submit one, nobody may read them back except an editor.
-   - A person's workbook progress and group membership belong to them alone.
-     Nothing in here lets one signed-in user read another's.
+   - A person's workbook progress belongs to them alone. Their account record
+     (name, email, email choice, groups) is theirs to change; editors may read
+     it for /admin → People. Nothing in here lets one signed-in user read
+     another's.
 */
 
 service cloud.firestore {
@@ -162,8 +164,13 @@ service cloud.firestore {
     /* Name, newsletter choice, and the groups this person is in
        ({ groups: { [code]: { seriesId, groupName, status, joinedAt } } }).
        Nothing in it decides who facilitates — that is groupCodes only. */
+    /* Editors may READ these (Kate, 6 Oct: one list of who leads and who
+       belongs to which group, and who asked for emails) — /admin → People.
+       Only the person may write or delete their own. The privacy page says
+       so: "the program team can see your name, email, and groups". */
     match /members/{uid} {
-      allow read, write: if isOwner(uid);
+      allow read: if isOwner(uid) || isEditor();
+      allow write: if isOwner(uid);
     }
 
     /* ---- settings ---- */

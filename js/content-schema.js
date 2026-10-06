@@ -78,8 +78,18 @@ export const COLLECTIONS = {
     fields: [
       { key: 'id', label: 'Edition', type: 'text', readonly: true },
       { key: 'badge', label: 'Small line above the title', type: 'text' },
-      { key: 'title', label: 'Title', type: 'text' },
+      { key: 'name', label: 'Name', type: 'text' },
       { key: 'desc', label: 'Description', type: 'textarea' },
+    ],
+  },
+  facilitatorKit: {
+    label: 'Facilitator materials',
+    help: 'What a group’s facilitator sees under “Your materials” on My Path: one manual for each edition, and one film for both. Put the file somewhere that gives a share link (Google Drive, Dropbox, Vimeo) and paste the link here. Leave a link empty and it reads “arrives soon”.',
+    fixed: true,
+    fields: [
+      { key: 'id', label: 'Which one', type: 'text', readonly: true },
+      { key: 'label', label: 'What it is called', type: 'text' },
+      { key: 'link', label: 'Link', type: 'url', help: 'A PDF share link for a manual; a Vimeo or YouTube link for the film.' },
     ],
   },
   reach: {

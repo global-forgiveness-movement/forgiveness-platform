@@ -17,7 +17,7 @@
 import { SERIES, PLAYLIST } from './data.js';
 import { store, withPatience } from './store.js';
 import { getCollection } from './content.js';
-import { applyGroupAction, applyMyTick, createdBy, facilitatorOf, FACILITATOR_SEES_MEMBER_TICKS } from './group-engine.js';
+import { applyGroupAction, applyMyTick, createdBy, facilitatorOf, runsGroup, FACILITATOR_SEES_MEMBER_TICKS } from './group-engine.js';
 
 /* No 0/O/1/I/L/S/5/2/Z — these get read aloud and written on whiteboards. */
 const ALPHABET = 'ACDEFGHJKMNPQRTUVWXY34679';
@@ -419,4 +419,36 @@ export async function repairFacilitators() {
     }
   }
   return report;
+}
+
+/* ------------------------------------------------ /admin → People
+
+   Kate, 6 Oct: "a spreadsheet [that] shows who is the group leader, group
+   member of x group, email address they want to share." One row per person
+   per group (a person in no group gets one row of their own), built live
+   from the account records — nothing new is stored. Editors only: reading
+   members/ needs the editor rule in firestore.rules. Who LEADS a group is
+   the engine's answer (runsGroup), never decided here. */
+export async function peopleRows() {
+  const [members, codes] = await Promise.all([store.list('members'), store.list('groupCodes')]);
+  const codeDoc = Object.fromEntries(codes.map((c) => [c.id, c]));
+  const rows = [];
+  for (const m of members) {
+    const { doc } = membershipsOf(m);
+    const person = {
+      name: doc.name || '', email: doc.email || '', newsletter: !!doc.newsletter,
+      joined: (doc.createdAt || '').slice(0, 10),
+    };
+    const groups = Object.entries(doc.groups || {});
+    if (!groups.length) { rows.push({ ...person, leads: false, group: '', code: '', edition: '', status: '' }); continue; }
+    for (const [code, g] of groups) {
+      rows.push({
+        ...person,
+        leads: runsGroup(codeDoc[code], m.id),
+        group: g.groupName || '', code, edition: SERIES[g.seriesId]?.name || g.seriesId || '',
+        status: g.status === 'past' ? 'Past' : 'Active',
+      });
+    }
+  }
+  return rows.sort((a, b) => (a.code || '~').localeCompare(b.code || '~') || (b.leads - a.leads) || a.name.localeCompare(b.name));
 }

@@ -3,18 +3,18 @@
    footer, hydrates video embeds from data.js, and counts workbook downloads.
    Written once, used everywhere — page files contain only their <main>. */
 
-import { NAV, FOOTER_COLS, BRAND } from './data.js';
+import { NAV, FOOTER_COLS, BRAND, ACCOUNT_LINKS } from './data.js';
 import { getVideos, getPages, fieldAttr } from './content.js';
 import { recordDownload } from './metrics.js';
 import { videoFrame } from './video.js';
 import { ensureGate, leaf } from './gate.js';
 
-export const STAMP = 'GFM-V1 · 2026-10-02a';
+export const STAMP = 'GFM-V1 · 2026-10-06a';
 
 /* Resolve everything relative to the site root (js/ → root), so pages work
    at any depth and on any host (github.io project path or a custom domain). */
 const ROOT = new URL('..', import.meta.url);
-export const href = (path) => new URL(path, ROOT).pathname;
+export const href = (path) => { const u = new URL(path, ROOT); return u.pathname + u.hash; };
 
 function el(tag, attrs = {}, html = '') {
   const node = document.createElement(tag);
@@ -42,8 +42,8 @@ function buildHeader() {
      swap once the backend answers. */
   let hintSignedIn = false;
   try { hintSignedIn = localStorage.getItem('gfm.auth.hint.v1') === '1'; } catch {}
-  const authLinks = hintSignedIn ? '' : `<a class="signin" href="${href('join/')}">Sign in</a>
-         <a class="btn btn--outline" href="${href('join/')}">Create account</a>`;
+  const authLinks = hintSignedIn ? '' : `<a class="signin" href="${href(ACCOUNT_LINKS.signIn)}">Sign in</a>
+         <a class="btn btn--outline" href="${href(ACCOUNT_LINKS.signUp)}">Create account</a>`;
   const head = el('header', { class: 'site-head' }, `
     <a class="site-brand" href="${href('')}">
       ${/* The GFM logo carries the name, so no words beside it, and it stands

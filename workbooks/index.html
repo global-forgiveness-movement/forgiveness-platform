@@ -12,37 +12,29 @@
 <body>
 <main>
 
-  <!-- Wyatt, 29 Sep: the interactive workbook comes FIRST on this page, one
-       big button right under the title, almost no words — "we just want
-       someone to want to start it now." It opens straight away; an account is
-       offered, never required (Wyatt's ruling on Richard's note, 29 Sep). This
-       supersedes Kate's 18 Sep "PDFs first" order — Wyatt carries that to her. -->
+  <!-- Kate, 6 Oct: "it is not clear how the workbooks are related" — the
+       three ways to do the same workbook, in ONE row, named by Kate:
+       Interactive / Downloadable / Downloadable … Adapted for Churches. The
+       interactive one stays first (Wyatt, 29 Sep) and still asks for a free
+       account (29 Sep call). -->
   <section class="section section--paper">
     <div class="wrap">
       <p class="kicker" data-copy="workbooks.p.free">Free</p>
       <h1 data-copy="workbooks.h1.the-reach-forgiveness-workbook">The REACH Forgiveness Workbook</h1>
-      <div class="wb-start-panel">
-        <h2 class="visually-hidden">The interactive workbook</h2>
-        <a class="btn btn--juicy btn--go" href="../workbook/" data-copy="workbooks.a.start-the-interactive-workbook">Start the interactive workbook</a>
-        <!-- 29 Sep call: it opens with a free account (Kate, Richard). -->
-        <p class="wb-start-line"><span data-copy="workbooks.p.free-with-an-account">Free, with an account that keeps your place on any device.</span> <span data-locked="privacy promise">What you write stays on your device.</span></p>
-      </div>
       <p data-copy="workbooks.p.a-self-guided-workbook">A self-guided workbook designed to take two to three hours. It was tested in a randomized trial with over 4,500 participants across 6 sites in 5 countries. You can download it, print it, share it, and translate it for your community. It is free, and it will stay free.</p>
-    </div>
-  </section>
-
-
-  <!-- The PDFs follow the interactive workbook (Wyatt, 29 Sep). -->
-  <section class="section">
-    <div class="wrap">
-      <h2 data-copy="workbooks.h2.or-download-it">Or download it</h2>
-      <p class="muted" data-copy="workbooks.p.print-it-share-it">Print it, share it. No account needed — and that will not change.</p>
-      <div class="grid grid--2" data-render="workbooks-main" style="margin-top:1.4rem"></div>
-      <!-- Kate's line, beside the REACH card. -->
+      <div class="grid grid--3 wb-row" style="margin-top:1.6rem">
+        <div class="card wb-card--interactive" id="interactive">
+          <p class="kicker" data-copy="workbooks.p.on-screen">On screen</p>
+          <h3 data-copy="workbooks.h3.interactive-reach-forgiveness-workbook">Interactive REACH Forgiveness Workbook</h3>
+          <p><span data-copy="workbooks.p.free-with-an-account">Free, with an account that keeps your place on any device.</span> <span data-locked="privacy promise">What you write stays on your device.</span></p>
+          <div class="dl-row"><a class="btn btn--juicy btn--go" href="../workbook/" data-copy="workbooks.a.start-the-interactive-workbook">Start the interactive workbook</a></div>
+        </div>
+        <div data-render="workbooks-main" style="display:contents"></div>
+      </div>
+      <!-- Kate's line, under the row. -->
       <p class="workbooks-basis" data-copy="workbooks.p.the-reach-forgiveness-workbook-is">The REACH Forgiveness Workbook is the basis of the Forgiveness Groups. <a href="../groups/">How Forgiveness Groups work →</a></p>
     </div>
   </section>
-
   <section class="section section--paper">
     <div class="wrap">
       <h2 data-copy="workbooks.h2.available-languages">Available languages</h2>
@@ -85,9 +77,9 @@
   /* A card's words are the editor's (the workbooks collection); its button is
      the file's — label, format and size come from downloadFor() alone. */
   const card = (w, i) => `
-    <div class="card" id="${w.id}">
+    <div class="card wb-card" id="${w.id}">
       <p class="kicker" ${fieldAttr('workbooks', w, i, 'badge')}>${w.badge}</p>
-      <h3 ${fieldAttr('workbooks', w, i, 'title')}>${w.title}</h3>
+      <h3 ${fieldAttr('workbooks', w, i, 'name')}>${w.name}</h3>
       <p ${fieldAttr('workbooks', w, i, 'desc')}>${w.desc}</p>
       <p class="dl-row">${w.pills.map((p, n) => `<span class="pill" ${fieldAttr('workbooks', w, i, `pills.${n}`)}>${p}</span>`).join('')}</p>
       <div class="dl-row">

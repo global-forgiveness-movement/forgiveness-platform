@@ -31,6 +31,10 @@
     .adm-pick { display: none; }
     .adm-panel > h2 { font-size: 1.4rem; margin: 0 0 0.3rem; }
     .adm-panel > .adm-lede { color: var(--muted); margin: 0 0 1.2rem; max-width: 62ch; }
+    .adm-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); }
+    .adm-table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
+    .adm-table th, .adm-table td { text-align: left; padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--line); white-space: nowrap; }
+    .adm-table th { font-family: var(--font-head); font-weight: 600; color: var(--navy); background: var(--cream-soft); position: sticky; top: 0; }
     .adm-item { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius);
       padding: 1rem 1.2rem; margin-bottom: 0.8rem; }
     .adm-item .form { max-width: none; }
@@ -125,7 +129,7 @@
   } from '../js/content.js';
   import { esc } from '../js/blocks.js';
   import { listInbox, SUBMISSIONS } from '../js/inbox.js';
-  import { repairFacilitators } from '../js/groups.js';
+  import { repairFacilitators, peopleRows } from '../js/groups.js';
 
   const $ = (sel, el = document) => el.querySelector(sel);
   const show = (name) => document.querySelectorAll('[data-view]').forEach((v) => (v.hidden = v.dataset.view !== name));
@@ -194,10 +198,10 @@
      picker with the same groups on a phone. A collection added to the schema
      and not placed here still appears, under "Around the site", so the menu
      can never silently lose a section. */
-  const LABELS = { messages: 'Messages', pages: 'New pages', history: 'History — undo a change' };
+  const LABELS = { messages: 'Messages', people: 'People', pages: 'New pages', history: 'History — undo a change' };
   const HOME = ['stats', 'reach', 'testimonials'];
   const MENU = [
-    { group: 'Inbox', items: ['messages'] },
+    { group: 'Inbox', items: ['messages', 'people'] },
     { group: 'Homepage', items: HOME },
     { group: 'Around the site', items: Object.keys(COLLECTIONS).filter((k) => !HOME.includes(k)) },
     { group: 'Your own pages', items: ['pages'] },
@@ -223,6 +227,7 @@
     history.replaceState(null, '', `#${name}`);
     if (name === 'pages') return renderPagesTab();
     if (name === 'messages') return renderMessagesTab();
+    if (name === 'people') return renderPeopleTab();
     if (name === 'history') return renderHistoryTab();
     renderCollectionTab(name);
   }
@@ -381,6 +386,65 @@
       ${rows.length
         ? rows.map(messageRow).join('')
         : '<p class="muted">Nothing yet. Messages from the Contact page and new group registrations will appear here.</p>'}`;
+  }
+
+  /* ---------------------------------------------- people */
+  /* Kate, 6 Oct: everyone with an account, which group they lead or belong
+     to, and the email of anyone who asked for emails — on screen, and as a
+     spreadsheet to download (CSV opens in Excel). */
+  const PEOPLE_COLS = [
+    ['name', 'Name'], ['email', 'Email'], ['newsletter', 'Wants emails'], ['role', 'Role'],
+    ['group', 'Group name'], ['code', 'Group code'], ['edition', 'Version'], ['status', 'Group status'], ['joined', 'Account made'],
+  ];
+  const cell = (r, k) => {
+    if (k === 'newsletter') return r.newsletter ? 'Yes' : 'No';
+    if (k === 'role') return r.code ? (r.leads ? 'Leader' : 'Member') : '';
+    return r[k] || '';
+  };
+  const csvOf = (rows) => [PEOPLE_COLS.map(([, h]) => h), ...rows.map((r) => PEOPLE_COLS.map(([k]) => cell(r, k)))]
+    .map((line) => line.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\r\n');
+  let peopleCache = [];
+
+  async function renderPeopleTab() {
+    $('[data-panel]').innerHTML = '<p class="muted small">Loading…</p>';
+    try { peopleCache = await peopleRows(); }
+    catch (err) {
+      $('[data-panel]').innerHTML = `${head('people', 'Everyone with an account.')}
+        <p class="form-msg form-msg--err">This list couldn’t load: the database doesn’t yet let editors read account records. Wyatt has the one-line rule change to publish in the Firebase console. (${esc(err.code || err.message || String(err))})</p>`;
+      return;
+    }
+    const accounts = new Set(peopleCache.map((r) => r.email || r.name)).size;
+    const wanting = [...new Set(peopleCache.filter((r) => r.newsletter && r.email).map((r) => r.email))];
+    $('[data-panel]').innerHTML = `
+      ${head('people', 'Everyone with an account: the groups they lead or belong to, and whether they asked for emails. One row per person per group. Emails appear once a person has signed in since October 6.')}
+      <div class="adm-row" style="gap:0.6rem;flex-wrap:wrap;margin-bottom:0.8rem">
+        <label class="small"><input type="checkbox" data-people-wanting> Only people who want emails</label>
+        <span class="spacer" style="flex:1"></span>
+        <button class="btn btn--outline" type="button" data-copy-emails>Copy the ${wanting.length} email${wanting.length === 1 ? '' : 's'} who want them</button>
+        <button class="btn btn--primary" type="button" data-people-csv>Download spreadsheet</button>
+      </div>
+      <p class="small muted" data-people-count></p>
+      <div class="adm-table-wrap"><table class="adm-table"><thead><tr>${PEOPLE_COLS.map(([, h]) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody data-people-body></tbody></table></div>`;
+    const draw = () => {
+      const only = $('[data-people-wanting]').checked;
+      const rows = only ? peopleCache.filter((r) => r.newsletter) : peopleCache;
+      $('[data-people-body]').innerHTML = rows.map((r) => `<tr>${PEOPLE_COLS.map(([k]) => `<td>${esc(cell(r, k))}</td>`).join('')}</tr>`).join('')
+        || `<tr><td colspan="${PEOPLE_COLS.length}" class="muted">No one yet.</td></tr>`;
+      $('[data-people-count]').textContent = `${accounts} account${accounts === 1 ? '' : 's'} · ${rows.length} row${rows.length === 1 ? '' : 's'} shown`;
+      return rows;
+    };
+    draw();
+    $('[data-people-wanting]').addEventListener('change', draw);
+    $('[data-people-csv]').addEventListener('click', () => {
+      const blob = new Blob(['\ufeff' + csvOf(draw())], { type: 'text/csv;charset=utf-8' });
+      const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `gfm-people-${new Date().toISOString().slice(0, 10)}.csv` });
+      document.body.append(a); a.click(); a.remove();
+    });
+    $('[data-copy-emails]').addEventListener('click', async (e) => {
+      const text = wanting.join(', ');
+      try { await navigator.clipboard.writeText(text); e.currentTarget.textContent = 'Copied'; }
+      catch { prompt('Copy these emails:', text); }
+    });
   }
 
   /* Groups created before September 28 don't name who runs them on their
