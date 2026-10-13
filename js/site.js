@@ -4,12 +4,13 @@
    Written once, used everywhere — page files contain only their <main>. */
 
 import { NAV, FOOTER_COLS, BRAND, ACCOUNT_LINKS, FORGIVING_BENEFITS } from './data.js';
+import { changeCard, percentChange } from './change-bar.js';
 import { getVideos, getPages, fieldAttr } from './content.js';
 import { recordDownload } from './metrics.js';
 import { videoFrame } from './video.js';
 import { ensureGate, leaf } from './gate.js';
 
-export const STAMP = 'GFM-V1 · 2026-10-13h';
+export const STAMP = 'GFM-V1 · 2026-10-13i';
 
 /* Resolve everything relative to the site root (js/ → root), so pages work
    at any depth and on any host (github.io project path or a custom domain). */
@@ -139,22 +140,20 @@ function renderDefinitions() {
   });
 }
 
-/* KATE'S BENEFITS CHART, drawn natively (Wyatt, 13 Oct: "rebuild it… so we
-   can simplify it"). Four labeled bars, every one pointing the good way; the
-   length is the size of the difference. No axis, no units to decode — the
-   source sits underneath. ONE drawing for every page that asks with
-   data-render="benefits"; the figures live in FORGIVING_BENEFITS alone. */
+/* THE NURSES' STUDY, drawn the way the trial's results are (Wyatt, 13 Oct):
+   one change bar per measure, in plum because it is a different study, the
+   size in plain percent. Figures in FORGIVING_BENEFITS alone; ONE drawing for
+   every page that asks with data-render="benefits". */
 function renderBenefits() {
-  const { findings, source, doi } = FORGIVING_BENEFITS;
-  const top = Math.max(...findings.map((f) => Math.abs(f.beta)));
-  const label = `Compared with people who seldom or never forgive, people who almost always forgive have ${findings.map((f) => `${f.label.toLowerCase()} (standardized difference ${Math.abs(f.beta).toFixed(2)})`).join(', ')}.`;
+  const { findings, cite, doi } = FORGIVING_BENEFITS;
   document.querySelectorAll('[data-render="benefits"]').forEach((el) => {
     el.dataset.locked = 'research claim';
-    el.innerHTML = `
-      <ul class="benefits-bars" role="img" aria-label="${label}">${findings.map((f) => `
-        <li><span class="bb-label">${f.label}</span><span class="bb-track"><span class="bb-bar" style="width:${(Math.abs(f.beta) / top * 100).toFixed(1)}%"></span></span></li>`).join('')}
-      </ul>
-      <figcaption class="small muted">People who almost always forgive, compared with people who seldom or never do. Longer bar, bigger difference. ${source} <a href="${doi}" target="_blank" rel="noopener">Read the study →</a></figcaption>`;
+    el.innerHTML = `<div class="chg-grid">${findings.map((f) => {
+      const n = percentChange(f.seldom, f.always), word = f.always < f.seldom ? 'lower' : f.name === 'Close friends' ? 'more' : 'higher';
+      return changeCard({ name: f.name, from: f.seldom, to: f.always, said: `${n}% ${word}`, theme: 'plum',
+        spoken: `${f.name}: ${n}% ${word} for women who almost always forgave than for women who seldom or never did (average ${f.seldom} vs ${f.always}, on a ${f.range} scale).` });
+    }).join('')}</div>
+      <figcaption class="small muted">${cite} · <a href="${doi}" target="_blank" rel="noopener">Read the study →</a></figcaption>`;
   });
 }
 

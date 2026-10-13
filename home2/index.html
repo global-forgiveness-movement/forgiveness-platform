@@ -47,7 +47,6 @@
         <li><img class="box-pic" src="../assets/illustrations/sunrise.webp" alt="" width="720" height="656"><b data-copy="home2.b.two-weeks-later">Two weeks later</b><span data-copy="home2.span.they-were-less-depressed">they were less depressed, less anxious, and held less ill will toward the person who hurt them than people still waiting to start.</span></li>
       </ul>
       <div class="why-results" data-render="why-results" data-locked="research claim"></div>
-      <p class="pr-note small" data-copy="home2.p.two-weeks-after-starting">Two weeks after starting the workbook. People who hadn’t started yet barely changed.</p>
       <p class="why-cta"><a class="btn btn--juicy btn--down" href="#start" data-copy="home2.a.show-me-how">Show me how to start</a></p>
     </div>
   </section>
@@ -56,7 +55,7 @@
   <section class="section section--paper">
     <div class="wrap">
       <h2 data-copy="home2.h2.people-who-forgive">People who forgive tend to live better</h2>
-      <p data-copy="home2.p.in-a-long-term-2">In a long-term study of nurses in mid-life, those who almost always forgave others had <b>more positive emotion and social connection, and less depression and anxiety</b>, than those who seldom or never did.</p>
+      <p data-copy="home2.p.in-a-study-of-over">In a study of over 50,000 nurses, women who almost always forgave others, compared with women who seldom or never did:</p>
       <figure class="benefits" data-render="benefits"></figure>
     </div>
   </section>
@@ -126,6 +125,7 @@
 
 <script type="module">
   import { TRIAL, downloadFor } from '../js/data.js';
+  import { changeCard, percentChange } from '../js/change-bar.js';
   import { getCollection, fieldAttr } from '../js/content.js';
 
   /* The trial's results, as few marks as possible (Wyatt, 13 Oct, round 2,
@@ -141,12 +141,9 @@
   document.querySelector('[data-render="why-results"]').innerHTML = order
     .map((m) => TRIAL.effects.find((e) => e.measure === m))
     .map((e) => {
-      const [before, after] = e.did;
-      const kept = after / before, down = Math.round((1 - kept) * 100);
-      return `<figure class="drop" aria-label="${NAME[e.measure]} decreased ${down}% in two weeks for people who did the workbook (average ${before.toFixed(1)} to ${after.toFixed(1)}).">
-        <figcaption><b>${NAME[e.measure]}</b> <span>decreased ${down}%</span></figcaption>
-        <span class="drop-bar"><span class="drop-kept" style="width:${(kept * 100).toFixed(1)}%"></span><span class="drop-gone"><span class="drop-arrow" aria-hidden="true">←</span></span></span>
-      </figure>`;
+      const [before, after] = e.did, n = percentChange(before, after);
+      return changeCard({ name: NAME[e.measure], from: before, to: after, said: `decreased ${n}%`, theme: 'teal',
+        spoken: `${NAME[e.measure]} decreased ${n}% in two weeks for people who did the workbook (average ${before.toFixed(1)} to ${after.toFixed(1)}).` });
     }).join('');
   document.querySelector('[data-render="participants"]').textContent = TRIAL.participants;
   document.querySelector('[data-render="countries"]').textContent = TRIAL.countries;

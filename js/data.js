@@ -139,20 +139,26 @@ export const EVENTS = [
 ];
 
 /* Trial numbers, phrased the clients' way, with units on every figure. */
-/* Kate's "Benefits of Forgiveness of Others" chart (her Animated Screens,
-   October 6 call), as data. People who almost always forgive, compared with
-   people who never or seldom do: standardized differences (β) from Long,
-   Worthington, VanderWeele & Chen 2020, BMC Psychology 8 — the source printed
-   on her chart. `size` is the difference with its sign taken in the good
-   direction, so every bar points the same way. */
+/* The nurses' study behind Kate's "Benefits of Forgiveness of Others" chart
+   (Long, Worthington, VanderWeele & Chen 2020, BMC Psychology 8; full text in
+   .planning/sources/long-2020-bmc-psychology-PMC7528379.xml). Wyatt, 13 Oct:
+   show it the way the trial's results are shown — the size of each
+   difference in plain percent. So these are the paper's Table 1 averages for
+   women who seldom/never forgave vs always/almost always did (N = 53,237).
+   Kate's chart showed the paper's ADJUSTED estimates (β: positive affect
+   0.18, social integration 0.15, depressive symptoms −0.16, anxiety −0.11),
+   which point the same way but are different numbers — flagged for Kate.
+   Table 1 has no plain average for social integration; close friends is its
+   nearest plain measure. */
 export const FORGIVING_BENEFITS = {
-  source: 'Long, Worthington, VanderWeele & Chen (2020). Forgiveness of others and subsequent health and well-being in mid-life: a longitudinal study on female nurses. BMC Psychology, 8.',
+  people: 'over 50,000 nurses',
+  cite: 'Long et al., 2020, BMC Psychology',
   doi: 'https://doi.org/10.1186/s40359-020-00470-w',
   findings: [
-    { label: 'More positive emotion', beta: 0.18 },
-    { label: 'Less depression', beta: -0.16 },
-    { label: 'More social connection', beta: 0.15 },
-    { label: 'Less anxiety', beta: -0.11 },
+    { name: 'Depression', seldom: 8.57, always: 4.82, range: '0–30' },
+    { name: 'Anxiety', seldom: 3.05, always: 2.10, range: '0–15' },
+    { name: 'Positive emotion', seldom: 1.77, always: 2.27, range: '0–3' },
+    { name: 'Close friends', seldom: 1.55, always: 1.80, range: '0–5' },
   ],
 };
 
