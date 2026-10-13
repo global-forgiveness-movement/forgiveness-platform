@@ -4,6 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Forgiveness Groups — Global Forgiveness Movement</title>
+  <!-- SHARE CARD — one block, the same on every page (scripts/qa/one-share-card.sh).
+       Link previews don't run JavaScript, so it is written here, not by site.js. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Global Forgiveness Movement">
+  <meta property="og:title" content="Global Forgiveness Movement">
+  <meta property="og:description" content="A free, evidence-based workbook for learning to forgive, on your own or in a group.">
+  <meta property="og:image" content="https://global-forgiveness-movement.github.io/forgiveness-platform/assets/brand/share-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="The Global Forgiveness Movement logo on cream">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="description" content="What a Forgiveness Group is, how to run one, and the videos that guide each session.">
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z' fill='%2300887a' transform='rotate(40 12 12)'/%3E%3C/svg%3E">
@@ -12,33 +23,20 @@
 <body>
 <main>
 
-  <section class="section section--paper">
-    <div class="wrap grid grid--2" style="align-items:center">
-      <div>
-        <p class="kicker" data-copy="groups.p.forgiveness-groups">Forgiveness Groups</p>
-        <h1 data-copy="groups.h1.doing-this-work-alongside">Doing this work alongside other people changes it</h1>
-        <p data-copy="groups.p.a-forgiveness-group-is">A Forgiveness Group is six to twelve people working through the REACH Forgiveness Workbook <b>on their own</b>, then meeting to talk about the experience. Each meeting is guided by a short video, so you don’t need to be a therapist or an expert to facilitate one — we provide the films, the guidance, and the materials.</p>
-        <!-- Kate, 6 Oct: the "About the research" note is gone from here. -->
-        <p style="display:flex;gap:0.7rem;flex-wrap:wrap">
-          <!-- Signed in, there is no account left to create (lane D, 28 Sep):
-               the same button says what it does now, and goes to the same place. -->
-          <a class="btn btn--plum" href="#tell-us" data-when="out" data-copy="groups.a.create-your-facilitator-account">Create your facilitator account</a>
-          <a class="btn btn--plum" href="#tell-us" data-when="in" hidden data-copy="groups.a.create-a-group">Create a group</a>
-          <a class="btn btn--outline" href="#facilitate" data-copy="groups.a.how-facilitating-works">How facilitating works</a>
-        </p>
-      </div>
-      <figure class="video" data-video="groupFilm"></figure>
-    </div>
-  </section>
-
-  <section class="section" id="what">
+  <!-- Testers, 12 and 13 Oct: a newcomer asks WHAT a group is before WHY.
+       The three pictures now sit directly under a shorter intro, and the
+       film moves below them. The intro sentence is reworded ("in their own
+       time", Wyatt 13 Oct) — new copy, flagged for Kate. -->
+  <section class="section section--paper" id="what">
     <div class="wrap">
-      <h2 data-copy="groups.h2.what-happens-in-a">What happens in a Forgiveness Group</h2>
+      <p class="kicker" data-copy="groups.p.forgiveness-groups">Forgiveness Groups</p>
+      <h1 data-copy="groups.h1.doing-this-work-alongside">Doing this work alongside other people changes it</h1>
+      <p class="measure" data-copy="groups.p.a-forgiveness-group-is">A Forgiveness Group is six to twelve people who each do the REACH Forgiveness Workbook lessons in their own time, then meet to talk about them. Each meeting is guided by a short video, so you don’t need to be a therapist or an expert to facilitate one.</p>
+      <h2 class="visually-hidden" data-copy="groups.h2.what-happens-in-a">What happens in a Forgiveness Group</h2>
       <!-- Kate, 6 Oct: "images or graphics to show this rather than so many
            words". The same three pictures as Home, in order: the lessons come
-           first, on your own (Kate, 18 Sep: never during the meeting). New
-           captions, flagged for Kate's approval. -->
-      <div class="two-ways two-ways--3">
+           first, on your own (Kate, 18 Sep: never during the meeting). -->
+      <div class="two-ways two-ways--3" style="margin-top:1.4rem">
         <figure>
           <img src="../assets/illustrations/on-your-own.webp" alt="" width="720" height="557">
           <figcaption><b data-copy="groups.b.first-on-your-own">1 · On your own</b>
@@ -55,7 +53,21 @@
             <span data-copy="groups.span.the-rest-of-the">The rest of the hour is for talking about what the lessons were like, with solidarity, support, and accountability.</span></figcaption>
         </figure>
       </div>
-      <p class="notice" style="margin-top:1.2rem" data-copy="groups.p.each-person-is-on">Each person is on their own forgiveness journey, and not everyone will reach full emotional forgiveness. That’s okay. If you ever need to pause or stop, you should. The guidelines below carry the rest, and they hold for every group.</p>
+      <p style="display:flex;gap:0.7rem;flex-wrap:wrap;justify-content:center;margin-top:1.4rem">
+        <!-- Signed in, there is no account left to create (lane D, 28 Sep):
+             the same button says what it does now, and goes to the same place. -->
+        <a class="btn btn--plum" href="#tell-us" data-when="out" data-copy="groups.a.create-your-facilitator-account">Create your facilitator account</a>
+        <a class="btn btn--plum" href="#tell-us" data-when="in" hidden data-copy="groups.a.create-a-group">Create a group</a>
+        <a class="btn btn--navy" href="#join" data-copy="groups.a.join-with-a-code">I have a group code</a>
+        <a class="btn btn--outline" href="#facilitate" data-copy="groups.a.how-facilitating-works">How facilitating works</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap grid grid--2" style="align-items:center">
+      <figure class="video" data-video="groupFilm"></figure>
+      <p class="notice" data-copy="groups.p.each-person-is-on">Each person is on their own forgiveness journey, and not everyone will reach full emotional forgiveness. That’s okay. If you ever need to pause or stop, you should. The guidelines below carry the rest, and they hold for every group.</p>
     </div>
   </section>
 
@@ -90,15 +102,15 @@
            different than "series" sounds. The films keep Kate's titles. -->
       <h2 data-copy="groups.h2.the-two-series">The two versions</h2>
       <p  data-copy="groups.p.a-series-is-a"><b>Each version is a set of films.</b> At each meeting the facilitator plays that session’s video — about ten minutes of teaching and a guided activity — and the group talks afterwards. Choose the one that matches your workbook: <b>three sessions</b> for the REACH Forgiveness Workbook, <b>six sessions</b> for the REACH Forgiveness Workbook, Adapted for Churches.</p>
-      <p class="muted"  data-copy="groups.p.both-are-ways-of">Both are ways of getting a group through the tested workbook — the evidence attaches to the workbook, and both versions inherit it. The lessons listed against each session are the ones your group completes <i>before</i> that meeting.</p>
+      <p data-copy="groups.p.both-are-ways-of">Both are ways of getting a group through the tested workbook — the evidence attaches to the workbook, and both versions inherit it. The lessons listed against each session are the ones your group completes <i>before</i> that meeting.</p>
       <!-- Richard, 24 Sep: "make it a kind of drop down ... three session versus
            six session ... they won't necessarily see both next to each other."
            Two buttons, nothing chosen at first, one series at a time. -->
       <div class="series-choose" role="group" aria-label="Choose a version">
-        <button type="button" class="series-choice" data-pick="secular" aria-pressed="false"><b>3 sessions</b><span>REACH Forgiveness Workbook</span></button>
-        <button type="button" class="series-choice" data-pick="church" aria-pressed="false"><b>6 sessions</b><span>Adapted for Churches</span></button>
+        <button type="button" class="series-choice" data-pick="secular" aria-pressed="false"><b data-copy="groups.b.3-sessions">3 sessions</b><span data-copy="groups.span.reach-forgiveness-workbook">REACH Forgiveness Workbook</span><em data-copy="groups.em.see-the-steps-3">See the steps</em></button>
+        <button type="button" class="series-choice" data-pick="church" aria-pressed="false"><b data-copy="groups.b.6-sessions">6 sessions</b><span data-copy="groups.span.adapted-for-churches">Adapted for Churches</span><em data-copy="groups.em.see-the-steps-6">See the steps</em></button>
       </div>
-      <p class="small muted series-hint center" data-render="series-hint">Choose one to see it step by step.</p>
+      <p class="small muted series-hint center" data-render="series-hint" data-copy="groups.p.choose-one-to-see">Choose one to see it step by step.</p>
       <div data-render="series"></div>
     </div>
   </section>
@@ -107,6 +119,9 @@
   <section class="section section--paper" id="tell-us">
     <div class="wrap">
       <h2 data-copy="groups.h2.create-your-group">Create your group</h2>
+      <!-- Testers, 12 and 13 Oct: starting a group makes you its facilitator, and
+           both were surprised. Wyatt's wording, 13 Oct — new copy, flagged for Kate. -->
+      <p class="notice" data-when="out" hidden data-copy="groups.p.youll-be-the-facilitator"><b>You’ll be the facilitator.</b> That just means gathering your people and pressing play. The video does the guiding, and you take part like everyone else.</p>
       <p class="muted"  data-copy="groups.p.pick-your-series-and">Pick your version and we’ll issue your group code straight away — that is the only answer we need. Once you have it, you can tell us a little more if you like: it helps us support you and understand where this work is taking root.</p>
 
       <!-- Kate, 18 Sep §3: "Tell us about your group needs to be within the
@@ -134,6 +149,19 @@
     </div>
   </section>
 
+  <!-- A tester, 13 Oct: "if someone sent me a code… I would click on groups
+       and be like, where do I put in the code?" Signed out, THE code card
+       (js/code-entry.js, the same one as My Path); signed in, My Path already
+       has the join form, so this points there rather than drawing a second. -->
+  <section class="section" id="join">
+    <div class="wrap center">
+      <h2 data-copy="groups.h2.already-in-a-group">Already in a group?</h2>
+      <p class="measure" style="margin:0 auto 1.2rem" data-copy="groups.p.your-facilitator-gives-you">Your facilitator gives you a code. It keeps your place and lets you rewatch the videos.</p>
+      <div data-render="code-entry" data-when="out" hidden></div>
+      <p data-when="in" hidden><a class="btn btn--navy btn--go" href="../my-path/#join" data-copy="groups.a.enter-your-code-on">Enter your code on My Path</a></p>
+    </div>
+  </section>
+
   <section class="section">
     <div class="wrap">
       <h2 data-copy="groups.h2.connect-with-other-practitioners">Connect with other practitioners</h2>
@@ -155,6 +183,7 @@
 <script type="module">
   import { deriveSeries, roleFor } from '../js/group-engine.js';
   import { seriesLanes, seriesName, seriesFraming } from '../js/series.js';
+  import { mountCodeEntry } from '../js/code-entry.js';
   import { getCollection, fieldAttr } from '../js/content.js';
   import { loadSeries } from '../js/groups.js';
   import { mountCreateGroup, preselectSeries } from '../js/group-create.js';
@@ -169,6 +198,8 @@
 
   /* Same two-state pattern My Path uses: nothing paints until the backend has
      answered, so a signed-in facilitator never sees the sign-in card flash. */
+  mountCodeEntry(document.querySelector('[data-render="code-entry"]'));
+
   onAuth((u) => {
     document.querySelectorAll('[data-when="in"]').forEach((n) => (n.hidden = !u));
     document.querySelectorAll('[data-when="out"]').forEach((n) => (n.hidden = !!u));
@@ -194,7 +225,7 @@
         ${seriesName(view)}
         <!-- Kate, 6 Oct: meetings are 1 hour, and she can change it — one key
              for both versions, so one edit changes both. -->
-        <p class="small muted"><span data-copy="groups.series.uses-the">Uses the</span> <span data-field="series/${s.id}/workbook">${s.workbook}</span>. <span data-copy="groups.series.meeting-length">Each meeting runs 1 hour, guided by about 10 minutes of video.</span></p>
+        <p class="small"><span data-copy="groups.series.uses-the">Uses the</span> <span data-field="series/${s.id}/workbook">${s.workbook}</span>. <span data-copy="groups.series.meeting-length">Each meeting runs 1 hour, guided by about 10 minutes of video.</span> <span data-copy="groups.series.once-a-week">We suggest meeting once a week, so there’s a week for the lessons before each meeting.</span></p>
         <!-- Wyatt, 12 Oct: the steps as a two-lane picture, not a long list.
              The lane names are the key (Kate, 6 Oct: the key inside). -->
         ${seriesLanes(view)}

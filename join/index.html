@@ -4,6 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Create account — Global Forgiveness Movement</title>
+  <!-- SHARE CARD — one block, the same on every page (scripts/qa/one-share-card.sh).
+       Link previews don't run JavaScript, so it is written here, not by site.js. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Global Forgiveness Movement">
+  <meta property="og:title" content="Global Forgiveness Movement">
+  <meta property="og:description" content="A free, evidence-based workbook for learning to forgive, on your own or in a group.">
+  <meta property="og:image" content="https://global-forgiveness-movement.github.io/forgiveness-platform/assets/brand/share-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="The Global Forgiveness Movement logo on cream">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="description" content="A free account for the interactive workbook and your Forgiveness Group. The PDF needs no account.">
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z' fill='%2300887a' transform='rotate(40 12 12)'/%3E%3C/svg%3E">
@@ -24,7 +35,7 @@
         <h1 class="join-title" data-mode-title>Create your free account</h1>
 
         <div data-not-forgot>
-          <button class="btn btn--outline" id="googleBtn" style="width:100%">Continue with Google</button>
+          <button class="btn btn--outline" id="googleBtn" style="width:100%">Sign up with Google</button>
           <p class="center muted small" style="margin:0.8rem 0" data-copy="join.p.or">— or —</p>
         </div>
         <!-- Forgot mode: one field, one button. Google accounts have no
@@ -47,7 +58,7 @@
         <hr class="leafline" style="margin:1.2rem 0">
         <div class="join-switch" data-mode-switch></div>
         <p class="small" hidden data-signin-only data-copy="join.p.forgot-your-password"><a href="#forgot" data-to="forgot">Forgot your password?</a></p>
-        <p class="small muted" hidden data-forgot-only data-copy="join.p.signed-up-with-google">Signed up with Google? There’s no password to reset — <a href="#signin" data-to="signin">go back</a> and choose “Continue with Google.”</p>
+        <p class="small muted" hidden data-forgot-only data-copy="join.p.signed-up-with-google">Signed up with Google? There’s no password to reset — <a href="#signin" data-to="signin">go back</a> and choose “Sign in with Google.”</p>
       </div>
     </div>
   </section>
@@ -87,9 +98,15 @@
   const msg = form.querySelector('.form-msg');
   const TITLE = { signup: 'Create your free account', signin: 'Welcome back', forgot: 'Reset your password' };
   const SUBMIT = { signup: 'Create account', signin: 'Sign in', forgot: 'Email me a reset link' };
+  /* A tester, 12 Oct: under "Create your free account", "Continue with
+     Google" read as a different thing from creating one. Saying the same
+     verb as the title makes it one of two ways to do the same thing. Both
+     wordings are on Google's approved list for its sign-in button. */
+  const GOOGLE = { signup: 'Sign up with Google', signin: 'Sign in with Google' };
 
   function render() {
     document.querySelector('[data-mode-title]').textContent = TITLE[mode];
+    if (GOOGLE[mode]) document.getElementById('googleBtn').textContent = GOOGLE[mode];
     document.querySelector('[data-submit]').textContent = SUBMIT[mode];
     const show = (sel, on) => document.querySelectorAll(sel).forEach((n) => (n.hidden = !on));
     show('[data-signup-only]', mode === 'signup');
@@ -154,7 +171,7 @@
       }
     } catch (err) {
       if (mode === 'forgot' && err?.code === 'auth/user-not-found') {
-        say('err', 'There’s no account with that email. If you signed up with Google, go back and choose “Continue with Google.”');
+        say('err', 'There’s no account with that email. If you signed up with Google, go back and choose “Sign in with Google.”');
       } else fail(err);
     } finally { btn.disabled = false; }
   });

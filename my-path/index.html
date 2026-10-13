@@ -4,6 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>My Path — Global Forgiveness Movement</title>
+  <!-- SHARE CARD — one block, the same on every page (scripts/qa/one-share-card.sh).
+       Link previews don't run JavaScript, so it is written here, not by site.js. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Global Forgiveness Movement">
+  <meta property="og:title" content="Global Forgiveness Movement">
+  <meta property="og:description" content="A free, evidence-based workbook for learning to forgive, on your own or in a group.">
+  <meta property="og:image" content="https://global-forgiveness-movement.github.io/forgiveness-platform/assets/brand/share-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="The Global Forgiveness Movement logo on cream">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="description" content="Your place in the workbook, your group, your materials.">
   <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z' fill='%2300887a' transform='rotate(40 12 12)'/%3E%3C/svg%3E">
@@ -26,21 +37,7 @@
            and the account is step two: a valid code turns this card's button
            into "Create your free account", and the code rides along (held by
            js/groups.js, the one place that keeps it). -->
-      <div class="card precode" id="preCode-card">
-        <p class="kicker" style="margin-bottom:0.3rem" data-copy="mypath.p.been-given-a-group">Been given a group code?</p>
-        <h3 data-copy="mypath.h3.put-it-in-now">Put it in now</h3>
-        <p class="small">Enter it here and we’ll hold on to it. You still need a free account to save your place — we’ll connect you to your group the moment you have one. Entering a code never tells your facilitator anything about your workbook.</p>
-        <form class="form" id="preCodeForm" novalidate>
-          <label for="preCode">Group code</label>
-          <input id="preCode" name="code" placeholder="GFM-3-XXXX" autocomplete="off" spellcheck="false" aria-describedby="preCodeMsg">
-          <div class="form-msg" id="preCodeMsg" hidden role="status"></div>
-          <button class="btn btn--outline" type="submit" data-precode="check">Check my code</button>
-          <p class="precode-next" data-precode="next" hidden>
-            <a class="btn btn--primary btn--go" href="../join/">Create your free account</a>
-            <a class="small" href="../join/#signin">I already have an account</a>
-          </p>
-        </form>
-      </div>
+      <div data-render="code-entry"></div>
 
       <a class="btn btn--primary" href="../join/" data-precode="plain" data-copy="mypath.a.sign-in-or-create">Sign in or create an account</a>
     </div>
@@ -126,8 +123,8 @@
   import { onAuth, signOutUser, deleteAccount, setDisplayName, firstName, authMessage } from '../js/auth.js';
   import { syncProgress } from '../js/progress-sync.js';
   import {
-    myGroups, joinGroup, finishGroup, bringBackGroup, codeRecord, CODE_SHAPE, holdGroupCode, heldGroupCode, heldCodeLine,
-    groupCodeProblem, forgetGroupCode, applyHeldGroupCode,
+    myGroups, joinGroup, finishGroup, bringBackGroup, codeRecord, CODE_SHAPE,
+    applyHeldGroupCode,
     loadSeries, groupState, myTicks, groupTicks, actOnGroup, tickMine, SESSION_VIDEO, groupToAskAbout, nameGroup,
   } from '../js/groups.js';
   import { deriveSeries, pathView, roleFor } from '../js/group-engine.js';
@@ -135,6 +132,7 @@
   import { videoFrame } from '../js/video.js';
   import { getCollection, fieldAttr } from '../js/content.js';
   import { mountCreateGroup, mountGroupDetails } from '../js/group-create.js';
+  import { mountCodeEntry } from '../js/code-entry.js';
 
   const TOTAL_LESSONS = 12;
 
@@ -181,45 +179,23 @@
       (pick?.closest('[data-card]') || home).scrollIntoView({ block: 'center' });
       pick?.focus({ preventScroll: true });
     }
+    /* Arriving from the Groups page's "Enter your code on My Path": the join
+       form, open, the code field ready. */
+    if (location.hash === '#join') {
+      home.querySelector('[data-more="join"]')?.setAttribute('open', '');
+      const field = home.querySelector('[data-card="join"] input[name="code"]');
+      (field?.closest('[data-card]') || home).scrollIntoView({ block: 'center' });
+      field?.focus({ preventScroll: true });
+    }
   });
 
-  /* Signed out: the code is parsed here, in the browser, so someone gets a
-     real answer — which series they are joining — before any account exists. */
-  const preForm = document.getElementById('preCodeForm');
-  if (preForm) {
-    const preMsg = preForm.querySelector('.form-msg');
-    const part = (name) => document.querySelector(`[data-precode="${name}"]`);
-    /* One function draws the card's three states \u2014 nothing typed yet, a code
-       held, a code that isn't one \u2014 so the button and the message never
-       disagree. */
-    const show = (held, problem) => {
-      preMsg.hidden = !held && !problem;
-      preMsg.className = `form-msg ${held ? 'form-msg--ok' : 'form-msg--err'}`;
-      if (held) preMsg.innerHTML = heldCodeLine(held);
-      else if (problem) preMsg.textContent = problem;
-      part('check').hidden = !!held;
-      part('next').hidden = !held;
-      part('plain').hidden = !!held;
-      preForm.code.setAttribute('aria-invalid', problem ? 'true' : 'false');
-    };
-    const already = heldGroupCode();
-    if (already) preForm.code.value = already.code;
-    show(already, null);
-    preForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const held = holdGroupCode(preForm.code.value);
-      /* A code that isn't one replaces any code held before — what /join/
-         carries is always what this card last said yes to. */
-      if (!held) forgetGroupCode();
-      else preForm.code.value = held.code;   // shown the way it is written
-      show(held, held ? null : groupCodeProblem(preForm.code.value));
-      if (held) part('next').querySelector('.btn').focus();
-    });
-    /* Typing again means checking again \u2014 the "Create" button never points
-       at a code other than the one on screen. */
-    preForm.code.addEventListener('input', () => {
-      if (!part('next').hidden) show(null, null);
-    });
+  /* Signed out: THE code card (js/code-entry.js), the same one the Groups
+     page shows. A held code turns My Path's plain sign-in button off, so
+     the card's own "Create your free account" is the only next step. */
+  const entry = document.querySelector('[data-render="code-entry"]');
+  if (entry) {
+    const plain = document.querySelector('[data-precode="plain"]');
+    mountCodeEntry(entry, { onShow: (held) => { if (plain) plain.hidden = !!held; } });
   }
 
   /* One field, once: an account that reached us without a name. */

@@ -564,6 +564,12 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .series-choice { display: grid; gap: 0.15rem; padding: 0.85rem 1rem; border-radius: var(--radius); border: 2px solid var(--teal); background: #fff; color: var(--navy); font: inherit; cursor: pointer; }
 .series-choice b { font-family: var(--font-head); font-size: 1.1rem; }
 .series-choice span { font-size: 0.85rem; color: var(--muted); }
+/* A tester, 13 Oct, didn't read these as buttons: a lift and a "See the steps" cue. */
+.series-choice { box-shadow: 0 2px 0 var(--teal-deep); transition: transform 0.12s, box-shadow 0.12s; }
+.series-choice:hover { transform: translateY(-1px); box-shadow: 0 3px 0 var(--teal-deep); }
+.series-choice em { font-style: normal; font-family: var(--font-head); font-weight: 600; font-size: 0.85rem; color: var(--teal-deep); margin-top: 0.2rem; }
+.series-choice em::after { content: " ↓"; }
+.series-choice[aria-pressed="true"] em { color: #fff; }
 .series-choice[aria-pressed="true"] { background: var(--teal); color: #fff; }
 .series-choice[aria-pressed="true"] span { color: rgba(255, 255, 255, 0.9); }
 .series-choice:focus-visible { outline: 3px solid var(--mustard); outline-offset: 2px; }
@@ -729,6 +735,7 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .btn--juicy:hover { transform: translateY(-3px); filter: saturate(1.15) brightness(1.06);
   box-shadow: 0 8px 0 var(--btn-edge), 0 20px 32px -12px rgba(0, 92, 83, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.35); }
 .btn--juicy:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--btn-edge), 0 6px 12px -8px rgba(0, 92, 83, 0.6); }
+@media (prefers-reduced-motion: reduce) { .series-choice, .series-choice:hover { transition: none; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .btn--juicy, .btn--juicy:hover, .btn--juicy:active { transform: none; } }
 .wb-title { font-size: clamp(1.4rem, 3vw, 1.8rem); margin: 0 0 0.3rem; }
 /* /join/: one card, alone on the page (Wyatt, 6 Oct). */

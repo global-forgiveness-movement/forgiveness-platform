@@ -12,6 +12,7 @@ export function createGroupForm({ series = 'secular' } = {}) {
   const opt = (v, label) => `<option value="${v}"${v === series ? ' selected' : ''}>${label}</option>`;
   return `
     <form class="form" data-create-group>
+      <p class="small"><b>You’ll be this group’s facilitator.</b> That just means gathering your people and pressing play. The video does the guiding, and you take part like everyone else.</p>
       <label>Which version will you use?
         <select name="series">
           ${opt('secular', '3 sessions · REACH Forgiveness Workbook')}

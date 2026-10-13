@@ -168,7 +168,9 @@ export function seriesFlow(view, { base = '../' } = {}) {
    a tester on 13 Oct read boxes and skipped prose). Two lanes — on your own
    above, together below — and one column per meeting, with the lessons done
    before it directly above it. Drawn from the same steps as seriesFlow, so
-   the two can never disagree; the titles stay editable where they sit. */
+   the two can never disagree; the titles stay editable where they sit.
+   Each column is a week (Wyatt, 13 Oct: the 13 Oct tester asked "is that
+   back to back? once a week?") — weekly is NEW and flagged for Kate. */
 export function seriesLanes(view) {
   const sid = view.series.id;
   const cols = [];
@@ -187,7 +189,7 @@ export function seriesLanes(view) {
       <span class="lane-label lane-label--own">${ICON_OWN}On your own</span>
       ${cols.map((c, i) => cell(c.own, 'own', i)).join('')}
       <span class="lane-label lane-label--together">${ICON_TOGETHER}Together</span>
-      ${cols.map((c, i) => `<div class="lane-cell lane-cell--together" style="--i:${i}"><small>Meeting ${c.meet.n}</small><b ${field(sid, c.meet.fields.title)}>${c.meet.title}</b></div>`).join('')}
+      ${cols.map((c, i) => `<div class="lane-cell lane-cell--together" style="--i:${i}"><small>Week ${i + 1} · Meeting ${c.meet.n}</small><b ${field(sid, c.meet.fields.title)}>${c.meet.title}</b></div>`).join('')}
     </div>
   </div>`;
 }
