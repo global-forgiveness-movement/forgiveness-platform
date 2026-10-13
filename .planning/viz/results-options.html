@@ -1,0 +1,202 @@
+<meta charset="utf-8">
+<title>Trial Results Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;1,6..12,400&display=swap">
+<style>
+  /* Layout: three stacked option panels, each a framed card with its picture and a note box; a fixed notes bar at the foot. */
+  :root {
+    --ground: #F5F1E2; --card: #FFFDF6; --ink: #0E2F40; --muted: #5B6B66; --line: #DDD5BC;
+    --did: #006D62; --later: #A9B3AF; --navy: #003D57; --plum: #770061; --mustard: #FAB812;
+    --note-bg: #FBF8EC; --note-filled: #EAF4EF; --note-edge: #CFC6A8; --bar: #003D57; --bar-ink: #F5F1E2; --focus: #FAB812;
+    --font-head: Poppins, "Avenir Next", system-ui, sans-serif; --font-body: "Nunito Sans", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0B2330; --card: #10303F; --ink: #EEF1E6; --muted: #A7B7B0; --line: #25495A;
+      --did: #3FC1B0; --later: #5E7480; --navy: #CFE3EC; --plum: #E58ACF;
+      --note-bg: #0D2A37; --note-filled: #133C3A; --note-edge: #2F5566; --bar: #F5F1E2; --bar-ink: #0B2330; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0B2330; --card: #10303F; --ink: #EEF1E6; --muted: #A7B7B0; --line: #25495A;
+    --did: #3FC1B0; --later: #5E7480; --navy: #CFE3EC; --plum: #E58ACF;
+    --note-bg: #0D2A37; --note-filled: #133C3A; --note-edge: #2F5566; --bar: #F5F1E2; --bar-ink: #0B2330; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--ground); color: var(--ink); font: 400 16px/1.55 var(--font-body); padding-inline: 16px; padding-block: 0 110px; }
+  .page { max-width: 1040px; margin: 0 auto; }
+  header { padding-block: 36px 8px; max-width: 70ch; }
+  .eyebrow { font: 600 12px/1 var(--font-head); letter-spacing: 0.12em; text-transform: uppercase; color: var(--plum); }
+  h1 { font: 700 clamp(26px, 4vw, 36px)/1.15 var(--font-head); color: var(--navy); margin: 10px 0 8px; text-wrap: balance; }
+  header p { margin: 0 0 8px; }
+  .data { font-size: 14px; color: var(--muted); }
+  .option { margin-top: 28px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 280px); gap: 16px 24px; align-items: start; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px 22px 18px; min-width: 0; }
+  .card h2 { font: 600 20px/1.25 var(--font-head); color: var(--navy); margin: 0 0 2px; }
+  .card .what { margin: 0 0 16px; color: var(--muted); font-size: 14.5px; }
+  .figs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .figs--one { grid-template-columns: minmax(0, 1fr); }
+  @media (max-width: 760px) { .option { grid-template-columns: minmax(0, 1fr); } .figs { grid-template-columns: minmax(0, 1fr); } }
+  figure { margin: 0; }
+  figure h3 { font: 600 16px/1.2 var(--font-head); color: var(--navy); margin: 0 0 4px; }
+  figure .say { font: 500 14px/1.3 var(--font-head); color: var(--ink); margin: 0 0 6px; }
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  svg text { font-family: var(--font-body); fill: var(--ink); }
+  .t-muted { fill: var(--muted); }
+  .t-head { font-family: var(--font-head); font-weight: 600; }
+  .why { margin: 14px 0 0; font-size: 14px; color: var(--muted); }
+  .why b { color: var(--ink); }
+  .one-circle { display: grid; grid-template-columns: 160px 1fr; gap: 24px; align-items: center; max-width: 560px; }
+  .one-circle svg { width: 160px; }
+  .big { font: 500 20px/1.35 var(--font-head); color: var(--navy); margin: 0; }
+  .big b { font-weight: 700; color: var(--did); }
+  figure .say { font: 600 15px/1.3 var(--font-head); color: var(--ink); margin: 6px 0 0; }
+  .note label { display: block; font: 600 12px/1 var(--font-head); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+  .note textarea { width: 100%; min-height: 92px; resize: vertical; font: 400 14px/1.45 var(--font-body); color: var(--ink); background: var(--note-bg); border: 1px solid var(--note-edge); border-radius: 10px; padding: 10px 12px; }
+  .note textarea:focus { outline: 3px solid var(--focus); outline-offset: 1px; }
+  .note.has textarea { background: var(--note-filled); border-color: var(--did); }
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; background: var(--bar); color: var(--bar-ink); padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  .bar-in { max-width: 1040px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+  .count { flex: 1 1 200px; margin: 0; font: 600 14px/1.3 var(--font-head); }
+  .count small { display: block; font: 400 12.5px/1.3 var(--font-body); opacity: 0.8; }
+  .btn { font: 600 14px/1 var(--font-head); border-radius: 999px; padding: 12px 18px; cursor: pointer; border: 0; }
+  .btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .btn-copy { background: var(--mustard); color: #1E2A16; }
+  .btn-copy[disabled] { opacity: 0.5; cursor: default; }
+  .btn-ghost { background: transparent; color: var(--bar-ink); border: 1px solid currentColor; padding: 10px 14px; font-size: 13px; }
+  .fallback { max-width: 1040px; margin: 10px auto 0; }
+  .fallback textarea { width: 100%; height: 140px; font: 13px/1.45 ui-monospace, Menlo, monospace; border-radius: 8px; padding: 10px; border: 0; }
+</style>
+
+<div class="page">
+  <header>
+    <span class="eyebrow">/home2 · the trial’s results</span>
+    <h1>Three simpler ways to show the drop</h1>
+    <p>Each picture shows one thing: in two weeks, people who did the workbook felt about a third less depression, anxiety and ill will. People who hadn’t started yet barely changed.</p>
+    <p class="data">Real data: each group’s average score before and two weeks later (Ho et al., BMJ Public Health 2024, Supplementary Table S7). “How much it fell” is measured from each scale’s floor, where zero means none at all.</p>
+  </header>
+  <main id="options"></main>
+</div>
+
+<div class="bar" role="region" aria-label="Your notes">
+  <div class="bar-in">
+    <p class="count" id="count" aria-live="polite">No notes yet<small>Notes save in this browser as you type</small></p>
+    <button class="btn btn-ghost" id="clear" type="button" hidden>Clear all notes</button>
+    <button class="btn btn-copy" id="copy" type="button" disabled>Copy all notes</button>
+  </div>
+  <div class="fallback" id="fallback" hidden><textarea id="fallbackText" readonly aria-label="All notes, as text"></textarea></div>
+</div>
+
+<script>
+(() => {
+  /* The trial's averages (TRIAL.effects in js/data.js). */
+  const DATA = [
+    { name: 'Depression', min: 0, max: 24, did: [8.79, 6.09], later: [8.60, 7.64] },
+    { name: 'Anxiety', min: 0, max: 24, did: [8.31, 5.73], later: [8.33, 7.26] },
+    { name: 'Ill will', min: 18, max: 90, did: [50.37, 39.37], later: [51.11, 48.99] },
+  ];
+  const fell = ([a, b], min) => (a - b) / (a - min);
+  const words = (f) => (f >= 0.45 ? 'about half' : f >= 0.28 ? 'about a third' : f >= 0.09 ? 'about a tenth' : 'barely');
+  const pct = (f) => Math.round(f * 100) + '%';
+  const DID = 'Did the workbook', LATER = 'Hadn’t started yet';
+
+  /* Round 2 (Wyatt, 13 Oct: "as FEW visual elements as possible to show the
+     RELATIVE DROP"). One shape per idea; the part that's gone is the only
+     thing that differs. The comparison group is one quiet line of text. */
+  const cut = (d) => fell(d.did, d.min);   // 0.31, 0.31, 0.34
+
+  /* A · one bar per result; the share that fell is faded and dashed. */
+  function barCut(d) {
+    const f = cut(d), W = 260, H = 34, w = W * (1 - f);
+    return `<figure><h3>${d.name}</h3>
+      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${d.name} fell by ${pct(f)}, about a third, in two weeks.">
+        <rect x="0" y="4" width="${w - 2}" height="26" rx="4" fill="var(--did)"/>
+        <rect x="${w + 1}" y="5" width="${W - w - 2}" height="24" rx="4" fill="none" stroke="var(--later)" stroke-width="2" stroke-dasharray="5 4"/>
+      </svg><p class="say">${words(f)} gone</p></figure>`;
+  }
+
+  /* B · three leaves per result; one is only an outline. */
+  const LEAF = 'M 0 -26 C 14 -14 14 10 0 26 C -14 10 -14 -14 0 -26 Z';
+  function leaves(d) {
+    const f = cut(d);
+    const leaf = (x, gone) => `<path transform="translate(${x} 30) rotate(-20)" d="${LEAF}" ${gone ? 'fill="none" stroke="var(--later)" stroke-width="2" stroke-dasharray="4 3"' : 'fill="var(--did)"'}/>`;
+    return `<figure><h3>${d.name}</h3>
+      <svg viewBox="0 0 150 60" role="img" aria-label="${d.name} fell by ${pct(f)}, about a third, in two weeks: one leaf of three is gone.">
+        ${leaf(28, false)}${leaf(75, false)}${leaf(122, true)}
+      </svg><p class="say">${words(f)} gone</p></figure>`;
+  }
+
+  /* C · one circle for all three, with the share that fell cut out. */
+  function circle() {
+    const f = DATA.reduce((t, d) => t + cut(d), 0) / DATA.length;   // ≈ 0.32
+    const R = 70, cx = 80, cy = 80, a = 2 * Math.PI * (1 - f);
+    const x = cx + R * Math.sin(a), y = cy - R * Math.cos(a);
+    const big = 1 - f > 0.5 ? 1 : 0;
+    return `<figure class="one-circle">
+      <svg viewBox="0 0 160 160" role="img" aria-label="Depression, anxiety and ill will each fell by about a third in two weeks (${DATA.map((d) => `${d.name.toLowerCase()} ${pct(cut(d))}`).join(', ')}).">
+        <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="var(--later)" stroke-width="2" stroke-dasharray="5 4"/>
+        <path d="M ${cx} ${cy} L ${cx} ${cy - R} A ${R} ${R} 0 ${big} 1 ${x} ${y} Z" fill="var(--did)"/>
+      </svg>
+      <p class="big">Depression, anxiety and ill will:<br><b>each about a third less</b></p></figure>`;
+  }
+
+  const LATER_LINE = '<p class="why">Two weeks after starting the workbook. People who hadn’t started yet barely changed.</p>';
+  const OPTIONS = [
+    { id: 'bar-cut', title: 'Option A · A bar with a third cut away', what: 'One bar per result. The faded, dashed end is the part that went away.', body: `<div class="figs">${DATA.map(barCut).join('')}</div>${LATER_LINE}` },
+    { id: 'leaves', title: 'Option B · Three leaves, one gone', what: 'The workbook’s leaf, three per result. One is only an outline.', body: `<div class="figs">${DATA.map(leaves).join('')}</div>${LATER_LINE}` },
+    { id: 'circle', title: 'Option C · One circle for all three', what: 'All three fell by about a third, so one picture says it once.', body: `<div class="figs figs--one">${circle()}</div>${LATER_LINE}` },
+  ];
+
+  const KEY = 'gfm-results-options-notes-2026-10-13-r2';
+  let notes = {};
+  try { notes = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { notes = {}; }
+  const persist = () => { try { localStorage.setItem(KEY, JSON.stringify(notes)); } catch (e) { /* storage blocked */ } };
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  const main = document.getElementById('options');
+  main.innerHTML = OPTIONS.map((o) => `
+    <section class="option" aria-labelledby="h-${o.id}">
+      <div class="card"><h2 id="h-${o.id}">${o.title}</h2><p class="what">${o.what}</p>${o.body}${o.why ? `<p class="why">${o.why}</p>` : ''}</div>
+      <div class="note${notes[o.id] ? ' has' : ''}"><label for="n-${o.id}">Your note on ${esc(o.title)}</label>
+        <textarea id="n-${o.id}" data-key="${o.id}" placeholder="Note…">${esc(notes[o.id] || '')}</textarea></div>
+    </section>`).join('') + `
+    <section class="option"><div class="card"><h2>Anything else</h2><p class="what">A mix of two options, a different wording, or anything to change.</p></div>
+      <div class="note${notes.other ? ' has' : ''}"><label for="n-other">Your note</label><textarea id="n-other" data-key="other" placeholder="Note…">${esc(notes.other || '')}</textarea></div></section>`;
+
+  const countEl = document.getElementById('count'), copyBtn = document.getElementById('copy'), clearBtn = document.getElementById('clear');
+  const fallback = document.getElementById('fallback'), fallbackText = document.getElementById('fallbackText');
+  const filled = () => Object.keys(notes).filter((k) => (notes[k] || '').trim());
+  function refresh(msg) {
+    const n = filled().length;
+    copyBtn.disabled = n === 0; clearBtn.hidden = n === 0;
+    countEl.innerHTML = `${n ? `${n} note${n === 1 ? '' : 's'}` : 'No notes yet'}<small>${msg || 'Notes save in this browser as you type'}</small>`;
+  }
+  main.addEventListener('input', (e) => {
+    const t = e.target.closest('textarea[data-key]'); if (!t) return;
+    if (t.value.trim()) notes[t.dataset.key] = t.value; else delete notes[t.dataset.key];
+    t.parentElement.classList.toggle('has', !!t.value.trim()); persist(); refresh();
+  });
+  function compose() {
+    const lines = ['Notes on the trial-results options for /home2, round 2 (October 13, 2026)', '', '## Options'];
+    OPTIONS.concat([{ id: 'other', title: 'Anything else' }]).forEach((o) => { if ((notes[o.id] || '').trim()) lines.push(`- ${o.title}: ${notes[o.id].trim().replace(/\n+/g, '\n  ')}`); });
+    return lines.join('\n') + '\n';
+  }
+  copyBtn.addEventListener('click', async () => {
+    const text = compose(); let ok = false;
+    try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {
+      try { const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); ok = document.execCommand('copy'); ta.remove(); } catch (e2) { ok = false; }
+    }
+    if (ok) { fallback.hidden = true; refresh('Copied — paste them to Claude'); }
+    else { fallbackText.value = text; fallback.hidden = false; fallbackText.select(); refresh('Copy the text below'); }
+  });
+  let armed = false;
+  clearBtn.addEventListener('click', () => {
+    if (!armed) { armed = true; clearBtn.textContent = 'Press again to clear'; setTimeout(() => { armed = false; clearBtn.textContent = 'Clear all notes'; }, 4000); return; }
+    armed = false; clearBtn.textContent = 'Clear all notes'; notes = {}; persist();
+    main.querySelectorAll('textarea[data-key]').forEach((t) => { t.value = ''; t.parentElement.classList.remove('has'); });
+    fallback.hidden = true; refresh('Notes cleared');
+  });
+  refresh();
+})();
+</script>

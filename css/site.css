@@ -319,7 +319,14 @@ ol.boxes--bare > li::before { top: 0; }
 .privacy-card li + li { margin-top: 0.5rem; }
 @media (min-width: 761px) { .boxes--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 /* Below that, one column — never two across with one left alone (Wyatt, 13 Oct). */
-@media (max-width: 760px) { .boxes--pictures > li > .box-pic { height: 5.5rem; } }
+/* Tablet and phone (Wyatt, 13 Oct): words on the left half, the picture large
+   on the right. */
+@media (max-width: 760px) {
+  .boxes--pictures > li { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: 1fr auto auto 1fr; column-gap: 1rem; align-content: stretch; }
+  .boxes--pictures > li > b { grid-column: 1; grid-row: 2; }
+  .boxes--pictures > li > span { grid-column: 1; grid-row: 3; }
+  .boxes--pictures > li > .box-pic { grid-column: 2; grid-row: 1 / -1; align-self: center; width: 100%; height: auto; max-height: 11rem; margin: 0; }
+}
 @media (max-width: 760px) { .boxes--3 { grid-template-columns: minmax(0, 1fr); } }
 .effects-table { margin-bottom: 1.4rem; }
 .effects-table summary { cursor: pointer; color: var(--teal-deep); font-family: var(--font-head); font-weight: 500; }
@@ -866,15 +873,14 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
   .pill { font-size: 0.82rem; }
 }
 
-/* Kate's animated screens: a framed 16:9 picture that plays once. */
-.anim { margin: 1.2rem auto; max-width: 60rem; }
-.anim { position: relative; }
-.anim-still, .anim video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: var(--radius-soft); }
-.anim-still { box-shadow: var(--shadow); }
-/* The video sits on the still and only appears once it is playing. */
-.anim video { position: absolute; inset: 0 0 auto 0; opacity: 0; transition: opacity 0.2s ease; }
-.anim.is-playing video { opacity: 1; }
-.anim figcaption { margin-top: 0.6rem; }
+/* Kate's benefits chart, drawn (Wyatt, 13 Oct): label, then a bar. */
+.benefits { margin: 1.4rem 0 0; max-width: 46rem; }
+.benefits-bars { list-style: none; margin: 0 0 0.8rem; padding: 0; display: grid; gap: 0.7rem; }
+.benefits-bars li { display: grid; grid-template-columns: 12rem 1fr; align-items: center; gap: 0.9rem; }
+.bb-label { font-family: var(--font-head); font-weight: 600; font-size: 1rem; color: var(--navy); }
+.bb-track { display: block; }
+.bb-bar { display: block; height: 1.1rem; border-radius: 0 4px 4px 0; background: var(--teal); }
+@media (max-width: 520px) { .benefits-bars li { grid-template-columns: minmax(0, 1fr); gap: 0.3rem; } }
 
 /* THE DEFINITION, written on (Wyatt, 13 Oct; after Kate's animated screen).
    Four beats, ~3.5s: the word writes on, how to say it, "definition:", then

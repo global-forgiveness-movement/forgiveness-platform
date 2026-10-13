@@ -139,6 +139,23 @@ export const EVENTS = [
 ];
 
 /* Trial numbers, phrased the clients' way, with units on every figure. */
+/* Kate's "Benefits of Forgiveness of Others" chart (her Animated Screens,
+   October 6 call), as data. People who almost always forgive, compared with
+   people who never or seldom do: standardized differences (β) from Long,
+   Worthington, VanderWeele & Chen 2020, BMC Psychology 8 — the source printed
+   on her chart. `size` is the difference with its sign taken in the good
+   direction, so every bar points the same way. */
+export const FORGIVING_BENEFITS = {
+  source: 'Long, Worthington, VanderWeele & Chen (2020). Forgiveness of others and subsequent health and well-being in mid-life: a longitudinal study on female nurses. BMC Psychology, 8.',
+  doi: 'https://doi.org/10.1186/s40359-020-00470-w',
+  findings: [
+    { label: 'More positive emotion', beta: 0.18 },
+    { label: 'Less depression', beta: -0.16 },
+    { label: 'More social connection', beta: 0.15 },
+    { label: 'Less anxiety', beta: -0.11 },
+  ],
+};
+
 export const TRIAL = {
   participants: 'over 4,500 participants',
   countries: '6 sites in 5 countries',

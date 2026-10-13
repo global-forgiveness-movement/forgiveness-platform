@@ -3,13 +3,13 @@
    footer, hydrates video embeds from data.js, and counts workbook downloads.
    Written once, used everywhere — page files contain only their <main>. */
 
-import { NAV, FOOTER_COLS, BRAND, ACCOUNT_LINKS } from './data.js';
+import { NAV, FOOTER_COLS, BRAND, ACCOUNT_LINKS, FORGIVING_BENEFITS } from './data.js';
 import { getVideos, getPages, fieldAttr } from './content.js';
 import { recordDownload } from './metrics.js';
 import { videoFrame } from './video.js';
 import { ensureGate, leaf } from './gate.js';
 
-export const STAMP = 'GFM-V1 · 2026-10-13f';
+export const STAMP = 'GFM-V1 · 2026-10-13g';
 
 /* Resolve everything relative to the site root (js/ → root), so pages work
    at any depth and on any host (github.io project path or a custom domain). */
@@ -139,29 +139,40 @@ function renderDefinitions() {
   });
 }
 
-/* Things that move once, when half on screen (Kate's animated screens,
-   October 6 call): a <video data-anim> plays once and rests on its last
-   frame (an ordinary <img> of that frame sits under it and stays if it never
-   plays); a [data-reveal] block gets .is-on, and its CSS does the rest. The
-   site is calm, so nothing loops. Reduced motion: nothing moves, and
-   everything shows finished. One place for every page. */
+/* KATE'S BENEFITS CHART, drawn natively (Wyatt, 13 Oct: "rebuild it… so we
+   can simplify it"). Four labeled bars, every one pointing the good way; the
+   length is the size of the difference. No axis, no units to decode — the
+   source sits underneath. ONE drawing for every page that asks with
+   data-render="benefits"; the figures live in FORGIVING_BENEFITS alone. */
+function renderBenefits() {
+  const { findings, source, doi } = FORGIVING_BENEFITS;
+  const top = Math.max(...findings.map((f) => Math.abs(f.beta)));
+  const label = `Compared with people who seldom or never forgive, people who almost always forgive have ${findings.map((f) => `${f.label.toLowerCase()} (standardized difference ${Math.abs(f.beta).toFixed(2)})`).join(', ')}.`;
+  document.querySelectorAll('[data-render="benefits"]').forEach((el) => {
+    el.dataset.locked = 'research claim';
+    el.innerHTML = `
+      <ul class="benefits-bars" role="img" aria-label="${label}">${findings.map((f) => `
+        <li><span class="bb-label">${f.label}</span><span class="bb-track"><span class="bb-bar" style="width:${(Math.abs(f.beta) / top * 100).toFixed(1)}%"></span></span></li>`).join('')}
+      </ul>
+      <figcaption class="small muted">People who almost always forgive, compared with people who seldom or never do. Longer bar, bigger difference. ${source} <a href="${doi}" target="_blank" rel="noopener">Read the study →</a></figcaption>`;
+  });
+}
+
+/* Things that reveal once, when half on screen (the written-on definition):
+   a [data-reveal] block gets .is-on and its CSS does the rest. The site is
+   calm, so nothing repeats. Reduced motion, or no observer: shown finished.
+   One place for every page. */
 function playAnimationsInView() {
-  const items = [...document.querySelectorAll('video[data-anim], [data-reveal]')];
+  const items = [...document.querySelectorAll('[data-reveal]')];
   if (!items.length) return;
-  const start = (el) => {
-    if (el.matches('[data-reveal]')) { el.classList.add('is-on'); return; }
-    el.addEventListener('playing', () => el.closest('.anim')?.classList.add('is-playing'), { once: true });
-    el.play().catch(() => { /* refused: the still stays */ });
-  };
-  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (still || !('IntersectionObserver' in window)) {
-    items.filter((el) => el.matches('[data-reveal]')).forEach((el) => el.classList.add('is-on'));
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+    items.forEach((el) => el.classList.add('is-on'));
     return;
   }
   const seen = new IntersectionObserver((entries) => entries.forEach((e) => {
     if (!e.isIntersecting) return;
     seen.unobserve(e.target);
-    start(e.target);
+    e.target.classList.add('is-on');
   }), { threshold: 0.5 });
   items.forEach((el) => seen.observe(el));
 }
@@ -231,6 +242,7 @@ async function buildShell() {
   document.body.append(buildFooter());
   hydrateVideos();
   renderDefinitions();
+  renderBenefits();
   playAnimationsInView();
   /* The HFP seal, wherever a page asks for it (About and Home). */
   document.querySelectorAll('img[data-render="hfp-seal-harvard"]').forEach((img) => { img.src = href(BRAND.hfpSealHarvard); });
