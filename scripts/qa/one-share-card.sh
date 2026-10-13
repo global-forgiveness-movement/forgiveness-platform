@@ -16,7 +16,8 @@ for f in $(git ls-files '*.html' | grep -v '^plan/\|^admin/'); do
   [ "$b" = "$ref" ] || { echo "RED: $f's share-card block differs from index.html's"; fail=1; }
   n=$(grep -c 'og:image"' "$f"); [ "$n" -eq 1 ] || { echo "RED: $f has $n og:image tags (want 1)"; fail=1; }
 done
-img=$(echo "$ref" | sed -n 's/.*og:image" content="[^"]*forgiveness-platform\/\([^"]*\)".*/\1/p')
+img=$(echo "$ref" | sed -n 's#.*og:image" content="https://globalforgiveness.org/\([^"]*\)".*#\1#p')
+[ -n "$img" ] || { echo "RED: og:image is not an absolute https://globalforgiveness.org/ address (the CNAME)"; fail=1; }
 [ -f "$img" ] || { echo "RED: the share image $img is not in the repo"; fail=1; }
 [ $fail -eq 0 ] && echo "GREEN: one-share-card — every page shares the same card, and its image exists."
 exit $fail
