@@ -563,11 +563,11 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .series-choice { justify-items: center; text-align: center; }
 .series-choice { display: grid; gap: 0.15rem; padding: 0.85rem 1rem; border-radius: var(--radius); border: 2px solid var(--teal); background: #fff; color: var(--navy); font: inherit; cursor: pointer; }
 .series-choice b { font-family: var(--font-head); font-size: 1.1rem; }
-.series-choice span { font-size: 0.85rem; color: var(--muted); }
+.series-choice span { font-size: 0.92rem; color: var(--muted); }
 /* A tester, 13 Oct, didn't read these as buttons: a lift and a "See the steps" cue. */
 .series-choice { box-shadow: 0 2px 0 var(--teal-deep); transition: transform 0.12s, box-shadow 0.12s; }
 .series-choice:hover { transform: translateY(-1px); box-shadow: 0 3px 0 var(--teal-deep); }
-.series-choice em { font-style: normal; font-family: var(--font-head); font-weight: 600; font-size: 0.85rem; color: var(--teal-deep); margin-top: 0.2rem; }
+.series-choice em { font-style: normal; font-family: var(--font-head); font-weight: 600; font-size: 0.92rem; color: var(--teal-deep); margin-top: 0.2rem; }
 .series-choice em::after { content: " ↓"; }
 .series-choice[aria-pressed="true"] em { color: #fff; }
 .series-choice[aria-pressed="true"] { background: var(--teal); color: #fff; }
@@ -789,3 +789,13 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .lane-cell--together { border: 1.5px solid var(--teal); background: rgba(0, 136, 122, 0.10); }
 /* Each column's two boxes read as one: own, then down into the meeting. */
 .lane-cell--own::after { content: ""; position: absolute; left: 50%; bottom: -0.55rem; width: 1.5px; height: 0.5rem; background: var(--line); }
+
+/* THE MOBILE FLOOR (12 Oct: a tester on a phone found the small print hard).
+   Body text is already 18px; this lifts the secondary text that sat at
+   12–13px — captions, footers, pills, result notes — to 14px or more. */
+@media (max-width: 600px) {
+  .small, .notice, .form-note, .pr, .pl, .pm, .stat span, .reach span, .effect span, .quote footer { font-size: 0.95rem; }
+  .video figcaption, .site-foot, .site-foot p, .site-foot a, .site-foot h4 { font-size: 0.9rem; }
+  .kicker { font-size: 0.82rem; }
+  .pill { font-size: 0.82rem; }
+}

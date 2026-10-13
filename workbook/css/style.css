@@ -34,6 +34,10 @@
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html { scroll-behavior: smooth; }
+/* A tester read this in a car, on a phone: "a little hard … with small font"
+   (12 Oct). One lever, not forty: on a phone every rem in the workbook grows
+   by an eighth — body text to about 18px, the smallest labels to about 13. */
+@media (max-width: 600px) { html { font-size: 112.5%; } }
 body {
   margin: 0;
   background: var(--cream);
@@ -99,6 +103,8 @@ textarea, input[type='text'], input[type='number'] {
   letter-spacing: 0.04em;
 }
 .brand b { font-weight: 700; }
+/* With the phone scale-up above, the label would run into the welcome branch. */
+@media (max-width: 600px) { .brand { font-size: 0.8rem; } }
 .brand-leaf { width: 20px; height: 20px; fill: var(--teal); }
 .page--dark .brand-leaf { fill: var(--mustard); }
 
