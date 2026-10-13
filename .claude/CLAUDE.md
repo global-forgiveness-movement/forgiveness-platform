@@ -119,6 +119,10 @@ definition in `~/.claude/agents/`, as the GSD workflows' own fallback prescribes
 
 ## Project facts
 
+- **Time zone: Boston (America/New_York).** Every date and time — build stamps, file names,
+  commit notes, briefs, "today" — is Boston time. Cloud containers run on UTC, which is a day
+  ahead every evening: use `TZ=America/New_York date`, never bare `date` (Wyatt, 12 Oct).
+
 - **Home:** `github.com/global-forgiveness-movement/forgiveness-platform` (org owned by Wyatt,
   transferable to a successor — moved from his personal account 2026-08-21). Site serves at
   `global-forgiveness-movement.github.io/forgiveness-platform/` until the custom domain lands.

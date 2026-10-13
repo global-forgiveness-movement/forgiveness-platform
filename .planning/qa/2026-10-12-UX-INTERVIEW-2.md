@@ -1,4 +1,4 @@
-# Backlog — UX interview 2, 13 Oct
+# Backlog — UX interview 2, 12 Oct
 
 **Source:** a recorded call with a second first-time tester. She is a trained social worker and
 counsellor, which makes her a skeptical reader of wellness sites. The setup: a friend has said

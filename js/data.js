@@ -144,10 +144,10 @@ export const TRIAL = {
   countries: '6 sites in 5 countries',
   countriesList: 'Colombia, Hong Kong, Indonesia, South Africa, and Ukraine',
   /* The three headline results (Ho et al. 2024, BMJ Public Health; checked
-     against the full text and Supplementary Table S7 on 13 Oct).
+     against the full text and Supplementary Table S7 on 12 Oct).
      `smd` is a STANDARDISED MEAN DIFFERENCE at two weeks, immediate vs
      waitlist — not a raw score change (the site called it "average score
-     change" until 13 Oct; the paper's Statistical methods: "All reported
+     change" until 12 Oct; the paper's Statistical methods: "All reported
      outcomes employed standardised mean differences"). `did` and `waited`
      are each group's raw average before and two weeks later (Table S7),
      on the scale named by `scale`; higher means more of the thing. */

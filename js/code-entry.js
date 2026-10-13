@@ -1,6 +1,6 @@
 /* "Been given a group code? Put it in now" — ONE card, wherever someone
    arrives holding a code before they have an account: My Path, and the
-   Groups page (a tester, 13 Oct: "if someone sent me a code… I would click on
+   Groups page (a tester, 12 Oct: "if someone sent me a code… I would click on
    groups and be like, where do I put in the code?").
 
    The code is parsed here, in the browser, so someone gets a real answer —

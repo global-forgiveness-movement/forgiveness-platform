@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ONEHELM check (2026-10-13) — "what a link looks like when someone shares it".
+# ONEHELM check (2026-10-12) — "what a link looks like when someone shares it".
 # Every page carries the SAME share-card block in its <head> (link previews
 # don't run JavaScript, so it can't be drawn by site.js). Goes red if a page
 # is missing it or carries a version that differs from the home page's.
