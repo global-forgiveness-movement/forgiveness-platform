@@ -154,7 +154,7 @@
 
 <script type="module">
   import { deriveSeries, roleFor } from '../js/group-engine.js';
-  import { seriesFlow, seriesName, seriesFraming, FLOW_LEGEND } from '../js/series.js';
+  import { seriesLanes, seriesName, seriesFraming } from '../js/series.js';
   import { getCollection, fieldAttr } from '../js/content.js';
   import { loadSeries } from '../js/groups.js';
   import { mountCreateGroup, preselectSeries } from '../js/group-create.js';
@@ -195,9 +195,9 @@
         <!-- Kate, 6 Oct: meetings are 1 hour, and she can change it — one key
              for both versions, so one edit changes both. -->
         <p class="small muted"><span data-copy="groups.series.uses-the">Uses the</span> <span data-field="series/${s.id}/workbook">${s.workbook}</span>. <span data-copy="groups.series.meeting-length">Each meeting runs 1 hour, guided by about 10 minutes of video.</span></p>
-        <!-- Kate, 6 Oct: the key for the two symbols sits inside the version. -->
-        ${FLOW_LEGEND}
-        ${seriesFlow(view)}
+        <!-- Wyatt, 12 Oct: the steps as a two-lane picture, not a long list.
+             The lane names are the key (Kate, 6 Oct: the key inside). -->
+        ${seriesLanes(view)}
         <figure class="video" data-video="${s.videoKey}" style="margin-top:1rem"></figure>
       </div>`;
     document.querySelectorAll('[data-pick]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.pick === id)));

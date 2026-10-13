@@ -755,3 +755,30 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 [data-copy-editing] [data-locked]::after { content: "🔒"; position: absolute; top: -0.7em; right: -0.5em; font-size: 0.7rem; line-height: 1; pointer-events: none; }
 /* In a tray the row already names the version; don't say it twice. */
 .tray-body .group-sub { display: none; }
+
+/* The two-lane rhythm on Groups (Wyatt, 12 Oct). A grid: a label column, then
+   one column per meeting; on your own on top, together below. Scrolls inside
+   its own box on a narrow phone rather than squeezing. */
+.lanes-wrap { margin: 1rem 0 0.4rem; }
+.lanes { display: grid; grid-template-columns: 6.5rem repeat(var(--cols), minmax(0, 1fr)); gap: 0.5rem; }
+/* A phone reads it top to bottom: one row per meeting — the lessons before
+   it on the left, the meeting on the right, the lane names as headings. */
+@media (max-width: 759px) {
+  .lanes { grid-template-columns: 1fr 1fr; }
+  .lane-label--own { grid-column: 1; grid-row: 1; }
+  .lane-label--together { grid-column: 2; grid-row: 1; }
+  .lane-cell--own, .lane-cell--empty { grid-column: 1; grid-row: calc(var(--i) + 2); }
+  .lane-cell--together { grid-column: 2; grid-row: calc(var(--i) + 2); }
+  .lane-cell--own::after { left: auto; right: -0.55rem; top: 50%; bottom: auto; width: 0.5rem; height: 1.5px; }
+}
+.lane-label { display: flex; align-items: center; gap: 0.35rem; font-family: var(--font-head); font-weight: 600; font-size: 0.8rem; }
+.lane-label svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; flex: none; }
+.lane-label--own { color: var(--plum); }
+.lane-label--together { color: var(--teal-deep); }
+.lane-cell { border-radius: var(--radius); padding: 0.6rem 0.7rem; display: grid; gap: 0.15rem; align-content: center; min-height: 3.6rem; position: relative; }
+.lane-cell b { font-family: var(--font-head); font-weight: 600; font-size: 0.88rem; color: var(--navy); line-height: 1.25; }
+.lane-cell small { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--teal-deep); }
+.lane-cell--own { border: 1.5px dashed var(--plum); background: rgba(119, 0, 97, 0.05); }
+.lane-cell--together { border: 1.5px solid var(--teal); background: rgba(0, 136, 122, 0.10); }
+/* Each column's two boxes read as one: own, then down into the meeting. */
+.lane-cell--own::after { content: ""; position: absolute; left: 50%; bottom: -0.55rem; width: 1.5px; height: 0.5rem; background: var(--line); }

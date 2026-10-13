@@ -164,6 +164,34 @@ export function seriesFlow(view, { base = '../' } = {}) {
   return `<ol class="flow" aria-label="${esc(view.series.name)}, step by step">${view.steps.map((s) => stepHtml(view, s, base)).join('')}</ol>`;
 }
 
+/* THE RHYTHM, as a picture (Wyatt, 12 Oct; Richard on the October 6 call;
+   a tester on 13 Oct read boxes and skipped prose). Two lanes — on your own
+   above, together below — and one column per meeting, with the lessons done
+   before it directly above it. Drawn from the same steps as seriesFlow, so
+   the two can never disagree; the titles stay editable where they sit. */
+export function seriesLanes(view) {
+  const sid = view.series.id;
+  const cols = [];
+  let own = null;
+  view.steps.forEach((s) => {
+    if (s.kind === 'own') { own = s; return; }
+    cols.push({ own, meet: s });
+    own = null;
+  });
+  const cell = (s, lane, i) => s
+    ? `<div class="lane-cell lane-cell--${lane}" style="--i:${i}"><b ${field(sid, s.fields.title)}>${s.title}</b></div>`
+    : `<div class="lane-cell lane-cell--empty" style="--i:${i}" aria-hidden="true"></div>`;
+  return `
+  <div class="lanes-wrap">
+    <div class="lanes" style="--cols:${cols.length}" role="img" aria-label="${esc(view.series.name)}: ${cols.length} meetings, each after lessons done on your own">
+      <span class="lane-label lane-label--own">${ICON_OWN}On your own</span>
+      ${cols.map((c, i) => cell(c.own, 'own', i)).join('')}
+      <span class="lane-label lane-label--together">${ICON_TOGETHER}Together</span>
+      ${cols.map((c, i) => `<div class="lane-cell lane-cell--together" style="--i:${i}"><small>Meeting ${c.meet.n}</small><b ${field(sid, c.meet.fields.title)}>${c.meet.title}</b></div>`).join('')}
+    </div>
+  </div>`;
+}
+
 /* The series' own name and framing, editable where they sit. */
 export const seriesName = (view, tag = 'h3') =>
   `<${tag} ${field(view.series.id, 'name')}>${view.series.name}</${tag}>`;
