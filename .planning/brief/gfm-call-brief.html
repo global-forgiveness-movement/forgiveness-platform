@@ -1,0 +1,312 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>GFM Call Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;1,6..12,400&display=swap">
+<style>
+  /* Layout: one reading column of items, each with its note box beside it; a fixed notes bar at the foot. */
+  :root {
+    --ground: #F5F1E2; --paper: #FFFDF6; --ink: #0E2F40; --muted: #5B6B66; --line: #DDD5BC;
+    --teal: #00887A; --teal-ink: #006B60; --navy: #003D57; --plum: #770061; --mustard: #FAB812; --sage: #8FBCAD;
+    --note-bg: #FBF8EC; --note-filled: #EAF4EF; --note-edge: #CFC6A8; --bar: #003D57; --bar-ink: #F5F1E2; --focus: #FAB812;
+    --pending-bg: #FFF4D6; --pending-ink: #6A4B00; --both-bg: #F3E6EF;
+    --shadow: 0 1px 0 rgba(0, 61, 87, 0.06), 0 8px 24px -12px rgba(0, 61, 87, 0.25);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0B2330; --paper: #10303F; --ink: #EEF1E6; --muted: #A7B7B0; --line: #25495A;
+      --teal: #3FC1B0; --teal-ink: #6FD6C8; --navy: #CFE3EC; --plum: #E58ACF;
+      --note-bg: #0D2A37; --note-filled: #133C3A; --note-edge: #2F5566; --bar: #F5F1E2; --bar-ink: #0B2330;
+      --pending-bg: #3A3010; --pending-ink: #F6D98A; --both-bg: #3A1E33;
+      --shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.6); color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0B2330; --paper: #10303F; --ink: #EEF1E6; --muted: #A7B7B0; --line: #25495A;
+    --teal: #3FC1B0; --teal-ink: #6FD6C8; --navy: #CFE3EC; --plum: #E58ACF;
+    --note-bg: #0D2A37; --note-filled: #133C3A; --note-edge: #2F5566; --bar: #F5F1E2; --bar-ink: #0B2330;
+    --pending-bg: #3A3010; --pending-ink: #F6D98A; --both-bg: #3A1E33;
+    --shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.6); color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--ground); color: var(--ink); font: 400 15.5px/1.6 "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif; padding-inline: 16px; padding-block: 0 96px; }
+  .page { max-width: 1120px; margin: 0 auto; }
+  header.top { padding-block: 40px 20px; display: grid; gap: 10px; max-width: 70ch; }
+  .eyebrow { font: 600 12px/1 Poppins, system-ui, sans-serif; letter-spacing: 0.12em; text-transform: uppercase; color: var(--plum); }
+  h1 { font: 700 clamp(28px, 4.2vw, 40px)/1.12 Poppins, system-ui, sans-serif; color: var(--navy); margin: 0; text-wrap: balance; }
+  .lede { margin: 0; font-size: 17px; }
+  .lede a, .item a, .pending a { color: var(--teal-ink); }
+  .meta { margin: 0; color: var(--muted); font-size: 14px; }
+  .pending { margin: 4px 0 0; padding: 10px 14px; border-radius: 10px; background: var(--pending-bg); color: var(--pending-ink); font-size: 14px; max-width: 70ch; }
+  .how { display: flex; gap: 10px; align-items: flex-start; margin: 8px 0 0; padding: 12px 14px; border: 1px dashed var(--note-edge); border-radius: 10px; color: var(--muted); font-size: 14px; max-width: 70ch; }
+  .how b { color: var(--ink); }
+  .toc { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 4px 0 0; padding: 0; list-style: none; font: 500 13.5px/1.4 Poppins, system-ui, sans-serif; }
+  .toc a { color: var(--teal-ink); }
+  section.part { margin-top: 40px; scroll-margin-top: 16px; }
+  section.part > h2 { font: 600 22px/1.25 Poppins, system-ui, sans-serif; color: var(--navy); margin: 0 0 6px; text-wrap: balance; }
+  section.part > .intro { margin: 0 0 16px; max-width: 70ch; }
+  .cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 300px); gap: 0 24px; font: 600 11.5px/1 Poppins, system-ui, sans-serif; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 0 0 8px; border-bottom: 2px solid var(--navy); }
+  .item { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 300px); gap: 12px 24px; padding-block: 16px; border-bottom: 1px solid var(--line); align-items: start; }
+  .item > div { min-width: 0; }
+  .item .label { font: 600 15px/1.35 Poppins, system-ui, sans-serif; color: var(--navy); margin: 0 0 4px; }
+  .item .tag { display: inline-block; font: 600 10.5px/1 Poppins, system-ui, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; color: var(--plum); border: 1px solid currentColor; border-radius: 999px; padding: 3px 7px; margin-left: 6px; vertical-align: 2px; }
+  .item .tag--both { background: var(--both-bg); }
+  .item p { margin: 0; }
+  .item p + p { margin-top: 6px; }
+  .item .why { color: var(--muted); font-size: 14px; }
+  .item .why b { color: var(--ink); font-weight: 600; }
+  .item q { font-style: italic; }
+  .item .who { display: block; margin-top: 6px; font: 600 11px/1.3 Poppins, system-ui, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .pair { display: grid; gap: 4px; }
+  .k { font: 600 11px/1.3 Poppins, system-ui, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .note { position: relative; }
+  .note label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .note textarea { width: 100%; min-height: 44px; resize: vertical; display: block; font: 400 14px/1.45 "Nunito Sans", system-ui, sans-serif; color: var(--ink); background: var(--note-bg); border: 1px solid var(--note-edge); border-radius: 8px; padding: 10px 12px; transition: background 0.15s, border-color 0.15s; }
+  .note textarea::placeholder { color: var(--muted); opacity: 0.8; }
+  .note textarea:focus { outline: 3px solid var(--focus); outline-offset: 1px; border-color: var(--teal); background: var(--paper); }
+  .note.has textarea { background: var(--note-filled); border-color: var(--teal); }
+  .decision .label::before { content: ""; display: inline-block; width: 12px; height: 12px; border: 2px solid var(--plum); border-radius: 3px; margin-right: 8px; vertical-align: -1px; }
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; background: var(--bar); color: var(--bar-ink); box-shadow: var(--shadow); padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  .bar-in { max-width: 1120px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+  .bar .count { font: 600 14px/1.3 Poppins, system-ui, sans-serif; flex: 1 1 200px; margin: 0; }
+  .bar .count small { display: block; font: 400 12.5px/1.3 "Nunito Sans", system-ui, sans-serif; opacity: 0.8; }
+  .btn { font: 600 14px/1 Poppins, system-ui, sans-serif; border-radius: 999px; padding: 12px 18px; cursor: pointer; border: 0; }
+  .btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .btn-copy { background: var(--mustard); color: #1E2A16; }
+  .btn-copy[disabled] { opacity: 0.5; cursor: default; }
+  .btn-ghost { background: transparent; color: var(--bar-ink); border: 1px solid currentColor; opacity: 0.85; padding: 10px 14px; font-size: 13px; }
+  .fallback { max-width: 1120px; margin: 10px auto 0; display: grid; gap: 8px; }
+  .fallback textarea { width: 100%; height: 160px; font: 13px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; border-radius: 8px; padding: 10px; border: 0; }
+  @media (max-width: 760px) { .cols { display: none; } .item { grid-template-columns: minmax(0, 1fr); } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="page">
+  <header class="top">
+    <span class="eyebrow">Global Forgiveness Movement · review call</span>
+    <h1>Call brief: what two first-time visitors showed us</h1>
+    <p class="lede">Two people who had never seen the site went through it while talking aloud, on October 12. Below: what they showed us, what changed on the site because of it, and the calls that are ours to make together.</p>
+    <p class="pending"><b>Live now</b> at <a href="https://globalforgiveness.org">globalforgiveness.org</a> (October 12). If a page looks unchanged, hard-reload it: the browser can hold the old version for up to 10 minutes.</p>
+    <p class="meta">Updated October 12, 2026, Boston time · build GFM-V1 · 2026-10-12d · The October 6 brief is in this page’s version history.</p>
+    <ul class="toc" aria-label="Sections"></ul>
+    <p class="how"><span aria-hidden="true">✎</span><span>Type a note in the box beside anything you want to raise. Notes save as you type, in this browser, and start fresh for this call. <b>Copy all notes</b> at the bottom puts every note on your clipboard, labeled by section, ready to paste to Claude.</span></p>
+  </header>
+  <main id="brief"></main>
+</div>
+
+<div class="bar" role="region" aria-label="Your notes">
+  <div class="bar-in">
+    <p class="count" id="count" aria-live="polite">No notes yet<small>Notes save in this browser as you type</small></p>
+    <button class="btn btn-ghost" id="clear" type="button" hidden>Clear all notes</button>
+    <button class="btn btn-copy" id="copy" type="button" disabled>Copy all notes</button>
+  </div>
+  <div class="fallback" id="fallback" hidden>
+    <p style="margin:0;font-size:13px">Your browser blocked the clipboard. Select all the text below and copy it.</p>
+    <textarea id="fallbackText" readonly aria-label="All notes, as text"></textarea>
+  </div>
+</div>
+
+<script>
+(() => {
+  const SECTIONS = [
+    {
+      id: 'heard', short: 'What we heard', title: 'What the two visitors showed us',
+      intro: 'Visitor 1 was on a phone, in a car, and was guided through the site. Visitor 2, a trained social worker and counselor, was sent the link by a friend who said forgiveness can be learned. Two sessions are a signal, not proof. Where both said the same thing, it is marked.',
+      cols: ['Takeaway', 'Your note'],
+      items: [
+        { id: 'trust-first', label: 'The front page asks for a decision before it has earned one', tag: 'both', body: ['Both would have left at the three doors. Visitor 1: <q>I would have left it.</q> Visitor 2: <q>Briefly scroll… see that it’s a time commitment. And not try it.</q>', 'What brought each of them back was further down the page. For Visitor 1 it was the definition (“replacing ill will with goodwill”). For Visitor 2 it was the evidence: <q>Stats immediately build trust… and give me the motivation.</q>'] },
+        { id: 'facilitator', label: 'Being the facilitator surprises people, and can put them off', tag: 'both', body: ['Visitor 1, starting a group: <q>Am I gonna be the facilitator?</q> Visitor 2 said someone who comes to forgive doesn’t want to run the room: <q>It’s nice to not be in charge of something when you have something you are trying to figure out how to hold.</q>', 'Once told the job is gathering people and pressing play, Visitor 2 was in.'] },
+        { id: 'boxes', label: 'People read boxes and lists, and skip paragraphs', body: ['Visitor 2 read the four facilitating boxes and the eight guidelines, and skipped the prose: <q>When I see a list like this… I’m more willing to read.</q> Light grey text <q>feels like it’s receding into the distance.</q>'] },
+        { id: 'words', label: 'Some words meant something different to a newcomer', body: ['“Download” means saving a file on a laptop. “Continue with Google” under “Create your free account” read as a different thing from making an account. “Working through the workbook on their own” sounded unpolished. “Does the workbook actually work?” as a headline plants doubt.'] },
+        { id: 'groups-order', label: 'On the Groups page: what a group is, before why', body: ['Visitor 2 read the second section first: <q>I just want to know what is a group, how does the group work.</q> They asked how often groups meet (<q>Is that back to back? Once a week?</q>), and they looked for where to type a group code on the Groups page.'] },
+        { id: 'phones', label: 'The small print is hard on a phone', body: ['Visitor 1: <q>This is a little hard in the car with small font.</q>'] },
+        { id: 'trust-signals', label: 'What builds trust for a skeptical visitor', body: ['Visitor 2 has worked in mental health and is wary of wellness sites: <q>Is this run by some weird cult, or a religious group… or is it just a blog?</q> The words <q>evidence-based</q>, the sources and the publications built their trust. They looked for the Harvard name near the top and didn’t find it.'] },
+        { id: 'worked', label: 'What already works', body: ['Visitor 1: <q>It feels warm… not just clip art.</q> Visitor 2: <q>Professional. It looks very much like a wellness website.</q> The Research page read as <q>super clear</q>. My Path matched what they expected: their progress, their group, their account.'] },
+      ],
+    },
+    {
+      id: 'changed', short: 'Changed', title: 'What changed on the site',
+      intro: 'Live on October 12. Where the words are new, it says so; those are yours to approve or change.',
+      cols: ['What changed', 'Your note'],
+      items: [
+        { id: 'groups-top', label: 'Groups: what a group is comes first', body: ['A shorter intro, then the three pictures (on your own, press play, then talk) right under it. The film moved below them.'] },
+        { id: 'code', label: 'Groups: a place to type a group code', body: ['An “I have a group code” button at the top, and an “Already in a group?” section. It is the same code box as My Path’s, so the two can’t drift apart.'] },
+        { id: 'facilitator-line', label: 'The facilitator line', tag: 'new copy', body: ['On the Home door, the Groups page and the create-a-group form: “You’ll be the facilitator. That just means gathering your people and pressing play. The video does the guiding, and you take part like everyone else.”'] },
+        { id: 'weekly', label: 'Sessions read as weeks', tag: 'new copy', body: ['Each meeting in the session plan is labeled “Week 1”, “Week 2”…, with “We suggest meeting once a week, so there’s a week for the lessons before each meeting.” (See the open calls.)'] },
+        { id: 'own-time', label: '“In their own time” instead of “on their own”', body: ['On Groups and Workbooks. The Home door still shows the old words, because an on-page edit overrides the code there (see “For Wyatt”).'] },
+        { id: 'google', label: 'Sign-up: “Sign up with Google”', body: ['The Google button now uses the same verb as the page title: “Sign up with Google” on the sign-up page, “Sign in with Google” on the sign-in page.'] },
+        { id: 'research-numbers', label: 'Research: the three numbers, explained and drawn', tag: 'new copy', body: ['We checked the paper. −0.53, −0.22 and −0.21 are <b>effect sizes</b>: how much further the workbook group’s scores fell than the waiting group’s, in standard deviations. The site had labeled them “average score change”, which was wrong.', 'Each result is now a small chart of both groups’ average scores, before and two weeks later, on the questionnaire’s full range. Unforgiveness fell from 50 to 39 for people who did the workbook, and from 51 to 49 for people still waiting (scale 18–90). Each effect size carries its usual label: −0.53 is medium, −0.22 and −0.21 are small. A three-step “what the numbers mean” sits above the charts, with a table view below. Sources: Ho et al., BMJ Public Health 2024, and its Supplementary Table S7.'] },
+        { id: 'boxes-sitewide', label: 'Paragraphs into boxes, across the site', body: ['Eleven longer paragraphs became boxes, steps or chips on Groups, Research, About, Workbooks, Privacy, Contact and Accessibility. The Privacy wording is unchanged; only its layout moved into three cards. On Research, the trial paragraph is now three facts (over 4,500 participants · 6 sites in 5 countries · February 2020 – September 2021), and the “participants worked through…” paragraph is folded into the new explainer.'] },
+        { id: 'about-steps', label: 'About: the mission as three steps', tag: 'new copy', body: ['“We take a tested model → Put it into free workbooks → And help people work through it.” The sub-lines under steps 2 and 3 are new: “Free to download, print, share, and translate.” and “People and communities everywhere, on their own or in groups.”'] },
+        { id: 'crisis', label: 'Contact: the crisis line stands out', body: ['It was small grey print. It is now a highlighted notice. Same words.'] },
+        { id: 'type', label: 'Bigger text on phones', body: ['The interactive workbook is about an eighth larger on phones (body text about 18px). Captions, footers and small labels elsewhere now have a minimum size.'] },
+        { id: 'share', label: 'A card for shared links', body: ['When someone shares a link to the site, the preview shows the logo on cream with “A free, evidence-based workbook for learning to forgive, on your own or in a group.”'] },
+      ],
+    },
+    {
+      id: 'calls', short: 'Open calls', title: 'Open calls to discuss',
+      intro: 'Each of these meets an earlier ruling or needs a client’s answer. Nothing below is built yet unless it says so.',
+      cols: ['Decision', 'Your note'], decision: true,
+      items: [
+        { id: 'top-of-home', label: 'Bring the definition and the evidence back above the three doors?', tag: 'both', body: ['Both visitors would have left at the doors. On October 6 we moved the definition down above the video and the result boxes to Research. Their sessions argue for putting a short version of both back at the top, ahead of the doors.'], who: 'Kate' },
+        { id: 'research-headline', label: 'Research headline: a question or a statement?', body: ['“Does the REACH Forgiveness Workbook actually work?” read to Visitor 2 as doubt. An alternative could lead with the result, in our usual phrasing (over 4,500 participants, 6 sites in 5 countries).'], who: 'Kate and Wyatt' },
+        { id: 'harvard', label: 'Name the institution higher up?', body: ['On August 25 Richard ruled out Harvard in the site chrome and marketing copy. Visitor 2 looked for it as a reason to trust the site. The other option is to make the evidence do that job, near the top of Home (see the first call).'], who: 'Richard' },
+        { id: 'weekly-call', label: '“We suggest meeting once a week”: is that our guidance?', body: ['Now live and labeled as new. Keep it, change the rhythm, or say groups set their own pace?'], who: 'Kate' },
+        { id: 'join-only', label: 'Someone who wants a group but doesn’t want to run one', body: ['Visitor 2 described two modes: holding space for others, or being held. A person who comes to forgive may not want to facilitate. The August 25 ruling was that there is no “find a group” directory. Is there anything we can offer this person short of one: a line of copy, an invitation to share the link with a friend who would lead?'], who: 'Kate' },
+        { id: 'about-story', label: 'An origin story on About?', body: ['Visitor 2 expected About to tell how this came to be: who developed it, and why. The page now leads with the mission and the people. Is there a short story to tell?'], who: 'Kate and Richard' },
+        { id: 'charts', label: 'Our research charts, or Kate’s graphics?', body: ['The new charts are live as a draft. On October 6, Kate’s own research graphics were still to come. Keep ours, replace them with hers, or combine?'], who: 'Kate' },
+        { id: 'professionals', label: 'A path for counselors and professionals?', body: ['Visitor 2 saw the site as speaking only to individuals and suggested a section on training professionals to run the workbook with clients. Out of scope for now. Park it, or put it on the version 2 list?'], who: 'Kate and Richard' },
+        { id: 'google-name', label: 'The Google sign-in screen', body: ['People see “Sign in to gfm-platform.firebaseapp.com”. Setting the app’s name and logo in the Google Cloud console is a settings change, and Google may ask to verify the brand first. Replacing the firebaseapp.com address needs more setup on globalforgiveness.org.'], who: 'Wyatt' },
+        { id: 'vimeo', label: 'Removing the Vimeo logo from the films', body: ['That’s a paid-plan setting on the account that hosts the films. Which Vimeo plan does the program use?'], who: 'Kate' },
+      ],
+    },
+    {
+      id: 'carried', short: 'From Oct 6', title: 'Still open from October 6',
+      intro: 'The four decisions from the last brief, in case any is still unsettled.',
+      cols: ['Decision', 'Your note'], decision: true,
+      items: [
+        { id: 'pictures', label: 'The new pictures: keep them?', body: ['Botanical, in the workbook’s style, with no people. Both visitors called the look warm.'] },
+        { id: 'evidence-final', label: 'The evidence section on Home: settled?', body: ['Now tied to the first open call above.'] },
+        { id: 'manuals', label: 'Facilitator manuals and film: where will the files live?', body: ['Then the links go into /admin → Facilitator materials.'] },
+        { id: 'flourishing', label: 'Which study supports “increases flourishing”?', body: ['Kate’s Home sentence says the workbook “increases flourishing”. The trial reports flourishing as a secondary result (effect size 0.27). We can cite that on Research, or change the words.'] },
+      ],
+    },
+    {
+      id: 'wyatt', short: 'Wyatt', title: 'For Wyatt',
+      cols: ['Step', 'Your note'],
+      items: [
+        { id: 'home-door', label: 'Change one line on Home with the on-page editor', body: ['The “start a group” door still says “They do the lessons on their own”, because an earlier on-page edit overrides the code. Edit it in place to: “Bring people together. They each do the lessons in their own time, then meet to talk.”'] },
+        { id: 'download', label: 'Check “Download the workbook” on a phone', body: ['Visitor 1 tapped it and landed in the interactive workbook. We haven’t reproduced this. Two minutes on a phone will tell.'] },
+        { id: 'logo', label: 'A larger logo file', body: ['The only logo file we have is 256 pixels wide, so the shared-link card is a little soft. A bigger PNG or SVG from the clients would fix that.'] },
+        { id: 'wording', label: '“4,500+” in the interactive workbook', body: ['Its welcome page says “4,500+ participants”. Elsewhere the site says “over 4,500 participants”, the clients’ wording.'] },
+      ],
+    },
+    {
+      id: 'other', short: 'Else', title: 'Anything else',
+      cols: ['', 'Your note'],
+      items: [
+        { id: 'general', label: 'Anything not covered above', body: ['Other things to raise on the call, or for Claude to act on after it.'] },
+      ],
+    },
+  ];
+
+  const KEY = 'gfm-call-brief-notes-2026-10-13';
+  let notes = {};
+  try { notes = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { notes = {}; }
+  const persist = () => { try { localStorage.setItem(KEY, JSON.stringify(notes)); } catch (e) { /* storage blocked: notes live until the tab closes */ } };
+
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  document.querySelector('.toc').innerHTML = SECTIONS.map((s) => `<li><a href="#s-${s.id}">${esc(s.short)}</a></li>`).join('');
+  const main = document.getElementById('brief');
+  const tagHtml = (t) => t ? `<span class="tag${t === 'both' ? ' tag--both' : ''}">${t === 'both' ? 'both visitors' : esc(t)}</span>` : '';
+  main.innerHTML = SECTIONS.map((s) => `
+    <section class="part" id="s-${s.id}" aria-labelledby="h-${s.id}">
+      <h2 id="h-${s.id}">${esc(s.title)}</h2>
+      ${s.intro ? `<p class="intro">${esc(s.intro)}</p>` : ''}
+      <div class="cols" aria-hidden="true"><span>${esc(s.cols[0])}</span><span>${esc(s.cols[1])}</span></div>
+      ${s.items.map((it) => {
+        const key = `${s.id}.${it.id}`;
+        return `
+        <div class="item${s.decision ? ' decision' : ''}">
+          <div>
+            <p class="label">${esc(it.label)}${tagHtml(it.tag)}</p>
+            ${(it.body || []).map((b) => `<p>${b}</p>`).join('')}
+            ${it.who ? `<span class="who">For: ${esc(it.who)}</span>` : ''}
+          </div>
+          <div class="note${notes[key] ? ' has' : ''}">
+            <label for="n-${key}">Note on ${esc(it.label)}</label>
+            <textarea id="n-${key}" data-key="${key}" rows="2" placeholder="Note…">${esc(notes[key] || '')}</textarea>
+          </div>
+        </div>`;
+      }).join('')}
+    </section>`).join('');
+
+  const countEl = document.getElementById('count');
+  const copyBtn = document.getElementById('copy');
+  const clearBtn = document.getElementById('clear');
+  const fallback = document.getElementById('fallback');
+  const fallbackText = document.getElementById('fallbackText');
+  const filled = () => Object.keys(notes).filter((k) => (notes[k] || '').trim());
+
+  function refresh(msg) {
+    const n = filled().length;
+    copyBtn.disabled = n === 0;
+    clearBtn.hidden = n === 0;
+    const head = n ? `${n} note${n === 1 ? '' : 's'}` : 'No notes yet';
+    countEl.innerHTML = `${head}<small>${msg || 'Notes save in this browser as you type'}</small>`;
+  }
+
+  const autoGrow = (t) => { t.style.height = 'auto'; t.style.height = Math.max(44, t.scrollHeight + 2) + 'px'; };
+  main.addEventListener('input', (e) => {
+    const t = e.target.closest('textarea[data-key]');
+    if (!t) return;
+    const v = t.value;
+    if (v.trim()) notes[t.dataset.key] = v; else delete notes[t.dataset.key];
+    t.parentElement.classList.toggle('has', !!v.trim());
+    autoGrow(t);
+    persist();
+    refresh();
+  });
+  main.querySelectorAll('textarea[data-key]').forEach((t) => { if (t.value) autoGrow(t); });
+
+  function compose() {
+    const lines = ['Notes on the GFM call brief (two first-time visitors, October 12, 2026)', ''];
+    SECTIONS.forEach((s) => {
+      const rows = s.items.filter((it) => (notes[`${s.id}.${it.id}`] || '').trim());
+      if (!rows.length) return;
+      lines.push(`## ${s.title}`);
+      rows.forEach((it) => {
+        const text = notes[`${s.id}.${it.id}`].trim().replace(/\n+/g, '\n  ');
+        lines.push(`- ${it.label}: ${text}`);
+      });
+      lines.push('');
+    });
+    return lines.join('\n').trim() + '\n';
+  }
+
+  async function copyText(text) {
+    try { await navigator.clipboard.writeText(text); return true; } catch (e) { /* fall through */ }
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      const ok = document.execCommand('copy');
+      ta.remove();
+      return ok;
+    } catch (e) { return false; }
+  }
+
+  copyBtn.addEventListener('click', async () => {
+    const text = compose();
+    const n = filled().length;
+    if (await copyText(text)) {
+      fallback.hidden = true;
+      refresh(`Copied ${n} note${n === 1 ? '' : 's'} — paste them to Claude`);
+    } else {
+      fallbackText.value = text;
+      fallback.hidden = false;
+      fallbackText.focus(); fallbackText.select();
+      refresh('Copy the text below');
+    }
+  });
+
+  let armed = false;
+  clearBtn.addEventListener('click', () => {
+    if (!armed) {
+      armed = true;
+      clearBtn.textContent = 'Press again to clear';
+      setTimeout(() => { armed = false; clearBtn.textContent = 'Clear all notes'; }, 4000);
+      return;
+    }
+    armed = false; clearBtn.textContent = 'Clear all notes';
+    notes = {}; persist();
+    main.querySelectorAll('textarea[data-key]').forEach((t) => { t.value = ''; t.style.height = ''; t.parentElement.classList.remove('has'); });
+    fallback.hidden = true;
+    refresh('Notes cleared');
+  });
+
+  refresh();
+})();
+</script>
+
+</body></html>
