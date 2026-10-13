@@ -866,4 +866,26 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .anim video { position: absolute; inset: 0 0 auto 0; opacity: 0; transition: opacity 0.2s ease; }
 .anim.is-playing video { opacity: 1; }
 .anim figcaption { margin-top: 0.6rem; }
-.anim--definition { max-width: 44rem; margin-top: 0; margin-bottom: 1.6rem; }
+
+/* THE DEFINITION, written on (Wyatt, 13 Oct; after Kate's animated screen).
+   Four beats, ~3.5s: the word writes on, how to say it, "definition:", then
+   the meaning wipes in from the left. Hidden only once the shell is ready
+   (so with no script it simply shows), and never while editing. */
+.def { max-width: 40rem; margin: 0 auto 2rem; padding: 0 0.5rem; }
+.def p { margin: 0; max-width: none; }
+.def-word { font-family: var(--font-script); font-size: clamp(3.6rem, 9vw, 5.6rem); line-height: 1.1; color: var(--plum); -webkit-text-stroke: 0.6px var(--plum); }
+.def-say { font-size: clamp(1.1rem, 2.4vw, 1.4rem); color: var(--plum); letter-spacing: 0.02em; margin-top: 0.1rem !important; }
+.def-label { font-style: italic; font-size: 0.95rem; color: var(--ink); margin: 0.7rem 0 0.2rem !important; }
+.def-text { font-family: var(--font-head); font-weight: 600; font-size: clamp(1.35rem, 3vw, 1.85rem); line-height: 1.3; color: var(--navy); }
+.def-text i { font-style: italic; }
+html[data-shell-ready]:not([data-copy-editing]) .def[data-reveal]:not(.is-on) > * { opacity: 0; }
+.def.is-on .def-word { animation: def-write 1s cubic-bezier(.4, 0, .2, 1) both; }
+.def.is-on .def-say { animation: def-fade 0.7s ease 0.7s both; }
+.def.is-on .def-label { animation: def-fade 0.6s ease 1.4s both; }
+.def.is-on .def-text { animation: def-wipe 1.3s cubic-bezier(.4, 0, .2, 1) 2s both;
+  -webkit-mask-image: linear-gradient(90deg, #000 40%, transparent 60%); mask-image: linear-gradient(90deg, #000 40%, transparent 60%);
+  -webkit-mask-size: 260% 100%; mask-size: 260% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+@keyframes def-write { from { clip-path: inset(0 100% 0 0); opacity: 1; } to { clip-path: inset(0 0 0 0); opacity: 1; } }
+@keyframes def-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes def-wipe { from { opacity: 1; -webkit-mask-position: 100% 0; mask-position: 100% 0; } to { opacity: 1; -webkit-mask-position: 0 0; mask-position: 0 0; } }
+@media (prefers-reduced-motion: reduce) { .def.is-on > * { animation: none !important; -webkit-mask-image: none !important; mask-image: none !important; } }

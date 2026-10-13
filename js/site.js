@@ -9,7 +9,7 @@ import { recordDownload } from './metrics.js';
 import { videoFrame } from './video.js';
 import { ensureGate, leaf } from './gate.js';
 
-export const STAMP = 'GFM-V1 · 2026-10-13a';
+export const STAMP = 'GFM-V1 · 2026-10-13b';
 
 /* Resolve everything relative to the site root (js/ → root), so pages work
    at any depth and on any host (github.io project path or a custom domain). */
@@ -124,25 +124,46 @@ async function hydrateVideos() {
   });
 }
 
-/* Kate's animated screens (October 6 call; files from her "Animated Screens",
-   12 Oct). <video data-anim> plays ONCE when it is half on screen, then rests
-   on its final frame — the site is calm, so nothing loops. With reduced
-   motion it never plays. The finished picture is an ordinary <img> under the
-   video, and the video only shows once it is actually playing — so whatever
-   happens (reduced motion, autoplay refused, a slow line) the picture is
-   there. One place for every page that has one. */
+/* THE DEFINITION — written onto the page the way Kate's animated screen
+   does it (Wyatt, 13 Oct: "I love the way it animates the definition"):
+   the word in script, how to say it, "definition:", then the meaning wiped
+   in from the left. Real text, every word editable where it sits; ONE
+   drawing for every page that asks with data-render="definition". */
+function renderDefinitions() {
+  document.querySelectorAll('[data-render="definition"]').forEach((el) => {
+    el.innerHTML = `
+      <p class="def-word" data-copy="def.word">Forgiveness</p>
+      <p class="def-say" data-copy="def.say">[for • give • ness]</p>
+      <p class="def-label" data-copy="def.label">definition:</p>
+      <p class="def-text" data-copy="def.text">replacing <i>ill</i> will with <i>good</i>will toward those who have wronged us</p>`;
+  });
+}
+
+/* Things that move once, when half on screen (Kate's animated screens,
+   October 6 call): a <video data-anim> plays once and rests on its last
+   frame (an ordinary <img> of that frame sits under it and stays if it never
+   plays); a [data-reveal] block gets .is-on, and its CSS does the rest. The
+   site is calm, so nothing loops. Reduced motion: nothing moves, and
+   everything shows finished. One place for every page. */
 function playAnimationsInView() {
-  const anims = [...document.querySelectorAll('video[data-anim]')];
-  if (!anims.length) return;
+  const items = [...document.querySelectorAll('video[data-anim], [data-reveal]')];
+  if (!items.length) return;
+  const start = (el) => {
+    if (el.matches('[data-reveal]')) { el.classList.add('is-on'); return; }
+    el.addEventListener('playing', () => el.closest('.anim')?.classList.add('is-playing'), { once: true });
+    el.play().catch(() => { /* refused: the still stays */ });
+  };
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (still || !('IntersectionObserver' in window)) return;
+  if (still || !('IntersectionObserver' in window)) {
+    items.filter((el) => el.matches('[data-reveal]')).forEach((el) => el.classList.add('is-on'));
+    return;
+  }
   const seen = new IntersectionObserver((entries) => entries.forEach((e) => {
     if (!e.isIntersecting) return;
     seen.unobserve(e.target);
-    e.target.addEventListener('playing', () => e.target.closest('.anim')?.classList.add('is-playing'), { once: true });
-    e.target.play().catch(() => { /* refused: the still stays */ });
+    start(e.target);
   }), { threshold: 0.5 });
-  anims.forEach((v) => seen.observe(v));
+  items.forEach((el) => seen.observe(el));
 }
 
 /* Editor-created pages that asked for a menu spot appear after the core nav. */
@@ -209,6 +230,7 @@ async function buildShell() {
   document.body.prepend(buildHeader());
   document.body.append(buildFooter());
   hydrateVideos();
+  renderDefinitions();
   playAnimationsInView();
   /* The HFP seal, wherever a page asks for it (About and Home). */
   document.querySelectorAll('img[data-render="hfp-seal-harvard"]').forEach((img) => { img.src = href(BRAND.hfpSealHarvard); });
