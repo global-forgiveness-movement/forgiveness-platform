@@ -10,7 +10,7 @@ fail=0
 block() { sed -n '/SHARE CARD/,/twitter:card/p' "$1"; }
 ref=$(block index.html)
 [ -n "$ref" ] || { echo "RED: index.html has no share-card block"; exit 1; }
-for f in $(git ls-files '*.html' | grep -v '^plan/\|^admin/'); do
+for f in $(git ls-files '*.html' | grep -v '^plan/\|^admin/\|^\.planning/'); do
   b=$(block "$f")
   [ -n "$b" ] || { echo "RED: $f has no share-card block"; fail=1; continue; }
   [ "$b" = "$ref" ] || { echo "RED: $f's share-card block differs from index.html's"; fail=1; }
