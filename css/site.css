@@ -257,9 +257,47 @@ h1 i, h1 em { font-style: normal; color: var(--teal); }
 
 /* Effect sizes */
 .effects { display: grid; gap: 1rem; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.effect { background: var(--white); border-radius: var(--radius); border: 1px solid var(--line); text-align: center; padding: 1rem 0.5rem; }
-.effect b { display: block; font-family: var(--font-head); font-size: 1.5rem; color: var(--plum); }
-.effect span { font-size: 0.8rem; color: var(--muted); display: block; }
+/* The trial results as pictures (13 Oct). Two groups, before → after, on the
+   questionnaire's whole range. The waiting group is a quiet grey and dashed,
+   so the difference never rests on colour alone; its numbers are printed. */
+.effect { margin: 0; background: var(--white); border-radius: var(--radius); border: 1px solid var(--line); padding: 1rem 1rem 0.9rem; }
+.effect figcaption b { display: block; font-family: var(--font-head); font-size: 1.1rem; color: var(--navy); }
+.effect figcaption span { display: block; font-size: 0.9rem; color: var(--muted); margin-bottom: 0.5rem; }
+.tc-key { margin: 0; font-size: 0.92rem; display: flex; align-items: center; gap: 0.45rem; }
+.tc-key b { font-family: var(--font-head); }
+.tc-swatch { width: 1.4rem; height: 0; border-top: 3px solid var(--teal); flex: none; }
+.tc-key--waited .tc-swatch { border-top: 3px dashed #a9b2b8; }
+.trial-chart { display: block; width: 100%; height: auto; margin-top: 0.4rem; overflow: visible; }
+.tc-tick { stroke: var(--line); stroke-width: 1.5; }
+.tc-row .tc-lane { stroke: var(--line); stroke-width: 6; stroke-dasharray: none; }
+.tc-better { fill: var(--teal-deep); }
+.tc-axis { font: 500 12px var(--font-head); fill: var(--muted); }
+.tc-row .tc-move { stroke-width: 4; stroke-linecap: round; }
+.tc-row path { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.tc-row circle { stroke-width: 3; }
+.tc-did .tc-move, .tc-did path { stroke: var(--teal); }
+.tc-did .tc-before { fill: var(--white); stroke: var(--teal); }
+.tc-did .tc-after { fill: var(--teal); stroke: var(--teal); }
+.tc-waited .tc-move { stroke: #a9b2b8; stroke-dasharray: 4 4; }
+.tc-waited path { stroke: #a9b2b8; }
+.tc-waited .tc-before { fill: var(--white); stroke: #8a949b; }
+.tc-waited .tc-after { fill: #8a949b; stroke: #8a949b; }
+.tc-size { margin: 0.5rem 0 0; font-size: 0.95rem; }
+.tc-size b { font-family: var(--font-head); color: var(--plum); font-size: 1.2rem; }
+.tc-size i { font-style: normal; font-family: var(--font-head); font-weight: 600; font-size: 0.85rem; color: var(--plum); margin-left: 0.35rem; }
+.tc-size span { display: block; font-size: 0.82rem; color: var(--muted); }
+.trial-explain { background: var(--white); border-radius: var(--radius); padding: 1rem 1.2rem; margin-block: 1.2rem 0; }
+.trial-explain h3 { margin-bottom: 0.6rem; }
+.explain-steps { display: grid; gap: 0.6rem; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; counter-reset: ex; max-width: none; }
+.explain-steps li { counter-increment: ex; font-size: 0.95rem; padding-left: 2.1rem; position: relative; }
+.explain-steps li::before { content: counter(ex); position: absolute; left: 0; top: 0.05rem; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--cream-soft); color: var(--teal-deep); font: 700 0.85rem/1.5rem var(--font-head); text-align: center; }
+.explain-steps b { display: block; font-family: var(--font-head); color: var(--navy); }
+@media (max-width: 760px) { .explain-steps { grid-template-columns: minmax(0, 1fr); } }
+.effects-table { margin-bottom: 1.4rem; }
+.effects-table summary { cursor: pointer; color: var(--teal-deep); font-family: var(--font-head); font-weight: 500; }
+.effects-table table { width: 100%; border-collapse: collapse; margin: 0.8rem 0 0.4rem; font-size: 0.92rem; }
+.effects-table th, .effects-table td { text-align: left; padding: 0.45rem 0.5rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.effects-table thead th { font-family: var(--font-head); font-weight: 600; color: var(--navy); }
 
 /* ------------------------------------------------ REACH steps */
 .reach { display: grid; gap: 0.9rem; }
@@ -492,7 +530,7 @@ html:not([data-copy-editing]) [data-copy]:empty { display: none; }
    column at --measure, left-aligned inside it. Grids, galleries and videos keep
    the full --page width. A block that sets its own narrower max-width still
    centers on the same axis. .center wraps center their text as before. */
-.wrap:not(.grid) > :where(h1, h2, h3, p, ul:not([class]), ol:not([class]), .kicker, .notice, .card, .form, .sessions, .effects, .dl-row, .measure) {
+.wrap:not(.grid) > :where(h1, h2, h3, p, ul:not([class]), ol:not([class]), .kicker, .notice, .card, .form, .sessions, .effects, .trial-explain, .effects-table, .dl-row, .measure) {
   max-width: var(--measure);
   margin-inline: auto;
 }
@@ -501,7 +539,7 @@ html:not([data-copy-editing]) [data-copy]:empty { display: none; }
 /* Wyatt, 6 Oct: the five steps sit inside the text column, edge to edge with the paragraphs. */
 .reach { max-width: var(--measure); padding: 0; margin: 1.4rem auto; gap: 0.6rem; }
 .reach li { padding-inline: 0.5rem; }
-@media (max-width: 520px) { .effects { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 900px) { .effects { grid-template-columns: minmax(0, 1fr); max-width: 30rem; } }
 
 
 /* My Path, signed out: code first, then the account. */
@@ -794,7 +832,7 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
    Body text is already 18px; this lifts the secondary text that sat at
    12–13px — captions, footers, pills, result notes — to 14px or more. */
 @media (max-width: 600px) {
-  .small, .notice, .form-note, .pr, .pl, .pm, .stat span, .reach span, .effect span, .quote footer { font-size: 0.95rem; }
+  .small, .notice, .form-note, .pr, .pl, .pm, .stat span, .reach span, .quote footer { font-size: 0.95rem; }
   .video figcaption, .site-foot, .site-foot p, .site-foot a, .site-foot h4 { font-size: 0.9rem; }
   .kicker { font-size: 0.82rem; }
   .pill { font-size: 0.82rem; }

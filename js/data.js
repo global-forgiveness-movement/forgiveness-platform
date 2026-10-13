@@ -143,10 +143,21 @@ export const TRIAL = {
   participants: 'over 4,500 participants',
   countries: '6 sites in 5 countries',
   countriesList: 'Colombia, Hong Kong, Indonesia, South Africa, and Ukraine',
+  /* The three headline results (Ho et al. 2024, BMJ Public Health; checked
+     against the full text and Supplementary Table S7 on 13 Oct).
+     `smd` is a STANDARDISED MEAN DIFFERENCE at two weeks, immediate vs
+     waitlist — not a raw score change (the site called it "average score
+     change" until 13 Oct; the paper's Statistical methods: "All reported
+     outcomes employed standardised mean differences"). `did` and `waited`
+     are each group's raw average before and two weeks later (Table S7),
+     on the scale named by `scale`; higher means more of the thing. */
   effects: [
-    { measure: 'Unforgiveness', change: '−0.53', unit: 'average score change', ci: '95% CI −0.58 to −0.47' },
-    { measure: 'Depression symptoms', change: '−0.22', unit: 'average score change', ci: '95% CI −0.28 to −0.16' },
-    { measure: 'Anxiety symptoms', change: '−0.21', unit: 'average score change', ci: '95% CI −0.27 to −0.15' },
+    { measure: 'Unforgiveness', about: 'toward the person who hurt them', smd: '−0.53', ci: '−0.58 to −0.47',
+      scale: { name: 'TRIM-18', min: 18, max: 90 }, did: [50.37, 39.37], waited: [51.11, 48.99] },
+    { measure: 'Depression symptoms', about: 'over the past week', smd: '−0.22', ci: '−0.28 to −0.16',
+      scale: { name: 'BSI-18 depression', min: 0, max: 24 }, did: [8.79, 6.09], waited: [8.60, 7.64] },
+    { measure: 'Anxiety symptoms', about: 'over the past week', smd: '−0.21', ci: '−0.27 to −0.15',
+      scale: { name: 'BSI-18 anxiety', min: 0, max: 24 }, did: [8.31, 5.73], waited: [8.33, 7.26] },
   ],
   paper: 'https://doi.org/10.1136/bmjph-2023-000072',
   paperCitation: 'Ho MY, et al. BMJ Public Health, 2024',
