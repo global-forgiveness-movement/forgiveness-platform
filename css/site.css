@@ -288,11 +288,30 @@ h1 i, h1 em { font-style: normal; color: var(--teal); }
 .tc-size span { display: block; font-size: 0.82rem; color: var(--muted); }
 .trial-explain { background: var(--white); border-radius: var(--radius); padding: 1rem 1.2rem; margin-block: 1.2rem 0; }
 .trial-explain h3 { margin-bottom: 0.6rem; }
-.explain-steps { display: grid; gap: 0.6rem; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; counter-reset: ex; max-width: none; }
-.explain-steps li { counter-increment: ex; font-size: 0.95rem; padding-left: 2.1rem; position: relative; }
-.explain-steps li::before { content: counter(ex); position: absolute; left: 0; top: 0.05rem; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--cream-soft); color: var(--teal-deep); font: 700 0.85rem/1.5rem var(--font-head); text-align: center; }
-.explain-steps b { display: block; font-family: var(--font-head); color: var(--navy); }
-@media (max-width: 760px) { .explain-steps { grid-template-columns: minmax(0, 1fr); } }
+/* THE BOXES — one pattern for every run of prose broken into pieces
+   (Wyatt, 13 Oct: "all multi-sentence text is enjoyable to read and more
+   visual"; a tester read boxes and skipped paragraphs). <ol class="boxes">
+   numbers its steps; <ul class="boxes"> is a set of facts. Each <li> leads
+   with a <b> that reads alone. Any new paragraph-turned-picture uses this,
+   not a new class. */
+.boxes { display: grid; gap: 0.8rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); margin: 1rem 0 1.2rem; padding: 0; list-style: none; max-width: none; counter-reset: box; }
+.boxes > li { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 0.85rem 1rem; font-size: 0.95rem; line-height: 1.55; }
+.boxes > li > b:first-child { display: block; font-family: var(--font-head); font-weight: 600; color: var(--navy); margin-bottom: 0.15rem; }
+ol.boxes > li { counter-increment: box; position: relative; padding-left: 3rem; }
+ol.boxes > li::before { content: counter(box); position: absolute; left: 0.9rem; top: 0.85rem; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--teal); color: #fff; font: 700 0.85rem/1.5rem var(--font-head); text-align: center; }
+.boxes--bare > li { background: none; border: 0; padding-top: 0; padding-bottom: 0; }
+ol.boxes--bare > li::before { top: 0; }
+.boxes--chips { gap: 0.5rem; grid-template-columns: none; display: flex; flex-wrap: wrap; }
+.boxes--chips > li { padding: 0.35rem 0.85rem; border-radius: 999px; font-family: var(--font-head); font-weight: 500; font-size: 0.9rem; color: var(--navy); }
+.boxes--stats > li > b:first-child { font-size: 1.3rem; color: var(--plum); }
+.boxes--stats > li > b:first-child::first-letter { text-transform: uppercase; }
+.notice--limits p { margin: 0; }
+.notice--limits p + p { margin-top: 0.3rem; }
+.privacy-cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); margin: 1.4rem 0; max-width: none; }
+.privacy-card h2 { font-size: 1.2rem; }
+.privacy-card ul { padding-left: 1.1rem; margin: 0; font-size: 0.98rem; }
+.privacy-card li + li { margin-top: 0.5rem; }
+@media (min-width: 761px) { .boxes--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .effects-table { margin-bottom: 1.4rem; }
 .effects-table summary { cursor: pointer; color: var(--teal-deep); font-family: var(--font-head); font-weight: 500; }
 .effects-table table { width: 100%; border-collapse: collapse; margin: 0.8rem 0 0.4rem; font-size: 0.92rem; }
@@ -530,7 +549,7 @@ html:not([data-copy-editing]) [data-copy]:empty { display: none; }
    column at --measure, left-aligned inside it. Grids, galleries and videos keep
    the full --page width. A block that sets its own narrower max-width still
    centers on the same axis. .center wraps center their text as before. */
-.wrap:not(.grid) > :where(h1, h2, h3, p, ul:not([class]), ol:not([class]), .kicker, .notice, .card, .form, .sessions, .effects, .trial-explain, .effects-table, .dl-row, .measure) {
+.wrap:not(.grid) > :where(h1, h2, h3, p, ul:not([class]), ol:not([class]), .kicker, .notice, .card, .form, .sessions, .effects, .trial-explain, .effects-table, .boxes, .privacy-cards, .dl-row, .measure) {
   max-width: var(--measure);
   margin-inline: auto;
 }
