@@ -9,7 +9,7 @@ import { recordDownload } from './metrics.js';
 import { videoFrame } from './video.js';
 import { ensureGate, leaf } from './gate.js';
 
-export const STAMP = 'GFM-V1 · 2026-10-12d';
+export const STAMP = 'GFM-V1 · 2026-10-13a';
 
 /* Resolve everything relative to the site root (js/ → root), so pages work
    at any depth and on any host (github.io project path or a custom domain). */
@@ -124,6 +124,27 @@ async function hydrateVideos() {
   });
 }
 
+/* Kate's animated screens (October 6 call; files from her "Animated Screens",
+   12 Oct). <video data-anim> plays ONCE when it is half on screen, then rests
+   on its final frame — the site is calm, so nothing loops. With reduced
+   motion it never plays. The finished picture is an ordinary <img> under the
+   video, and the video only shows once it is actually playing — so whatever
+   happens (reduced motion, autoplay refused, a slow line) the picture is
+   there. One place for every page that has one. */
+function playAnimationsInView() {
+  const anims = [...document.querySelectorAll('video[data-anim]')];
+  if (!anims.length) return;
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (still || !('IntersectionObserver' in window)) return;
+  const seen = new IntersectionObserver((entries) => entries.forEach((e) => {
+    if (!e.isIntersecting) return;
+    seen.unobserve(e.target);
+    e.target.addEventListener('playing', () => e.target.closest('.anim')?.classList.add('is-playing'), { once: true });
+    e.target.play().catch(() => { /* refused: the still stays */ });
+  }), { threshold: 0.5 });
+  anims.forEach((v) => seen.observe(v));
+}
+
 /* Editor-created pages that asked for a menu spot appear after the core nav. */
 async function appendCustomNav() {
   const pages = (await getPages()).filter((p) => p.showInNav);
@@ -188,6 +209,7 @@ async function buildShell() {
   document.body.prepend(buildHeader());
   document.body.append(buildFooter());
   hydrateVideos();
+  playAnimationsInView();
   /* The HFP seal, wherever a page asks for it (About and Home). */
   document.querySelectorAll('img[data-render="hfp-seal-harvard"]').forEach((img) => { img.src = href(BRAND.hfpSealHarvard); });
   /* A page that draws video slots late (the Groups page series chooser)

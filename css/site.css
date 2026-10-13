@@ -856,3 +856,14 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
   .kicker { font-size: 0.82rem; }
   .pill { font-size: 0.82rem; }
 }
+
+/* Kate's animated screens: a framed 16:9 picture that plays once. */
+.anim { margin: 1.2rem auto; max-width: 60rem; }
+.anim { position: relative; }
+.anim-still, .anim video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: var(--radius-soft); }
+.anim-still { box-shadow: var(--shadow); }
+/* The video sits on the still and only appears once it is playing. */
+.anim video { position: absolute; inset: 0 0 auto 0; opacity: 0; transition: opacity 0.2s ease; }
+.anim.is-playing video { opacity: 1; }
+.anim figcaption { margin-top: 0.6rem; }
+.anim--definition { max-width: 44rem; margin-top: 0; margin-bottom: 1.6rem; }
