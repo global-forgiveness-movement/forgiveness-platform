@@ -47,6 +47,7 @@
         <li><img class="box-pic" src="../assets/illustrations/sunrise.webp" alt="" width="720" height="656"><b data-copy="home2.b.two-weeks-later">Two weeks later</b><span data-copy="home2.span.they-were-less-depressed">they were less depressed, less anxious, and held less ill will toward the person who hurt them than people still waiting to start.</span></li>
       </ul>
       <div class="why-results" data-render="why-results" data-locked="research claim"></div>
+      <p class="pr-note small" data-copy="home2.p.average-scores-two-weeks">Average scores, two weeks in, for people who did the workbook and for people still waiting to start. Faint: where they began.</p>
       <p class="why-cta"><a class="btn btn--juicy btn--down" href="#start" data-copy="home2.a.show-me-how">Show me how to start</a></p>
     </div>
   </section>
@@ -133,15 +134,35 @@
   import { TRIAL, downloadFor } from '../js/data.js';
   import { getCollection, fieldAttr } from '../js/content.js';
 
-  /* The trial's figures, from TRIAL alone (rule 12) — said plainly: which way
-     each moved, then the number, then what the number is. */
-  const PLAIN = { 'Depression symptoms': 'Less depression', 'Anxiety symptoms': 'Less anxiety', Unforgiveness: 'Less ill will' };
-  document.querySelector('[data-render="participants"]').textContent = TRIAL.participants;
-  document.querySelector('[data-render="countries"]').textContent = TRIAL.countries;
+  /* The trial's results as pictures, for someone in pain to read at a glance
+     (Wyatt, 13 Oct: "I still don't know what −0.22 is out of"). From TRIAL
+     alone (rule 12): each group's average before and two weeks later
+     (Supplementary Table S7). How much of each score fell is measured above
+     the scale's floor (18 on the ill-will scale means none at all), then
+     said in words. Two bars per result: where each group started (faint) and
+     where it was two weeks later (solid). The exact figures, effect sizes and
+     intervals stay on Research. */
+  const NAME = { 'Depression symptoms': 'Depression', 'Anxiety symptoms': 'Anxiety', Unforgiveness: 'Ill will' };
+  const fell = ([before, after], min) => (before - after) / (before - min);
+  const inWords = (f) => (f >= 0.45 ? 'about half' : f >= 0.28 ? 'about a third' : f >= 0.2 ? 'about a quarter' : 'a little');
   const order = ['Depression symptoms', 'Anxiety symptoms', 'Unforgiveness'];
   document.querySelector('[data-render="why-results"]').innerHTML = order
     .map((m) => TRIAL.effects.find((e) => e.measure === m))
-    .map((e) => `<div class="why-result"><span class="why-arrow" aria-hidden="true">↓</span><b>${PLAIN[e.measure]}</b><span class="why-num">${e.change}</span><small>${e.unit} vs. a waitlist group · ${e.ci}</small></div>`).join('');
+    .map((e) => {
+      const min = e.scale.min;
+      const top = Math.max(e.did[0], e.waited[0]) - min;
+      const bar = (label, [before, after], cls) => `
+        <div class="pr-row ${cls}"><span class="pr-who">${label}</span>
+          <span class="pr-track"><span class="pr-before" style="width:${((before - min) / top * 100).toFixed(1)}%"></span><span class="pr-after" style="width:${((after - min) / top * 100).toFixed(1)}%"></span></span></div>`;
+      const did = fell(e.did, min), waited = fell(e.waited, min);
+      return `<figure class="pr" aria-label="${NAME[e.measure]}: for people who did the workbook, down ${Math.round(did * 100)}% in two weeks; for people still waiting, down ${Math.round(waited * 100)}%.">
+        <figcaption><span class="pr-arrow" aria-hidden="true">↓</span><b>${NAME[e.measure]}</b> down ${inWords(did)}</figcaption>
+        ${bar('Did the workbook', e.did, 'pr-row--did')}
+        ${bar('Still waiting', e.waited, 'pr-row--waited')}
+      </figure>`;
+    }).join('');
+  document.querySelector('[data-render="participants"]').textContent = TRIAL.participants;
+  document.querySelector('[data-render="countries"]').textContent = TRIAL.countries;
   const paperLink = document.querySelector('[data-render="paper-link"]');
   if (paperLink) paperLink.href = TRIAL.paper;
 

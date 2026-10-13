@@ -907,10 +907,20 @@ html[data-shell-ready]:not([data-copy-editing]) .def[data-reveal]:not(.is-on) > 
 .why-hero h1 { font-size: clamp(2.2rem, 5.6vw, 3.6rem); line-height: 1.08; max-width: 18ch; margin-bottom: 1.2rem; }
 .why-results { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.8rem; margin: 0.4rem 0 0; }
 @media (max-width: 760px) { .why-results { grid-template-columns: minmax(0, 1fr); } }
-.why-result { display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: 0.1rem 0.6rem; padding: 1rem 1.1rem; border-radius: var(--radius); background: rgba(0, 136, 122, 0.08); border: 1.5px solid var(--teal); }
-.why-arrow { grid-row: span 2; font-size: 2rem; line-height: 1; color: var(--teal); }
-.why-result b { font-family: var(--font-head); font-size: 1.25rem; color: var(--navy); }
-.why-num { font-family: var(--font-head); font-weight: 700; font-size: 1.1rem; color: var(--plum); }
-.why-result small { grid-column: 1 / -1; font-size: 0.78rem; color: var(--muted); }
+/* The results as pictures (Wyatt, 13 Oct): a plain headline, then two bars
+   per group — faint where they began, solid where they were two weeks in. */
+.pr { margin: 0; padding: 1rem 1.1rem 1.1rem; border-radius: var(--radius); background: var(--white); border: 1.5px solid var(--teal); display: grid; gap: 0.55rem; }
+.pr figcaption { font-family: var(--font-head); font-weight: 500; font-size: 1.05rem; color: var(--navy); display: flex; align-items: baseline; gap: 0.4rem; flex-wrap: wrap; }
+.pr figcaption b { font-weight: 700; font-size: 1.2rem; }
+.pr-arrow { color: var(--teal); font-size: 1.4rem; line-height: 1; }
+.pr-row { display: grid; grid-template-columns: 7.5rem 1fr; align-items: center; gap: 0.6rem; }
+.pr-who { font-size: 0.85rem; color: var(--ink); }
+.pr-track { position: relative; height: 0.9rem; }
+.pr-before, .pr-after { position: absolute; left: 0; top: 0; height: 100%; border-radius: 999px; }
+.pr-row--did .pr-before { background: rgba(0, 136, 122, 0.22); }
+.pr-row--did .pr-after { background: var(--teal); }
+.pr-row--waited .pr-before { background: rgba(91, 107, 102, 0.22); }
+.pr-row--waited .pr-after { background: var(--muted); }
+.pr-note { color: var(--muted); margin: 0.6rem 0 0; }
 .why-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-top: 1.6rem; }
 .def-not { text-align: center; color: var(--muted); max-width: 40rem; margin: 0 auto; }
