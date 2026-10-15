@@ -23,13 +23,32 @@
 <body>
 <main>
 
+  <!-- Kate, 14 Oct: Home's "Why forgive?" lands here, and Research leads
+       with Home2's case for forgiving — the HFP line, the claim, the trial in
+       boxes and bars (js/site.js, the same drawing as /home2), then the
+       nurses' study. The detail of the trial follows for anyone who wants it. -->
+  <section class="section section--paper why-hero" id="why">
+    <div class="wrap">
+      <p class="hfp-eyebrow" data-render="hfp-eyebrow"></p>
+      <p class="kicker" data-copy="research.p.why-forgive">Why forgive?</p>
+      <h1 data-copy="research.h1.learning-to-forgive">Learning to forgive can lower your <i>depression and anxiety</i>.</h1>
+      <div data-render="why"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="benefits-block" data-render="benefits"></div>
+    </div>
+  </section>
+
   <!-- The research film sits beside the opening, as on the Groups page
        (Kate's email, before 28 Sep). -->
   <section class="section section--paper">
     <div class="wrap grid grid--2" style="align-items:center">
       <div>
         <p class="kicker" data-copy="research.p.the-evidence-base">The evidence base</p>
-        <h1 data-copy="research.h1.does-this-actually-work">Does the REACH Forgiveness Workbook actually work?</h1>
+        <h2 data-copy="research.h1.does-this-actually-work">Does the REACH Forgiveness Workbook actually work?</h2>
         <p data-copy="research.p.it-s-a-fair">It’s a fair question, and one we have spent years working on. Below is what the research shows, what it does not yet show, and where you can read it for yourself.</p>
       </div>
       <figure class="video" data-video="research"></figure>
@@ -69,6 +88,7 @@
         <summary>See the numbers as a table</summary>
         <div data-render="effects-table"></div>
       </details>
+      <p class="flourish-note" data-locked="research claim" data-render="flourishing"></p>
       <div class="notice notice--limits">
         <p data-copy="research.p.what-it-does-not-lead"><b>What it does not show</b></p>
         <p data-copy="research.p.the-effects-are-definitively">The effects are definitively established only at a two-week follow-up. Improvements in depression and anxiety continued to four weeks, but because the waitlist group eventually received the same materials, the trial could not test how long the benefit lasts.</p>
@@ -76,17 +96,6 @@
       <p class="dl-row">
         <a class="btn btn--primary" data-render="paper-link" target="_blank" rel="noopener" data-copy="research.a.read-the-paper">Read the paper</a>
       </p>
-    </div>
-  </section>
-
-  <!-- October 6 call: Kate's research graphics on Research. Her chart, its
-       own title as the heading, one line saying only what it shows (new
-       words, flagged), and the source printed on her still. -->
-  <section class="section section--paper">
-    <div class="wrap">
-      <h2 data-copy="research.h2.benefits-of-forgiveness-of">Benefits of forgiveness of others</h2>
-      <p data-copy="research.p.in-a-study-of-over">In a study of over 50,000 nurses, women who almost always forgave others, compared with women who seldom or never did:</p>
-      <figure class="benefits" data-render="benefits"></figure>
     </div>
   </section>
 
@@ -173,6 +182,10 @@
       <tbody>${TRIAL.effects.map((e) => `<tr><th scope="row">${e.measure} (${e.scale.min}–${e.scale.max})</th><td>${e.did[0].toFixed(1)} → ${e.did[1].toFixed(1)}</td><td>${e.waited[0].toFixed(1)} → ${e.waited[1].toFixed(1)}</td><td>${e.smd} (${e.ci})</td></tr>`).join('')}</tbody>
     </table>
     <p class="small muted">Group averages before and two weeks after the workbook group began. Source: Ho et al., BMJ Public Health 2024, Supplementary Table S7; effect sizes from the paper's results.</p>`;
+  /* Flourishing, the secondary result (Table 3): an effect size only. */
+  const F = TRIAL.flourishing;
+  document.querySelector('[data-render="flourishing"]').innerHTML =
+    `<b>Flourishing rose as well.</b> On the <a href="${F.about}">${F.scale}</a>, a secondary outcome, the workbook group gained ${F.smd} standard deviations more than the waiting group (95% CI ${F.ci}).`;
   document.querySelector('[data-render="paper-link"]').href = TRIAL.paper;
   document.querySelector('[data-render="participants"]').textContent = TRIAL.participants;
   document.querySelector('[data-render="countries"]').textContent = TRIAL.countries;

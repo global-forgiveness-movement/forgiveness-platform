@@ -35,10 +35,17 @@
         <!-- October 6 call: Kate's tagline is the headline, the evidence-based
              line a paragraph under it, then the pictures. The headline keeps
              its key, which holds Kate's saved tagline; the line has its own
-             key, so neither can overwrite the other again. The small label
-             above the headline is gone (Wyatt: eyebrows add words). -->
-        <h1 data-copy="home.p.we-have-an-evidence-based">Your <i>forgiveness journey</i> starts here</h1>
-        <p class="hero-lead" data-copy="home.p.an-evidence-based-workbook-you">We have an evidence-based workbook, the REACH Forgiveness Workbook, that you can complete alone or in a group.</p>
+             key, so neither can overwrite the other again.
+             Kate, 14 Oct (Wyatt: yes, with Harvard): the HFP line is back
+             above the headline; under it, what forgiving does (her idea, new
+             words — each claim is one of the trial's results: ill will,
+             depression, anxiety, flourishing; anger was not measured, so it
+             is left out), then "Why forgive?" to Research, above the doors. -->
+        <p class="hfp-eyebrow" data-render="hfp-eyebrow"></p>
+        <h1 data-copy="home.p.we-have-an-evidence-based">Are you ready for your <i>forgiveness journey?</i></h1>
+        <p class="hero-benefits" data-copy="home.p.learning-to-forgive-can-help">Learning to forgive can help you let go of resentment, ease depression and anxiety, and flourish.</p>
+        <p class="hero-why"><a class="btn btn--outline btn--go" href="research/" data-copy="home.a.why-forgive">Why forgive?</a></p>
+        <p class="hero-lead" data-copy="home.p.an-evidence-based-workbook-you">Complete the evidence-based REACH Forgiveness Workbook alone or in a group.</p>
         <div class="two-ways">
           <figure>
             <img src="assets/illustrations/on-your-own.webp" alt="" width="720" height="557">
@@ -92,12 +99,16 @@
 
   <!-- Kate, 6 Oct: the definition sits above the video. Same key as when it
        was the headline, so any saved edit travels with it. The numbers that
-       were here moved into her Forgiveness Groups section, below. -->
+       were here moved into her Forgiveness Groups section, below.
+       Kate, 14 Oct: the section is named, and what forgiveness is NOT moves
+       here from under REACH, drawn so people read it — js/site.js. -->
   <section class="section">
     <div class="wrap">
+      <p class="kicker def-kicker" data-copy="home.p.the-definition">The definition</p>
       <!-- The definition, written on the way Kate's animated screen does it
            (Wyatt, 13 Oct), with the site's own words — drawn by js/site.js. -->
       <div class="def" data-render="definition" data-reveal></div>
+      <div class="def-not" data-render="def-not" data-reveal></div>
       <figure class="video video--feature" data-video="hero"></figure>
     </div>
   </section>
@@ -110,7 +121,6 @@
       <!-- Kate's claim, her words (rule 12). -->
       <p data-copy="home.p.reach-was-developed-by">REACH Forgiveness was developed by Everett Worthington and is the most widely tested forgiveness model.</p>
       <ol class="reach" data-render="reach"></ol>
-      <p class="muted" data-copy="home.p.forgiveness-does-not-mean">Forgiveness does not mean forgetting, excusing, or reconciling. It is compatible with accountability, truth, and justice.</p>
     </div>
   </section>
 
@@ -125,6 +135,9 @@
            the trial's figures are fixed; every other word is Kate's to edit. -->
       <p><span data-copy="home.span.in-the-largest-randomized">In the largest randomized trial of an interpersonal forgiveness intervention to date,</span> <span data-locked="research claim"><b data-render="participants"></b> across <b data-render="countries"></b></span> <span data-copy="home.span.worked-through-this-workbook">worked through this workbook.</span></p>
       <p data-copy="home.p.our-study-of-the"><a data-render="paper-link" href="https://doi.org/10.1136/bmjph-2023-000072">Our study</a> of the REACH Forgiveness Workbook shows that the workbook decreases anxiety, decreases depression, and <a href="https://hfh.fas.harvard.edu/measuring-flourishing" target="_blank" rel="noopener">increases flourishing</a>.</p>
+      <!-- Kate, 14 Oct: the Home2 box, "People who forgive tend to live
+           better", on Home — the same drawing as Research (js/site.js). -->
+      <div class="benefits-block" data-render="benefits" data-level="h3"></div>
       <p class="dl-row"><a class="btn btn--outline" href="research/" data-copy="home.a.see-the-research">See the research</a></p>
     </div>
   </section>

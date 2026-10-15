@@ -840,7 +840,7 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
    one column per meeting; on your own on top, together below. Scrolls inside
    its own box on a narrow phone rather than squeezing. */
 .lanes-wrap { margin: 1rem 0 0.4rem; }
-.lanes { display: grid; grid-template-columns: 6.5rem repeat(var(--cols), minmax(0, 1fr)); gap: 0.5rem; }
+.lanes { display: grid; grid-template-columns: 8.5rem repeat(var(--cols), minmax(0, 1fr)); gap: 0.5rem; }
 /* A phone reads it top to bottom: one row per meeting — the lessons before
    it on the left, the meeting on the right, the lane names as headings. */
 @media (max-width: 759px) {
@@ -901,8 +901,6 @@ html[data-shell-ready]:not([data-copy-editing]) .def[data-reveal]:not(.is-on) > 
 /* /home2 — the draft homepage that leads with why (Wyatt, 13 Oct): cream
    like the rest of the site, the claim big, the proof in boxes. */
 .why-hero { padding-block: clamp(2rem, 6vw, 4rem); }
-.why-from { display: flex; align-items: center; gap: 0.7rem; margin: 0 0 1.1rem; font-family: var(--font-head); font-weight: 600; font-size: 1rem; letter-spacing: 0.02em; color: var(--plum); }
-.why-from img { width: 56px; height: 56px; flex: none; }
 .why-hero h1 { font-size: clamp(2.2rem, 5.6vw, 3.6rem); line-height: 1.08; max-width: 18ch; margin-bottom: 1.2rem; }
 .why-results { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.8rem; margin: 0.4rem 0 0; }
 @media (max-width: 760px) { .why-results { grid-template-columns: minmax(0, 1fr); } }
@@ -920,4 +918,56 @@ html[data-shell-ready]:not([data-copy-editing]) .def[data-reveal]:not(.is-on) > 
 .chg-grid { display: grid; gap: 0.8rem; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 0.7rem; }
 @media (max-width: 760px) { .chg-grid { grid-template-columns: minmax(0, 1fr); } }
 .why-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-top: 1.6rem; }
-.def-not { text-align: center; color: var(--muted); max-width: 40rem; margin: 0 auto; }
+
+/* THE HFP LINE above a headline (js/site.js renderEyebrows; Kate, 14 Oct):
+   the seal and the program's name, Home and Research. */
+.hfp-eyebrow { display: flex; align-items: center; gap: 0.7rem; margin: 0 0 1.1rem; font-family: var(--font-head); font-weight: 600; font-size: 1rem; letter-spacing: 0.02em; color: var(--plum); }
+.hfp-eyebrow img { width: 56px; height: 56px; flex: none; }
+.hero-lede--center .hfp-eyebrow { justify-content: center; }
+@media (max-width: 560px) {
+  .hfp-eyebrow { flex-direction: column; align-items: flex-start; gap: 0.4rem; font-size: 0.95rem; }
+  .hero-lede--center .hfp-eyebrow { align-items: center; }
+  .hfp-eyebrow img { width: 44px; height: 44px; }
+}
+/* "The definition" sits on the definition's own left edge. */
+.def-kicker { max-width: 40rem; margin: 0 auto 0.4rem; padding: 0 0.5rem; }
+
+/* Home's hero, Kate 14 Oct: what forgiving does, then "Why forgive?". */
+.hero-benefits { text-wrap: balance; font-family: var(--font-head); font-weight: 500; font-size: clamp(1.15rem, 2.4vw, 1.45rem); line-height: 1.4; color: var(--navy); max-width: 36rem; margin: 0.6rem auto 0; }
+.hero-why { margin: 1.3rem auto 1.4rem; }
+
+/* WHAT FORGIVENESS ISN'T (js/site.js renderDefinitionNot): two halves under
+   the definition. Three words struck through in plum, three ticked in teal;
+   each mark draws itself in, one after another, when the block comes into
+   view. Reduced motion, or no observer: shown finished. */
+.def-not { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; max-width: 44rem; margin: 0 auto 2.4rem; }
+.def-half { border-radius: var(--radius); padding: 1.1rem 1.3rem 1.2rem; }
+.def-half--not { background: rgba(119, 0, 97, 0.05); border: 1.5px dashed rgba(119, 0, 97, 0.45); }
+.def-half--with { background: rgba(0, 136, 122, 0.08); border: 1.5px solid rgba(0, 136, 122, 0.5); }
+.def-half-h { margin: 0 0 0.6rem; font-family: var(--font-head); font-weight: 600; font-size: 1.05rem; color: var(--navy); }
+.def-half ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.45rem; }
+.def-half li { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-head); font-weight: 600; font-size: clamp(1.15rem, 2.4vw, 1.4rem); line-height: 1.2; }
+.def-half li svg { width: 1.3rem; height: 1.3rem; flex: none; fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.def-half--not li { color: var(--plum); }
+.def-half--not li svg { stroke: var(--plum); }
+.def-half--not s { text-decoration: none; background: linear-gradient(currentColor, currentColor) no-repeat 0 55% / 100% 2.5px; }
+.def-half--with li { color: var(--teal-deep); }
+.def-half--with li svg { stroke: var(--teal); }
+html[data-shell-ready]:not([data-copy-editing]) .def-not[data-reveal]:not(.is-on) li { opacity: 0; }
+.def-not.is-on li { animation: def-fade 0.5s ease both; animation-delay: calc(0.35s + var(--i) * 0.35s); }
+.def-not.is-on .def-half--with li { animation-delay: calc(1.5s + var(--i) * 0.35s); }
+.def-not.is-on .def-half--not s { animation: def-strike 0.5s cubic-bezier(.4, 0, .2, 1) both; animation-delay: calc(0.6s + var(--i) * 0.35s); }
+@keyframes def-strike { from { background-size: 0 2.5px; } to { background-size: 100% 2.5px; } }
+@media (prefers-reduced-motion: reduce) { .def-not.is-on li, .def-not.is-on s { animation: none !important; } }
+@media (max-width: 560px) { .def-not { grid-template-columns: minmax(0, 1fr); } }
+
+/* Flourishing, stated under the trial's bars (it has no averages to draw). */
+.why-flourish { margin: 0.9rem 0 0; font-size: 1.02rem; color: var(--ink); max-width: none; }
+.why-flourish b, .why-flourish a { color: var(--teal-deep); }
+.flourish-note { margin: 1rem 0; }
+.benefits-block { margin-top: 2rem; }
+.benefits-block + .dl-row { margin-top: 1.4rem; }
+.wrap > .benefits-block:first-child { margin-top: 0; }
+/* Groups, Kate 14 Oct: the two versions inside Forgiveness Group Basics. */
+.basics-sub { margin-top: 2.2rem; }
+

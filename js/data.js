@@ -182,6 +182,13 @@ export const TRIAL = {
     { measure: 'Anxiety symptoms', about: 'over the past week', smd: '−0.21', ci: '−0.27 to −0.15',
       scale: { name: 'BSI-18 anxiety', min: 0, max: 24 }, did: [8.31, 5.73], waited: [8.33, 7.26] },
   ],
+  /* Flourishing, a preregistered SECONDARY outcome (Table 3 of the paper:
+     β = 0.27, 95% CI 0.22 to 0.33, Secure Flourishing Index, significant
+     after Bonferroni-Holm). The paper gives no raw averages for it, so it is
+     reported as the effect size alone, never as a percent. Checked against
+     the full text, 14 Oct. */
+  flourishing: { measure: 'Flourishing', scale: 'Secure Flourishing Index', smd: '0.27', ci: '0.22 to 0.33',
+    about: 'https://hfh.fas.harvard.edu/measuring-flourishing' },
   paper: 'https://doi.org/10.1136/bmjph-2023-000072',
   paperCitation: 'Ho MY, et al. BMJ Public Health, 2024',
 };

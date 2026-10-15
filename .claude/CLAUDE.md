@@ -75,15 +75,19 @@ the way out always visible. "There's no hurry" is design language here.
   THREE** — "Do it solo", "Start a group", and "I'm already in a group". The third is for someone
   already meeting in person who wants to track progress and rewatch videos; a leader issues them
   a code. **There is deliberately no "find a group to join" directory** — Kate's call.
-- **No Harvard in site chrome or marketing copy** (Richard, 25 Aug): the site speaks for the
-  Human Flourishing Program, not the university. Factual attribution stays — workbook authorship
-  credits, the conference venue, and outbound links to `hfh.fas.harvard.edu`.
+- **Harvard is in** (Kate, 14 Oct; Wyatt: "put Harvard in"): Home and Research open with the HFP
+  seal and "The Human Flourishing Program at Harvard" (`data-render="hfp-eyebrow"`, one line in
+  `js/site.js`). This replaces Richard's 25 Aug "no Harvard in chrome or marketing copy"; the
+  header still carries the GFM logo alone.
 - **Testimonials never show names** — a vague descriptor only ("Pastor who ran it with his
   church"). Kate, 25 Aug, replacing the earlier permission-gated plan.
 - **The Forgiveness Group model is the clients' own design** (workbook done solo, group meets to
   discuss). Don't describe it as Worthington's group protocol.
 - **When a client ruling and a design instinct collide, surface it, don't settle it** — that's
   Wyatt's conversation with Kate, carried by him.
+- **Rulings change — that's iteration, not a problem** (Wyatt, 14 Oct: "we're designers, we
+  iterate, we change our minds"). When a new request reverses an earlier ruling, do it and write
+  the new ruling down here or in `.planning/qa/`; don't flag the reversal back to him.
 
 ## Safety
 

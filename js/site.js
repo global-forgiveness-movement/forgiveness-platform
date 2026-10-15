@@ -3,14 +3,14 @@
    footer, hydrates video embeds from data.js, and counts workbook downloads.
    Written once, used everywhere — page files contain only their <main>. */
 
-import { NAV, FOOTER_COLS, BRAND, ACCOUNT_LINKS, FORGIVING_BENEFITS } from './data.js';
+import { NAV, FOOTER_COLS, BRAND, ACCOUNT_LINKS, FORGIVING_BENEFITS, TRIAL } from './data.js';
 import { changeCard, percentChange } from './change-bar.js';
 import { getVideos, getPages, fieldAttr } from './content.js';
 import { recordDownload } from './metrics.js';
 import { videoFrame } from './video.js';
 import { ensureGate, leaf } from './gate.js';
 
-export const STAMP = 'GFM-V1 · 2026-10-13i';
+export const STAMP = 'GFM-V1 · 2026-10-14a';
 
 /* Resolve everything relative to the site root (js/ → root), so pages work
    at any depth and on any host (github.io project path or a custom domain). */
@@ -140,20 +140,88 @@ function renderDefinitions() {
   });
 }
 
+/* WHAT FORGIVENESS ISN'T — Kate, 14 Oct: "these issues are a stumbling block
+   for many people … add graphics so people read it". Her sentence, cut into
+   the two halves it already has: three things it does not mean, each struck
+   through as the block comes into view, and three it stands with, each
+   ticked. Same reveal as the definition above it; ONE drawing for every page
+   that asks with data-render="def-not". */
+function renderDefinitionNot() {
+  const STRIKE = [['forgetting', 'def.not.1'], ['excusing', 'def.not.2'], ['reconciling', 'def.not.3']];
+  const STAND = [['accountability', 'def.with.1'], ['truth', 'def.with.2'], ['justice', 'def.with.3']];
+  const TICK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7"/></svg>';
+  const CROSS = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>';
+  document.querySelectorAll('[data-render="def-not"]').forEach((el) => {
+    el.innerHTML = `
+      <div class="def-half def-half--not">
+        <p class="def-half-h" data-copy="def.not.h">Forgiveness does not mean</p>
+        <ul>${STRIKE.map(([w, k], i) => `<li style="--i:${i}">${CROSS}<s data-copy="${k}">${w}</s></li>`).join('')}</ul>
+      </div>
+      <div class="def-half def-half--with">
+        <p class="def-half-h" data-copy="def.with.h">It is compatible with</p>
+        <ul>${STAND.map(([w, k], i) => `<li style="--i:${i}">${TICK}<span data-copy="${k}">${w}</span></li>`).join('')}</ul>
+      </div>`;
+  });
+}
+
+/* THE HFP LINE above a headline (Kate, 14 Oct; Wyatt: "put Harvard in"):
+   the seal and the program's name. ONE line for every page that asks with
+   data-render="hfp-eyebrow" — Home and Research. */
+function renderEyebrows() {
+  document.querySelectorAll('[data-render="hfp-eyebrow"]').forEach((el) => {
+    el.innerHTML = `<img src="${href(BRAND.hfpSealHarvard)}" alt="" width="56" height="56"><span data-copy="brand.eyebrow">The Human Flourishing Program at Harvard</span>`;
+  });
+}
+
+/* WHY FORGIVE — the trial in three boxes and three bars (first drawn on the
+   /home2 draft, 13 Oct; Kate, 14 Oct: bring it onto Research). The boxes'
+   words are editable; the figures come from TRIAL alone (rule 12). The bars:
+   one per result, the workbook group's average from before to two weeks
+   later, "decreased x%" being the fall as a share of where it started
+   (Supplementary Table S7). Flourishing has no raw averages in the paper,
+   so it is stated, not drawn. ONE drawing for every page that asks with
+   data-render="why". */
+function renderWhy() {
+  const NAME = { 'Depression symptoms': 'Depression', 'Anxiety symptoms': 'Anxiety', Unforgiveness: 'Ill will' };
+  const ORDER = ['Depression symptoms', 'Anxiety symptoms', 'Unforgiveness'];
+  const F = TRIAL.flourishing;
+  document.querySelectorAll('[data-render="why"]').forEach((el) => {
+    el.innerHTML = `
+      <ul class="boxes boxes--3 boxes--pictures">
+        <li><img class="box-pic" src="${href('assets/illustrations/trial-flask.webp')}" alt="" width="486" height="720"><b data-copy="why.b.tested-at-harvard">Tested at Harvard</b><span data-copy="why.span.harvards-human-flourishing">Harvard’s Human Flourishing Program and colleagues ran <a href="${TRIAL.paper}">the largest randomized trial of its kind</a>.</span></li>
+        <li data-locked="research claim"><img class="box-pic" src="${href('assets/illustrations/globe.webp')}" alt="" width="720" height="689"><b>${TRIAL.participants}</b><span>across ${TRIAL.countries}, each working through one free workbook.</span></li>
+        <li><img class="box-pic" src="${href('assets/illustrations/sunrise.webp')}" alt="" width="720" height="656"><b data-copy="why.b.two-weeks-later">Two weeks later</b><span data-copy="why.span.they-were-less-depressed">they were less depressed and less anxious, held less ill will toward the person who hurt them, and were flourishing more than people still waiting to start.</span></li>
+      </ul>
+      <div class="why-results" data-locked="research claim">${ORDER
+        .map((m) => TRIAL.effects.find((e) => e.measure === m))
+        .map((e) => {
+          const [before, after] = e.did, n = percentChange(before, after);
+          return changeCard({ name: NAME[e.measure], from: before, to: after, said: `decreased ${n}%`, theme: 'teal',
+            spoken: `${NAME[e.measure]} decreased ${n}% in two weeks for people who did the workbook (average ${before.toFixed(1)} to ${after.toFixed(1)}).` });
+        }).join('')}</div>
+      <p class="why-flourish" data-locked="research claim"><b>Their flourishing rose too</b>, measured with the Human Flourishing Program’s own <a href="${F.about}">${F.scale}</a> (effect size ${F.smd}).</p>`;
+  });
+}
+
 /* THE NURSES' STUDY, drawn the way the trial's results are (Wyatt, 13 Oct):
    one change bar per measure, in plum because it is a different study, the
    size in plain percent. Figures in FORGIVING_BENEFITS alone; ONE drawing for
-   every page that asks with data-render="benefits". */
+   every page that asks with data-render="benefits".
+   The heading and the line under it travel with the chart (Kate, 14 Oct:
+   the Home2 box, on Home), so every page says it the same way; data-level
+   sets the heading's rank where it sits. */
 function renderBenefits() {
   const { findings, cite, doi } = FORGIVING_BENEFITS;
   document.querySelectorAll('[data-render="benefits"]').forEach((el) => {
-    el.dataset.locked = 'research claim';
-    el.innerHTML = `<div class="chg-grid">${findings.map((f) => {
+    const h = el.dataset.level === 'h3' ? 'h3' : 'h2';
+    el.innerHTML = `<${h} data-copy="benefits.h.people-who-forgive">People who forgive tend to live better</${h}>
+      <p data-copy="benefits.p.in-a-study-of-over">In a study of over 50,000 nurses, women who almost always forgave others, compared with women who seldom or never did:</p>
+      <figure class="benefits" data-locked="research claim"><div class="chg-grid">${findings.map((f) => {
       const n = percentChange(f.seldom, f.always), word = f.always < f.seldom ? 'lower' : f.name === 'Close friends' ? 'more' : 'higher';
       return changeCard({ name: f.name, from: f.seldom, to: f.always, said: `${n}% ${word}`, theme: 'plum',
         spoken: `${f.name}: ${n}% ${word} for women who almost always forgave than for women who seldom or never did (average ${f.seldom} vs ${f.always}, on a ${f.range} scale).` });
     }).join('')}</div>
-      <figcaption class="small muted">${cite} · <a href="${doi}" target="_blank" rel="noopener">Read the study →</a></figcaption>`;
+      <figcaption class="small muted">${cite} · <a href="${doi}" target="_blank" rel="noopener">Read the study →</a></figcaption></figure>`;
   });
 }
 
@@ -240,7 +308,10 @@ async function buildShell() {
   document.body.prepend(buildHeader());
   document.body.append(buildFooter());
   hydrateVideos();
+  renderEyebrows();
   renderDefinitions();
+  renderDefinitionNot();
+  renderWhy();
   renderBenefits();
   playAnimationsInView();
   /* The HFP seal, wherever a page asks for it (About and Home). */

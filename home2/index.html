@@ -39,14 +39,10 @@
        "the largest randomized trial of its kind". -->
   <section class="section section--paper why-hero">
     <div class="wrap">
-      <p class="why-from"><img data-render="hfp-seal-harvard" alt="" width="56" height="56"><span data-copy="home2.span.from-harvard">Harvard University Human Flourishing Program</span></p>
+      <p class="hfp-eyebrow" data-render="hfp-eyebrow"></p>
       <h1 data-copy="home2.h1.learning-to-forgive">Learning to forgive can lower your <i>depression and anxiety</i>.</h1>
-      <ul class="boxes boxes--3 boxes--pictures">
-        <li><img class="box-pic" src="../assets/illustrations/trial-flask.webp" alt="" width="486" height="720"><b data-copy="home2.b.tested-at-harvard">Tested at Harvard</b><span data-copy="home2.span.harvards-human-flourishing-2">Harvard’s Human Flourishing Program and colleagues ran <a data-render="paper-link" href="https://doi.org/10.1136/bmjph-2023-000072">the largest randomized trial of its kind</a>.</span></li>
-        <li data-locked="research claim"><img class="box-pic" src="../assets/illustrations/globe.webp" alt="" width="720" height="689"><b data-render="participants"></b><span>across <span data-render="countries"></span>, each working through one free workbook.</span></li>
-        <li><img class="box-pic" src="../assets/illustrations/sunrise.webp" alt="" width="720" height="656"><b data-copy="home2.b.two-weeks-later">Two weeks later</b><span data-copy="home2.span.they-were-less-depressed">they were less depressed, less anxious, and held less ill will toward the person who hurt them than people still waiting to start.</span></li>
-      </ul>
-      <div class="why-results" data-render="why-results" data-locked="research claim"></div>
+      <!-- The boxes and bars are Research's too (Kate, 14 Oct): one drawing, js/site.js. -->
+      <div data-render="why"></div>
       <p class="why-cta"><a class="btn btn--juicy btn--down" href="#start" data-copy="home2.a.show-me-how">Show me how to start</a></p>
     </div>
   </section>
@@ -54,9 +50,7 @@
   <!-- 2 · IS IT REAL, beyond one trial. Kate's chart (Research has it too). -->
   <section class="section section--paper">
     <div class="wrap">
-      <h2 data-copy="home2.h2.people-who-forgive">People who forgive tend to live better</h2>
-      <p data-copy="home2.p.in-a-study-of-over">In a study of over 50,000 nurses, women who almost always forgave others, compared with women who seldom or never did:</p>
-      <figure class="benefits" data-render="benefits"></figure>
+      <div class="benefits-block" data-render="benefits"></div>
     </div>
   </section>
 
@@ -64,7 +58,7 @@
   <section class="section">
     <div class="wrap">
       <div class="def" data-render="definition" data-reveal></div>
-      <p class="def-not" data-copy="home2.p.it-isnt-forgetting">It isn’t forgetting, excusing, or reconciling. It is compatible with accountability, truth, and justice.</p>
+      <div class="def-not" data-render="def-not" data-reveal></div>
     </div>
   </section>
 
@@ -124,31 +118,8 @@
 </main>
 
 <script type="module">
-  import { TRIAL, downloadFor } from '../js/data.js';
-  import { changeCard, percentChange } from '../js/change-bar.js';
+  import { downloadFor } from '../js/data.js';
   import { getCollection, fieldAttr } from '../js/content.js';
-
-  /* The trial's results, as few marks as possible (Wyatt, 13 Oct, round 2,
-     option A): one bar per result. The solid part is where the workbook
-     group's average ended; the dashed box with the arrow is how much it fell.
-     "Decreased x%" is the plainest reading of the paper's own averages
-     (Supplementary Table S7): the fall in the average score as a share of
-     where it started — 8.8→6.1 depression, 8.3→5.7 anxiety, 50.4→39.4 ill
-     will. The paper itself reports effect sizes; those, and the comparison
-     group, stay on Research. From TRIAL alone (rule 12). */
-  const NAME = { 'Depression symptoms': 'Depression', 'Anxiety symptoms': 'Anxiety', Unforgiveness: 'Ill will' };
-  const order = ['Depression symptoms', 'Anxiety symptoms', 'Unforgiveness'];
-  document.querySelector('[data-render="why-results"]').innerHTML = order
-    .map((m) => TRIAL.effects.find((e) => e.measure === m))
-    .map((e) => {
-      const [before, after] = e.did, n = percentChange(before, after);
-      return changeCard({ name: NAME[e.measure], from: before, to: after, said: `decreased ${n}%`, theme: 'teal',
-        spoken: `${NAME[e.measure]} decreased ${n}% in two weeks for people who did the workbook (average ${before.toFixed(1)} to ${after.toFixed(1)}).` });
-    }).join('');
-  document.querySelector('[data-render="participants"]').textContent = TRIAL.participants;
-  document.querySelector('[data-render="countries"]').textContent = TRIAL.countries;
-  const paperLink = document.querySelector('[data-render="paper-link"]');
-  if (paperLink) paperLink.href = TRIAL.paper;
 
   const dl = downloadFor('reach', 'en', '../');
   const dlBtn = document.querySelector('[data-render="workbook-download"]');

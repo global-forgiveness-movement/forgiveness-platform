@@ -20,6 +20,9 @@ import { videoFrame } from './video.js';
 const ICON_TOGETHER = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8.5" cy="8" r="3.2"/><circle cx="15.5" cy="8" r="3.2"/><path d="M2.5 19c.6-3.4 3-5.3 6-5.3s5.4 1.9 6 5.3M9.5 19c.6-3.4 3-5.3 6-5.3s5.4 1.9 6 5.3"/></svg>';
 const ICON_OWN = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 19.5c.7-3.6 3.3-5.6 6.5-5.6s5.8 2 6.5 5.6"/></svg>';
 const ICON = { own: ICON_OWN, together: ICON_TOGETHER };
+/* The two lanes' names — ONE pair for the key and the lanes (Kate, 14 Oct:
+   "on your own time prior to the meeting", not "on your own"). */
+const LANE = { own: 'On your own time, before the meeting', together: 'Together' };
 
 /* Anything a facilitator typed (a place, a link) is shown to other people,
    so it is always escaped. Series text is editor content and is drawn as
@@ -28,8 +31,8 @@ export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&a
 
 export const FLOW_LEGEND = `
   <p class="flow-legend">
-    <span class="flow-key flow-key--own">${ICON_OWN}On your own</span>
-    <span class="flow-key flow-key--together">${ICON_TOGETHER}Together</span>
+    <span class="flow-key flow-key--own">${ICON_OWN}${LANE.own}</span>
+    <span class="flow-key flow-key--together">${ICON_TOGETHER}${LANE.together}</span>
   </p>`;
 
 const STATE_WORD = { done: 'Done', open: 'Open now', upcoming: 'Coming up' };
@@ -169,8 +172,8 @@ export function seriesFlow(view, { base = '../' } = {}) {
    above, together below — and one column per meeting, with the lessons done
    before it directly above it. Drawn from the same steps as seriesFlow, so
    the two can never disagree; the titles stay editable where they sit.
-   Each column is a week (Wyatt, 12 Oct: the second tester asked "is that
-   back to back? once a week?") — weekly is NEW and flagged for Kate. */
+   Each column is numbered by meeting only (Kate, 14 Oct: "don't need weeks,
+   just meeting numbers"); the once-a-week suggestion stays in the line above. */
 export function seriesLanes(view) {
   const sid = view.series.id;
   const cols = [];
@@ -186,10 +189,10 @@ export function seriesLanes(view) {
   return `
   <div class="lanes-wrap">
     <div class="lanes" style="--cols:${cols.length}" role="img" aria-label="${esc(view.series.name)}: ${cols.length} meetings, each after lessons done on your own">
-      <span class="lane-label lane-label--own">${ICON_OWN}On your own</span>
+      <span class="lane-label lane-label--own">${ICON_OWN}${LANE.own}</span>
       ${cols.map((c, i) => cell(c.own, 'own', i)).join('')}
-      <span class="lane-label lane-label--together">${ICON_TOGETHER}Together</span>
-      ${cols.map((c, i) => `<div class="lane-cell lane-cell--together" style="--i:${i}"><small>Week ${i + 1} · Meeting ${c.meet.n}</small><b ${field(sid, c.meet.fields.title)}>${c.meet.title}</b></div>`).join('')}
+      <span class="lane-label lane-label--together">${ICON_TOGETHER}${LANE.together}</span>
+      ${cols.map((c, i) => `<div class="lane-cell lane-cell--together" style="--i:${i}"><small>Meeting ${c.meet.n}</small><b ${field(sid, c.meet.fields.title)}>${c.meet.title}</b></div>`).join('')}
     </div>
   </div>`;
 }

@@ -59,7 +59,7 @@
         <a class="btn btn--plum" href="#tell-us" data-when="out" data-copy="groups.a.create-your-facilitator-account">Create your facilitator account</a>
         <a class="btn btn--plum" href="#tell-us" data-when="in" hidden data-copy="groups.a.create-a-group">Create a group</a>
         <a class="btn btn--navy" href="#join" data-copy="groups.a.join-with-a-code">I have a group code</a>
-        <a class="btn btn--outline" href="#facilitate" data-copy="groups.a.how-facilitating-works">How facilitating works</a>
+        <a class="btn btn--outline" href="#basics" data-copy="groups.a.forgiveness-group-basics">Forgiveness Group Basics</a>
       </p>
     </div>
   </section>
@@ -71,20 +71,14 @@
     </div>
   </section>
 
-  <!-- The eight guidelines, verbatim from Kate's 18 Sep email. Rendered from
-       GROUP_GUIDELINES in js/data.js — one copy, no drift. -->
-  <section class="section section--paper" id="guidelines">
+  <!-- Kate, 14 Oct: one section for members and facilitators alike —
+       "Facilitating a group" renamed, with the two versions folded in and the
+       separate "Video-guided" section gone. The new heading and the line under
+       it are new words. -->
+  <section class="section section--paper" id="basics">
     <div class="wrap">
-      <h2 data-copy="groups.h2.forgiveness-group-guidelines">Forgiveness Group Guidelines</h2>
-      <p class="muted"  data-copy="groups.p.these-eight-hold-for">These eight hold for every group, whichever version you use. Read them out at your first meeting.</p>
-      <ol class="sessions" data-render="guidelines" style="margin-top:1.2rem"></ol>
-    </div>
-  </section>
-
-  <section class="section" id="facilitate">
-    <div class="wrap">
-      <h2 data-copy="groups.h2.facilitating-a-group">Facilitating a group</h2>
-      <p class="muted"  data-copy="groups.p.four-things-to-get">Four things to get right. None of them needs training.</p>
+      <h2 data-copy="groups.h2.forgiveness-group-basics">Forgiveness Group Basics</h2>
+      <p class="muted" data-copy="groups.p.what-everyone-in-a">What everyone in a group should know, whether you lead it or join it. None of it needs training.</p>
       <div class="grid grid--4" style="margin-top:1.2rem">
         <div class="card"><h3 data-copy="groups.h3.choose-your-format">Choose your format</h3><p class="small" data-copy="groups.p.three-sessions-using-the">Three sessions using the REACH Forgiveness Workbook, or six using the church edition.</p></div>
         <div class="card"><h3 data-copy="groups.h3.gather-6-12-people">Gather 6–12 people</h3><p class="small" data-copy="groups.p.a-church-small-group">A church small group, a class, a workplace team, or friends.</p></div>
@@ -92,15 +86,10 @@
         <div class="card"><h3 data-copy="groups.h3.press-play-then-talk">Press play, then talk</h3><p class="small" data-copy="groups.p.watch-the-short-video">Watch the short video together, then discuss what it raises. The video carries the structure so you don’t have to.</p></div>
       </div>
       <p class="small muted" style="margin-top:1rem" data-copy="groups.p.a-facilitator-guide-and">A facilitator guide and a short film on running a session are in production and will appear in your account. <span class="pill pill--plum">Coming with the videos</span></p>
-    </div>
-  </section>
 
-  <section class="section">
-    <div class="wrap">
-      <p class="kicker" data-copy="groups.p.video-guided">Video-guided</p>
       <!-- Richard, 28 Sep: "the two versions", not "series" — they are less
            different than "series" sounds. The films keep Kate's titles. -->
-      <h2 data-copy="groups.h2.the-two-series">The two versions</h2>
+      <h3 class="basics-sub" data-copy="groups.h2.the-two-series">The two versions</h3>
       <!-- Wyatt, 12 Oct: prose into boxes. Same facts, cut into three. -->
       <ul class="boxes boxes--3">
         <li><b data-copy="groups.b.each-version-is">Each version is a set of films.</b><span data-copy="groups.span.at-each-meeting-the">At each meeting the facilitator plays that session’s video — about ten minutes of teaching and a guided activity — and the group talks afterwards.</span></li>
@@ -121,7 +110,7 @@
   </section>
 
   <!-- Kate, 6 Oct: Create your group comes before Connect with other practitioners. -->
-  <section class="section section--paper" id="tell-us">
+  <section class="section" id="tell-us">
     <div class="wrap">
       <h2 data-copy="groups.h2.create-your-group">Create your group</h2>
       <!-- Testers, 12 Oct: starting a group makes you its facilitator, and
@@ -161,7 +150,7 @@
        and be like, where do I put in the code?" Signed out, THE code card
        (js/code-entry.js, the same one as My Path); signed in, My Path already
        has the join form, so this points there rather than drawing a second. -->
-  <section class="section" id="join">
+  <section class="section section--paper" id="join">
     <div class="wrap center">
       <h2 data-copy="groups.h2.already-in-a-group">Already in a group?</h2>
       <p class="measure" style="margin:0 auto 1.2rem" data-copy="groups.p.your-facilitator-gives-you">Your facilitator gives you a code. It keeps your place and lets you rewatch the videos.</p>
@@ -183,6 +172,17 @@
       </div>
       <h3 style="margin-top:1.6rem" data-copy="groups.h3.upcoming-events">Upcoming events</h3>
       <ol class="sessions" data-render="events"></ol>
+    </div>
+  </section>
+
+  <!-- The eight guidelines, verbatim from Kate's 18 Sep email. Rendered from
+       GROUP_GUIDELINES in js/data.js — one copy, no drift. At the foot of the
+       page (Kate, 14 Oct). -->
+  <section class="section section--paper" id="guidelines">
+    <div class="wrap">
+      <h2 data-copy="groups.h2.forgiveness-group-guidelines">Forgiveness Group Guidelines</h2>
+      <p class="muted"  data-copy="groups.p.these-eight-hold-for">These eight hold for every group, whichever version you use. Read them out at your first meeting.</p>
+      <ol class="sessions" data-render="guidelines" style="margin-top:1.2rem"></ol>
     </div>
   </section>
 
