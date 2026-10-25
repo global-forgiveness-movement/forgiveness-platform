@@ -197,11 +197,13 @@
   /* ONE menu, drawn twice: a grouped sidebar on a wide screen, a native
      picker with the same groups on a phone. A collection added to the schema
      and not placed here still appears, under "Around the site", so the menu
-     can never silently lose a section. */
-  const LABELS = { messages: 'Messages', people: 'People', pages: 'New pages', history: 'History — undo a change' };
+     can never silently lose a section. A tab's name must not repeat a
+     collection's: the Inbox list was once also called "people", which hid
+     the About team (Kate, 20 Oct) — scripts/qa/one-admin-tab.mjs checks. */
+  const LABELS = { messages: 'Messages', accounts: 'Accounts', pages: 'New pages', history: 'History — undo a change' };
   const HOME = ['stats', 'reach', 'testimonials'];
   const MENU = [
-    { group: 'Inbox', items: ['messages', 'people'] },
+    { group: 'Inbox', items: ['messages', 'accounts'] },
     { group: 'Homepage', items: HOME },
     { group: 'Around the site', items: Object.keys(COLLECTIONS).filter((k) => !HOME.includes(k)) },
     { group: 'Your own pages', items: ['pages'] },
@@ -227,7 +229,7 @@
     history.replaceState(null, '', `#${name}`);
     if (name === 'pages') return renderPagesTab();
     if (name === 'messages') return renderMessagesTab();
-    if (name === 'people') return renderPeopleTab();
+    if (name === 'accounts') return renderPeopleTab();
     if (name === 'history') return renderHistoryTab();
     renderCollectionTab(name);
   }
@@ -409,14 +411,14 @@
     $('[data-panel]').innerHTML = '<p class="muted small">Loading…</p>';
     try { peopleCache = await peopleRows(); }
     catch (err) {
-      $('[data-panel]').innerHTML = `${head('people', 'Everyone with an account.')}
+      $('[data-panel]').innerHTML = `${head('accounts', 'Everyone with an account.')}
         <p class="form-msg form-msg--err">This list couldn’t load: the database doesn’t yet let editors read account records. Wyatt has the one-line rule change to publish in the Firebase console. (${esc(err.code || err.message || String(err))})</p>`;
       return;
     }
     const accounts = new Set(peopleCache.map((r) => r.email || r.name)).size;
     const wanting = [...new Set(peopleCache.filter((r) => r.newsletter && r.email).map((r) => r.email))];
     $('[data-panel]').innerHTML = `
-      ${head('people', 'Everyone with an account: the groups they lead or belong to, and whether they asked for emails. One row per person per group. Emails appear once a person has signed in since October 6.')}
+      ${head('accounts', 'Everyone with an account: the groups they lead or belong to, and whether they asked for emails. One row per person per group. Emails appear once a person has signed in since October 6.')}
       <div class="adm-row" style="gap:0.6rem;flex-wrap:wrap;margin-bottom:0.8rem">
         <label class="small"><input type="checkbox" data-people-wanting> Only people who want emails</label>
         <span class="spacer" style="flex:1"></span>

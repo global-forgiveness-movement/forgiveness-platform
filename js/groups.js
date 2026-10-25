@@ -322,11 +322,17 @@ export async function codeRecord(code) {
 
 export { PLAYLIST as SESSION_VIDEO };
 
-/* Every series by id — editor wording on top of the committed defaults. */
+/* Every series by id — editor wording on top of the committed defaults, and
+   each meeting's film from /admin → Group meeting videos. The one place a
+   meeting gets its film (scripts/qa/one-meeting-video.mjs). */
 export async function loadSeries() {
-  const list = await getCollection('series');
-  const byId = Object.fromEntries(list.map((x) => [x.id, x]));
-  return { ...SERIES, ...byId };
+  const [list, films] = await Promise.all([getCollection('series'), getCollection('meetingVideos')]);
+  const filmOf = Object.fromEntries(films.map((f) => [f.id, f.src || '']));
+  const byId = { ...SERIES, ...Object.fromEntries(list.map((x) => [x.id, x])) };
+  return Object.fromEntries(Object.entries(byId).map(([id, s]) => [id, {
+    ...s,
+    sessions: (s.sessions || []).map((m) => ({ ...m, video: filmOf[`${id}-${m.n}`] || '' })),
+  }]));
 }
 
 export async function groupState(code) {

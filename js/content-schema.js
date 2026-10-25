@@ -29,6 +29,15 @@ export const COLLECTIONS = {
       { key: 'caption', label: 'Caption under the video', type: 'text' },
     ],
   },
+  meetingVideos: {
+    label: 'Group meeting videos',
+    help: 'The film each Forgiveness Group meeting plays on My Path: 3 for the 3-session series, 6 for the church series. Upload the film to Vimeo, then paste its link here as it is. Leave a link empty and that meeting plays the placeholder.',
+    fixed: true,
+    fields: [
+      { key: 'meeting', label: 'Meeting', type: 'text', readonly: true },
+      { key: 'src', label: 'Video link', type: 'url', help: 'Paste a Vimeo or YouTube link as it is — the page address, a share link, or an embed address. The site works out the rest.' },
+    ],
+  },
   events: {
     label: 'Events',
     help: 'Upcoming events shown on the Groups page. Delete an event when it has passed.',

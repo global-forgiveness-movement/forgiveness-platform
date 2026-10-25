@@ -368,6 +368,19 @@ export const SERIES = {
   },
 };
 
+/* The film each group meeting plays (Kate, 22 Oct: the group films arrive
+   26 Oct). ONE row per meeting, made from SERIES, so a meeting can never
+   exist without a place for its film. An editor pastes links in /admin →
+   Group meeting videos; loadSeries() (js/groups.js) is the one place that
+   puts them on the meetings. An empty link plays the placeholder.
+   Checked by scripts/qa/one-meeting-video.mjs. */
+export const MEETING_VIDEOS = Object.values(SERIES).flatMap((s) =>
+  s.sessions.map((m) => ({
+    id: `${s.id}-${m.n}`,
+    meeting: `${s.name} · Meeting ${m.n} · ${m.title}`,
+    src: '',
+  })));
+
 /* What a group's facilitator gets (Kate, 6 Oct): ONE facilitator manual for
    the whole series, one per edition, and ONE facilitator film, shared by both
    editions for now. Not per meeting. Links are pasted in /admin → Facilitator

@@ -6,7 +6,7 @@
 import { store, withPatience } from './store.js';
 import {
   TESTIMONIALS, VIDEOS, EVENTS, PUBLICATIONS, PEOPLE, GROUP_STATS, SERIES,
-  WORKBOOKS, REACH_STEPS, GROUP_GUIDELINES, FACILITATOR_KIT,
+  WORKBOOKS, REACH_STEPS, GROUP_GUIDELINES, FACILITATOR_KIT, MEETING_VIDEOS,
 } from './data.js';
 
 /* Workbook cards: only their words are content. Files, sizes and links stay
@@ -25,14 +25,25 @@ const DEFAULTS = {
   guidelines: GROUP_GUIDELINES.map((text) => ({ text })),
   series: Object.values(SERIES),
   facilitatorKit: FACILITATOR_KIT,
+  meetingVideos: MEETING_VIDEOS,
 };
 
+/* Rows whose structure is fixed in code: the editor's version only fills in
+   `src`, so a meeting added to SERIES still gets its row after a save. */
+const ROWS_FROM_CODE = { meetingVideos: ['src'] };
+
 export async function getCollection(name) {
+  let items = null;
   try {
     const doc = await withPatience(store.get('content', name));
-    if (doc?.items?.length) return doc.items;
+    if (doc?.items?.length) items = doc.items;
   } catch { /* fall through to defaults */ }
-  return DEFAULTS[name] ?? [];
+  const keep = ROWS_FROM_CODE[name];
+  if (keep) {
+    const byId = Object.fromEntries((items || []).map((x) => [x.id, x]));
+    return DEFAULTS[name].map((row) => ({ ...row, ...pick(byId[row.id] || {}, keep) }));
+  }
+  return items || (DEFAULTS[name] ?? []);
 }
 
 /* Videos as a map keyed by slot, for the shell's embed hydration. */
