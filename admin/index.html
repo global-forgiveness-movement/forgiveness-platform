@@ -396,7 +396,7 @@
      spreadsheet to download (CSV opens in Excel). */
   const PEOPLE_COLS = [
     ['name', 'Name'], ['email', 'Email'], ['newsletter', 'Wants emails'], ['role', 'Role'],
-    ['group', 'Group name'], ['code', 'Group code'], ['edition', 'Version'], ['status', 'Group status'], ['joined', 'Account made'],
+    ['group', 'Group name'], ['code', 'Group code'], ['edition', 'Version'], ['size', 'Expected group size'], ['status', 'Group status'], ['joined', 'Account made'],
   ];
   const cell = (r, k) => {
     if (k === 'newsletter') return r.newsletter ? 'Yes' : 'No';

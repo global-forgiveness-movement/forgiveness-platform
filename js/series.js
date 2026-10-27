@@ -128,7 +128,7 @@ function videoHtml(v) {
   if (v.playable) {
     return `<figure class="video flow-video">
         ${videoFrame(v.src, v.title)}
-        <figcaption>${esc(v.note)}</figcaption>
+        ${v.note ? `<figcaption>${esc(v.note)}</figcaption>` : ''}
       </figure>`;
   }
   return `<p class="flow-video-locked">${ICON_TOGETHER}<span>${esc(v.note)}</span></p>`;

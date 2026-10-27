@@ -440,8 +440,17 @@ export async function repairFacilitators() {
    members/ needs the editor rule in firestore.rules. Who LEADS a group is
    the engine's answer (runsGroup), never decided here. */
 export async function peopleRows() {
-  const [members, codes] = await Promise.all([store.list('members'), store.list('groupCodes')]);
+  /* Kate, 27 Oct: each group's expected size, from the leader's optional
+     "Tell us about your group" answer (groups/, editor-read). The newest
+     answer for a code wins; a list that can't be read leaves the column blank. */
+  const [members, codes, regs] = await Promise.all([
+    store.list('members'), store.list('groupCodes'), store.list('groups').catch(() => []),
+  ]);
   const codeDoc = Object.fromEntries(codes.map((c) => [c.id, c]));
+  const sizeOf = {};
+  for (const r of [...regs].sort((a, b) => (a.submittedAt || '').localeCompare(b.submittedAt || ''))) {
+    if (r.code && String(r.size || '').trim()) sizeOf[r.code] = String(r.size).trim();
+  }
   const rows = [];
   for (const m of members) {
     const { doc } = membershipsOf(m);
@@ -450,12 +459,13 @@ export async function peopleRows() {
       joined: (doc.createdAt || '').slice(0, 10),
     };
     const groups = Object.entries(doc.groups || {});
-    if (!groups.length) { rows.push({ ...person, leads: false, group: '', code: '', edition: '', status: '' }); continue; }
+    if (!groups.length) { rows.push({ ...person, leads: false, group: '', code: '', edition: '', size: '', status: '' }); continue; }
     for (const [code, g] of groups) {
       rows.push({
         ...person,
         leads: runsGroup(codeDoc[code], m.id),
         group: g.groupName || '', code, edition: SERIES[g.seriesId]?.name || g.seriesId || '',
+        size: sizeOf[code] || '',
         status: g.status === 'past' ? 'Past' : 'Active',
       });
     }

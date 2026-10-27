@@ -249,8 +249,10 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
         src: s.src.video || video,
         title: `Meeting ${s.n} · ${s.src.title}`,
         playable,
+        /* Kate, 27 Oct: the placeholder line showed under real films too.
+           It belongs only to a meeting with no film of its own. */
         note: playable
-          ? 'Placeholder: the clients’ current films. The session films land in mid-October.'
+          ? (s.src.video ? '' : 'A placeholder film. This meeting’s own film is coming soon.')
           : can.playOpen
             ? 'Opens once the step before it is done.'
             : 'Your facilitator plays this at the meeting. It opens here to re-watch once your group has met.',
