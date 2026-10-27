@@ -21,13 +21,13 @@
   <link rel="stylesheet" href="../css/site.css">
 </head>
 <body>
-<main>
+<main data-page="groups">
 
   <!-- Testers, 12 Oct: a newcomer asks WHAT a group is before WHY.
        The three pictures now sit directly under a shorter intro, and the
        film moves below them. The intro sentence is reworded ("in their own
        time", Wyatt 12 Oct) — new copy, flagged for Kate. -->
-  <section class="section section--paper" id="what">
+  <section class="section section--paper" id="what" data-section="opening" data-section-label="Opening: what happens in a group" data-section-lock="first">
     <div class="wrap">
       <p class="kicker" data-copy="groups.p.forgiveness-groups">Forgiveness Groups</p>
       <h1 data-copy="groups.h1.doing-this-work-alongside">Doing this work alongside other people changes it</h1>
@@ -64,7 +64,7 @@
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" data-section="film" data-section-label="The group film">
     <div class="wrap grid grid--2" style="align-items:center">
       <figure class="video" data-video="groupFilm"></figure>
       <p class="notice" data-copy="groups.p.each-person-is-on">Each person is on their own forgiveness journey, and not everyone will reach full emotional forgiveness. That’s okay. If you ever need to pause or stop, you should. The guidelines below carry the rest, and they hold for every group.</p>
@@ -75,7 +75,7 @@
        "Facilitating a group" renamed, with the two versions folded in and the
        separate "Video-guided" section gone. The new heading and the line under
        it are new words. -->
-  <section class="section section--paper" id="basics">
+  <section class="section section--paper" id="basics" data-section="basics" data-section-label="Forgiveness Group Basics">
     <div class="wrap">
       <h2 data-copy="groups.h2.forgiveness-group-basics">Forgiveness Group Basics</h2>
       <p class="muted" data-copy="groups.p.what-everyone-in-a">What everyone in a group should know, whether you lead it or join it. None of it needs training.</p>
@@ -110,7 +110,7 @@
   </section>
 
   <!-- Kate, 6 Oct: Create your group comes before Connect with other practitioners. -->
-  <section class="section" id="tell-us">
+  <section class="section" id="tell-us" data-section="create" data-section-label="Create your group">
     <div class="wrap">
       <h2 data-copy="groups.h2.create-your-group">Create your group</h2>
       <!-- Testers, 12 Oct: starting a group makes you its facilitator, and
@@ -150,7 +150,7 @@
        and be like, where do I put in the code?" Signed out, THE code card
        (js/code-entry.js, the same one as My Path); signed in, My Path already
        has the join form, so this points there rather than drawing a second. -->
-  <section class="section section--paper" id="join">
+  <section class="section section--paper" id="join" data-section="join" data-section-label="Already in a group? (the code box)">
     <div class="wrap center">
       <h2 data-copy="groups.h2.already-in-a-group">Already in a group?</h2>
       <p class="measure" style="margin:0 auto 1.2rem" data-copy="groups.p.your-facilitator-gives-you">Your facilitator gives you a code. It keeps your place and lets you rewatch the videos.</p>
@@ -159,7 +159,7 @@
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" data-section="practitioners" data-section-label="Connect with other practitioners">
     <div class="wrap">
       <h2 data-copy="groups.h2.connect-with-other-practitioners">Connect with other practitioners</h2>
       <div class="card">
@@ -178,7 +178,7 @@
   <!-- The eight guidelines, verbatim from Kate's 18 Sep email. Rendered from
        GROUP_GUIDELINES in js/data.js — one copy, no drift. At the foot of the
        page (Kate, 14 Oct). -->
-  <section class="section section--paper" id="guidelines">
+  <section class="section section--paper" id="guidelines" data-section="guidelines" data-section-label="Forgiveness Group Guidelines">
     <div class="wrap">
       <h2 data-copy="groups.h2.forgiveness-group-guidelines">Forgiveness Group Guidelines</h2>
       <p class="muted"  data-copy="groups.p.these-eight-hold-for">These eight hold for every group, whichever version you use. Read them out at your first meeting.</p>

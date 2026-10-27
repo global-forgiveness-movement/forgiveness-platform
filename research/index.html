@@ -21,30 +21,28 @@
   <link rel="stylesheet" href="../css/site.css">
 </head>
 <body>
-<main>
+<main data-page="research">
 
   <!-- Kate, 14 Oct: Home's "Why forgive?" lands here, and Research leads
        with Home2's case for forgiving — the HFP line, the claim, the trial in
        boxes and bars (js/site.js, the same drawing as /home2), then the
        nurses' study. The detail of the trial follows for anyone who wants it. -->
-  <section class="section section--paper why-hero" id="why">
+  <!-- Sections are named for /admin → Page order (js/page-order.js). Kate,
+       27 Oct: the film first, then the purple bars (the nurses' study), then
+       the trial; Richard has thoughts on simpler trial graphics. The trial in
+       boxes and bars was inside the opening; it is its own section now so it
+       can move. -->
+  <section class="section section--paper why-hero" id="why" data-section="opening" data-section-label="Opening: Why forgive?" data-section-lock="first">
     <div class="wrap">
       <p class="hfp-eyebrow" data-render="hfp-eyebrow"></p>
       <p class="kicker" data-copy="research.p.why-forgive">Why forgive?</p>
       <h1 data-copy="research.h1.learning-to-forgive">Learning to forgive can lower your <i>depression and anxiety</i>.</h1>
-      <div data-render="why"></div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="wrap">
-      <div class="benefits-block" data-render="benefits"></div>
     </div>
   </section>
 
   <!-- The research film sits beside the opening, as on the Groups page
        (Kate's email, before 28 Sep). -->
-  <section class="section section--paper">
+  <section class="section" data-section="film" data-section-label="The research film">
     <div class="wrap grid grid--2" style="align-items:center">
       <div>
         <p class="kicker" data-copy="research.p.the-evidence-base">The evidence base</p>
@@ -55,7 +53,19 @@
     </div>
   </section>
 
-  <section class="section">
+  <section class="section section--paper" data-section="nurses" data-section-label="People who forgive tend to live better (the purple bars)">
+    <div class="wrap">
+      <div class="benefits-block" data-render="benefits"></div>
+    </div>
+  </section>
+
+  <section class="section" data-section="trial-summary" data-section-label="The trial in pictures and bars">
+    <div class="wrap">
+      <div data-render="why"></div>
+    </div>
+  </section>
+
+  <section class="section section--paper" data-section="trial" data-section-label="The headline study, in detail">
     <div class="wrap">
       <p class="kicker" data-copy="research.p.the-headline-study">The headline study</p>
       <h2 data-copy="research.h2.international-reach-forgiveness-intervention">International REACH forgiveness intervention: a multisite randomised controlled trial</h2>
@@ -99,7 +109,7 @@
     </div>
   </section>
 
-  <section class="section section--paper">
+  <section class="section" data-section="how-much" data-section-label="How much forgiveness work is enough?">
     <div class="wrap">
       <h2 data-copy="research.h2.how-much-forgiveness-work">How much forgiveness work is enough?</h2>
       <p data-copy="research.p.a-useful-question-for">A useful question for anyone planning a group or a curriculum. Across the wider forgiveness literature, benefit broadly scales with time invested. But the international trial found something encouraging: on forgiveness of the target hurt, the 2–3 hour self-directed workbook performed comparably to a six-hour group program.</p>
@@ -110,7 +120,7 @@
     </div>
   </section>
 
-  <section class="section">
+  <section class="section section--paper" data-section="publications" data-section-label="Publications">
     <div class="wrap">
       <h2 data-copy="research.h2.publications">Publications</h2>
       <div class="grid measure" data-render="publications"></div>
@@ -118,7 +128,7 @@
     </div>
   </section>
 
-  <section class="section section--paper">
+  <section class="section" data-section="workbooks" data-section-label="The workbook the trial used">
     <div class="wrap center">
       <h2 data-copy="research.h2.the-workbook-they-used">The workbook the trial’s participants used is the one on this site</h2>
       <!-- Kate, 6 Oct: the research backs every version, so this sends people

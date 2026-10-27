@@ -21,9 +21,9 @@
   <link rel="stylesheet" href="../css/site.css">
 </head>
 <body>
-<main>
+<main data-page="about">
 
-  <section class="section section--paper">
+  <section class="section section--paper" data-section="opening" data-section-label="Opening: about the movement" data-section-lock="first">
     <div class="wrap">
       <p class="kicker" data-copy="about.p.about-the-movement">About the movement</p>
       <h1 data-copy="about.h1.using-evidence-based-interventions">Using evidence-based interventions to make the world a more loving and forgiving place</h1>
@@ -36,7 +36,7 @@
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" data-section="beliefs" data-section-label="What we believe, how we work, where we are going">
     <div class="wrap grid grid--3">
       <div class="card"><h3 data-copy="about.h3.what-we-believe">What we believe</h3><p class="small" data-copy="about.p.we-believe-in-a">We believe in a world where everyone is skilled at forgiving. Not a world without wrongdoing, and not a world where wrongs go unnamed — forgiveness is compatible with accountability, truth, and justice.</p></div>
       <div class="card"><h3 data-copy="about.h3.how-we-work">How we work</h3><p class="small" data-copy="about.p.we-start-with-rigorous">We start with rigorous research, turn it into free materials, and put those materials in the hands of the people and communities who carry them. Everything we publish is grounded in evidence, and all of it is given away.</p></div>
@@ -44,7 +44,7 @@
     </div>
   </section>
 
-  <section class="section section--paper">
+  <section class="section section--paper" data-section="people" data-section-label="The people behind this">
     <div class="wrap">
       <h2 class="center" data-copy="about.h2.the-people-behind-this">The people behind this</h2>
       <div class="people" data-render="people" style="margin-top:1.6rem"></div>
@@ -52,7 +52,7 @@
   </section>
 
 
-  <section class="section">
+  <section class="section" data-section="publisher" data-section-label="Who is behind this site">
     <div class="wrap grid grid--2" style="align-items:center">
       <div>
         <h2 data-copy="about.h2.who-is-behind-this">Who is behind this site</h2>
@@ -72,7 +72,7 @@
   </section>
 
   <!-- Richard, 28 Sep: funding comes after who is behind the site. -->
-  <section class="section section--paper">
+  <section class="section section--paper" data-section="funding" data-section-label="How this work is funded">
     <div class="wrap">
       <h2 data-copy="about.h2.how-this-work-is">How this work is funded</h2>
       <ul class="boxes boxes--3">
@@ -85,7 +85,7 @@
   <!-- The HFP seal with "at Harvard University": body only, never the header
        (Richard, 25 Aug). At the foot of About (Kate, 28 Sep) and of Home (29 Sep
        call). js/site.js fills every one from BRAND — no page names the file. -->
-  <section class="section seal-foot">
+  <section class="section seal-foot" data-section="seal" data-section-label="The seal" data-section-lock="last" data-band="own">
     <div class="wrap center">
       <img data-render="hfp-seal-harvard" alt="Human Flourishing Program at Harvard University" width="160" height="160">
     </div>

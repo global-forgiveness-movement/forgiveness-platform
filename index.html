@@ -21,9 +21,12 @@
   <link rel="stylesheet" href="css/site.css">
 </head>
 <body>
-<main>
+<main data-page="home">
 
-  <section class="section section--paper">
+  <!-- Sections are named for /admin → Page order (js/page-order.js). Kate,
+       27 Oct: "Why forgive?" bigger, then the three doors, then the two
+       pictures. The three are separate sections that join into one band. -->
+  <section class="section section--paper" data-section="opening" data-section-label="Opening: the heading and Why forgive?" data-section-lock="first">
     <div class="wrap">
       <!-- Kate, 6 Oct: the definition moves down, above the video; the line
            that was under it becomes the headline. Both keep their keys, so
@@ -44,21 +47,14 @@
         <p class="hfp-eyebrow" data-render="hfp-eyebrow"></p>
         <h1 data-copy="home.p.we-have-an-evidence-based">Are you ready for your <i>forgiveness journey?</i></h1>
         <p class="hero-benefits" data-copy="home.p.learning-to-forgive-can-help">Learning to forgive can help you let go of resentment, ease depression and anxiety, and flourish.</p>
-        <p class="hero-why"><a class="btn btn--outline btn--go" href="research/" data-copy="home.a.why-forgive">Why forgive?</a></p>
+        <p class="hero-why"><a class="btn btn--primary btn--lg btn--go" href="research/" data-copy="home.a.why-forgive">Why forgive?</a></p>
         <p class="hero-lead" data-copy="home.p.an-evidence-based-workbook-you">Complete the evidence-based REACH Forgiveness Workbook alone or in a group.</p>
-        <div class="two-ways">
-          <figure>
-            <img src="assets/illustrations/on-your-own.webp" alt="" width="720" height="557">
-            <figcaption><b data-copy="home.b.on-your-own">On your own</b>
-              <span data-copy="home.span.work-through-the-workbook">Work through the free workbook at your own pace.</span></figcaption>
-          </figure>
-          <figure>
-            <img src="assets/illustrations/in-a-group.webp" alt="" width="720" height="550">
-            <figcaption><b data-copy="home.b.in-a-forgiveness-group">In a Forgiveness Group</b>
-              <span data-copy="home.span.do-the-lessons-on">Do the lessons on your own, then meet to talk them through, for solidarity, accountability, and community. Short videos guide each meeting.</span></figcaption>
-          </figure>
-        </div>
       </div>
+    </div>
+  </section>
+
+  <section class="section section--paper" data-section="doors" data-section-label="The three doors (solo, start a group, already in one)" data-band="join">
+    <div class="wrap">
       <!-- Wyatt, 21 Sep (option A): one question frames all three doors, and each
            heading is the visitor's own answer. Supersedes two of the door names
            from the 25 Aug call ("Do it solo", "Start a group"); the third is Kate's,
@@ -97,12 +93,31 @@
     </div>
   </section>
 
+  <section class="section section--paper" data-section="two-ways" data-section-label="On your own, or in a group (the two pictures)" data-band="join">
+    <div class="wrap">
+      <div class="hero-lede hero-lede--center">
+        <div class="two-ways">
+          <figure>
+            <img src="assets/illustrations/on-your-own.webp" alt="" width="720" height="557">
+            <figcaption><b data-copy="home.b.on-your-own">On your own</b>
+              <span data-copy="home.span.work-through-the-workbook">Work through the free workbook at your own pace.</span></figcaption>
+          </figure>
+          <figure>
+            <img src="assets/illustrations/in-a-group.webp" alt="" width="720" height="550">
+            <figcaption><b data-copy="home.b.in-a-forgiveness-group">In a Forgiveness Group</b>
+              <span data-copy="home.span.do-the-lessons-on">Do the lessons on your own, then meet to talk them through, for solidarity, accountability, and community. Short videos guide each meeting.</span></figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Kate, 6 Oct: the definition sits above the video. Same key as when it
        was the headline, so any saved edit travels with it. The numbers that
        were here moved into her Forgiveness Groups section, below.
        Kate, 14 Oct: the section is named, and what forgiveness is NOT moves
        here from under REACH, drawn so people read it — js/site.js. -->
-  <section class="section">
+  <section class="section" data-section="definition" data-section-label="The definition and the film">
     <div class="wrap">
       <p class="kicker def-kicker" data-copy="home.p.the-definition">The definition</p>
       <!-- The definition, written on the way Kate's animated screen does it
@@ -113,7 +128,7 @@
     </div>
   </section>
 
-  <section class="section section--paper">
+  <section class="section section--paper" data-section="method" data-section-label="The method: REACH Forgiveness">
     <div class="wrap">
       <p class="kicker" data-copy="home.p.the-method">The method</p>
       <h2 data-copy="home.h2.reach"><i>REACH</i> Forgiveness</h2>
@@ -124,7 +139,7 @@
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" data-section="evidence" data-section-label="The evidence">
     <div class="wrap">
       <p class="kicker" data-copy="home.p.the-evidence">The evidence</p>
       <h2 data-copy="home.h2.the-reach-forgiveness-workbook">The REACH Forgiveness Workbook works.</h2>
@@ -143,7 +158,7 @@
   </section>
   <!-- Kate, 6 Oct: "this is where we connect all the dots" — her section and
        words, with the numbers moved here from under the video. -->
-  <section class="section section--paper">
+  <section class="section section--paper" data-section="groups" data-section-label="Forgiveness Groups">
     <div class="wrap center">
       <h2 data-copy="home.h2.forgiveness-groups">Forgiveness Groups</h2>
       <p data-copy="home.p.on-this-website-you">On this website you will find all the tools to bring the evidence-based REACH Forgiveness Workbook to your community through Forgiveness Groups.</p>
@@ -151,7 +166,7 @@
       <p><a class="btn btn--plum btn--go" href="groups/" data-copy="home.a.how-forgiveness-groups-work-2">How Forgiveness Groups work</a></p>
     </div>
   </section>
-  <section class="section">
+  <section class="section" data-section="voices" data-section-label="What people say">
     <div class="wrap">
       <h2 class="center" data-copy="home.h2.what-people-say">What people say</h2>
       <div class="grid grid--3" data-render="testimonials" style="margin-top:1.4rem"></div>
@@ -162,7 +177,7 @@
   <!-- The HFP seal with "at Harvard University": body only, never the header
        (Richard, 25 Aug). At the foot of About (Kate, 28 Sep) and of Home (29 Sep
        call). js/site.js fills every one from BRAND — no page names the file. -->
-  <section class="section seal-foot">
+  <section class="section seal-foot" data-section="seal" data-section-label="The seal" data-section-lock="last" data-band="own">
     <div class="wrap center">
       <img data-render="hfp-seal-harvard" alt="Human Flourishing Program at Harvard University" width="160" height="160">
     </div>

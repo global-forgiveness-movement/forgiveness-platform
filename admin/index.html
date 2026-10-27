@@ -130,6 +130,7 @@
   import { esc } from '../js/blocks.js';
   import { listInbox, SUBMISSIONS } from '../js/inbox.js';
   import { repairFacilitators, peopleRows } from '../js/groups.js';
+  import { ORDERED_PAGES, orderedNames, sectionsOf, rememberOrder } from '../js/page-order.js';
 
   const $ = (sel, el = document) => el.querySelector(sel);
   const show = (name) => document.querySelectorAll('[data-view]').forEach((v) => (v.hidden = v.dataset.view !== name));
@@ -200,13 +201,13 @@
      can never silently lose a section. A tab's name must not repeat a
      collection's: the Inbox list was once also called "people", which hid
      the About team (Kate, 20 Oct) — scripts/qa/one-admin-tab.mjs checks. */
-  const LABELS = { messages: 'Messages', accounts: 'Accounts', pages: 'New pages', history: 'History — undo a change' };
+  const LABELS = { messages: 'Messages', accounts: 'Accounts', order: 'Page order', pages: 'New pages', history: 'History — undo a change' };
   const HOME = ['stats', 'reach', 'testimonials'];
   const MENU = [
     { group: 'Inbox', items: ['messages', 'accounts'] },
     { group: 'Homepage', items: HOME },
     { group: 'Around the site', items: Object.keys(COLLECTIONS).filter((k) => !HOME.includes(k)) },
-    { group: 'Your own pages', items: ['pages'] },
+    { group: 'Pages', items: ['order', 'pages'] },
     { group: 'Safety net', items: ['history'] },
   ];
   const ALL = MENU.flatMap((g) => g.items);
@@ -231,6 +232,7 @@
     if (name === 'messages') return renderMessagesTab();
     if (name === 'accounts') return renderPeopleTab();
     if (name === 'history') return renderHistoryTab();
+    if (name === 'order') return renderOrderTab();
     renderCollectionTab(name);
   }
   const head = (name, lede) => `<h2>${esc(labelOf(name))}</h2><p class="adm-lede">${esc(lede)}</p>`;
@@ -483,6 +485,71 @@
   }
 
   /* ---------------------------------------------- history */
+  /* ---------------------------------------------- page order */
+  /* Kate, 27 Oct: move the sections on each page. The sections come from
+     the page itself (its <main data-page> and data-section names), so this
+     list can never disagree with the site; js/page-order.js decides the
+     order shown and the bands, here and on the page alike. */
+  let orderPage = ORDERED_PAGES[0].id;
+  async function renderOrderTab() {
+    const page = ORDERED_PAGES.find((x) => x.id === orderPage) || ORDERED_PAGES[0];
+    $('[data-panel]').innerHTML = `${head('order', 'Move the sections of a page up or down, then save. The first and last sections stay where they are. The cream and white bands follow the new order on their own.')}
+      <label class="adm-pick" style="display:flex">Page: <select data-orderpage>${ORDERED_PAGES.map((x) =>
+        `<option value="${x.id}" ${x.id === page.id ? 'selected' : ''}>${esc(x.label)}</option>`).join('')}</select></label>
+      <div data-orderlist><p class="small muted">Loading the page’s sections…</p></div>`;
+    $('[data-orderpage]').addEventListener('change', (e) => { orderPage = e.target.value; renderOrderTab(); });
+    let defaults;
+    try {
+      const html = await (await fetch(`../${page.path}`, { cache: 'no-store' })).text();
+      const main = new DOMParser().parseFromString(html, 'text/html').querySelector('main[data-page]');
+      defaults = main ? sectionsOf(main) : [];
+    } catch { defaults = []; }
+    if (!defaults.length) {
+      $('[data-orderlist]').innerHTML = '<p class="form-msg form-msg--err">This page’s sections couldn’t be read. Reload and try again.</p>';
+      return;
+    }
+    const items = await getCollection('pageOrder');
+    const saved = items.find((x) => x.id === page.id)?.order || null;
+    const byName = Object.fromEntries(defaults.map((d) => [d.name, d]));
+    let order = orderedNames(defaults, saved);
+    const draw = () => {
+      $('[data-orderlist]').innerHTML = `<ol class="adm-order" style="list-style:none;padding:0;margin:1rem 0 0">${order.map((n, i) => {
+        const d = byName[n];
+        const fixed = d.lock === 'first' ? 'Stays first' : d.lock === 'last' ? 'Stays last' : '';
+        const canUp = !fixed && i > 0 && !byName[order[i - 1]].lock;
+        const canDown = !fixed && i < order.length - 1 && !byName[order[i + 1]].lock;
+        return `<li class="adm-item" style="display:flex;align-items:center;gap:0.6rem;margin:0 0 0.5rem">
+          <span style="flex:1">${esc(d.label)}</span>
+          ${fixed ? `<span class="small muted">${fixed}</span>` : `
+          <button type="button" class="adm-mini" data-orderup="${i}" aria-label="Move ${esc(d.label)} up" ${canUp ? '' : 'disabled'}>↑</button>
+          <button type="button" class="adm-mini" data-orderdown="${i}" aria-label="Move ${esc(d.label)} down" ${canDown ? '' : 'disabled'}>↓</button>`}
+        </li>`;
+      }).join('')}</ol>
+      <div class="adm-save"><button class="btn btn--primary" data-saveorder>Save — goes live now</button>
+        <button type="button" class="adm-mini" data-resetorder style="margin-left:0.5rem">Back to the original order</button>
+        <a class="small" href="../${page.path}" target="_blank" rel="noopener" style="margin-left:0.8rem">Open the page →</a>
+        <span class="form-msg" hidden role="status" style="margin-left:0.6rem"></span></div>`;
+    };
+    draw();
+    $('[data-orderlist]').addEventListener('click', async (e) => {
+      const up = e.target.closest('[data-orderup]'), down = e.target.closest('[data-orderdown]');
+      if (up || down) {
+        const i = Number((up || down).dataset[up ? 'orderup' : 'orderdown']), j = up ? i - 1 : i + 1;
+        [order[i], order[j]] = [order[j], order[i]];
+        return draw();
+      }
+      const reset = e.target.closest('[data-resetorder]');
+      if (!reset && !e.target.closest('[data-saveorder]')) return;
+      const next = items.filter((x) => x.id !== page.id);
+      if (!reset) next.push({ id: page.id, order: orderedNames(defaults, order) });
+      await saveCollection('pageOrder', next, editor.email);
+      items.splice(0, items.length, ...next);
+      rememberOrder(next);
+      if (reset) { order = orderedNames(defaults, null); draw(); }
+      flash(reset ? 'Back to the original order — it’s live.' : 'Saved — it’s live.');
+    });
+  }
+
   async function renderHistoryTab() {
     const entries = await listHistory();
     $('[data-panel]').innerHTML = `

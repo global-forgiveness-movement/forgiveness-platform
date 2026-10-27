@@ -5,12 +5,13 @@
 
 import { NAV, FOOTER_COLS, BRAND, ACCOUNT_LINKS, FORGIVING_BENEFITS, TRIAL } from './data.js';
 import { changeCard, percentChange } from './change-bar.js';
-import { getVideos, getPages, fieldAttr } from './content.js';
+import { getVideos, getPages, fieldAttr, getCollection } from './content.js';
+import { applyPageOrder, cachedOrder, rememberOrder } from './page-order.js';
 import { recordDownload } from './metrics.js';
 import { videoFrame } from './video.js';
 import { ensureGate, leaf } from './gate.js';
 
-export const STAMP = 'GFM-V1 · 2026-10-27a';
+export const STAMP = 'GFM-V1 · 2026-10-27b';
 
 /* Resolve everything relative to the site root (js/ → root), so pages work
    at any depth and on any host (github.io project path or a custom domain). */
@@ -304,6 +305,11 @@ function externalLinksInNewTabs() {
 
 async function buildShell() {
   const main = document.querySelector('main');
+  /* Sections in the editor's order (js/page-order.js): this browser's last
+     known order at once, then the store's, which wins. */
+  applyPageOrder(document, cachedOrder());
+  getCollection('pageOrder').then((items) => { rememberOrder(items); applyPageOrder(document, items); })
+    .catch(() => { /* the HTML order stands */ });
   externalLinksInNewTabs();
   document.body.prepend(buildHeader());
   document.body.append(buildFooter());
