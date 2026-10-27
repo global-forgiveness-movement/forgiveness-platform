@@ -36,6 +36,16 @@ ok(roleFor({ surface: 'mypath', user: { id: 'u' }, membership: { seriesId: 'secu
 ok(roleFor({ surface: 'mypath', user: { id: 'u' }, membership: { seriesId: 'secular' }, codeDoc: { facilitator: 'u' } }) === 'facilitator', 'the code’s record names you: facilitator');
 ok(roleFor({ surface: 'mypath', user: { id: 'u' }, membership: { seriesId: 'secular' }, codeDoc: { seriesId: 'secular' } }) === 'member', 'a pre-28 Sep code naming nobody: member, so no tick is offered that the database would refuse');
 
+console.log('Each tick says what it opens; each locked film says what opens it (27 Oct)');
+{
+  const v = deriveSeries({ series: S, group: { steps: {} }, me: {}, role: 'facilitator', now: NOW, video: V });
+  ok(/opens Meeting 1/.test(act(step(v, 'prep'), 'group').note), 'the first tick says it opens Meeting 1');
+  ok(/opens Meeting 2/.test(act(step(v, 'meet-1'), 'group').note), 'the Meeting 1 tick says it opens Meeting 2');
+  ok(!step(v, 'meet-1').video.playable && /Everyone has their workbook/.test(step(v, 'meet-1').video.note), 'Meeting 1’s film, still shut, names the tick that opens it');
+  const v2 = deriveSeries({ series: S, group: { steps: { prep: { done: true } } }, me: {}, role: 'facilitator', now: NOW, video: V });
+  ok(/Meeting 1 is ticked/.test(step(v2, 'meet-2').video.note), 'Meeting 2’s film names Meeting 1');
+}
+
 console.log('Visitor and none see the plain map');
 for (const role of ['visitor', 'none']) {
   const v = deriveSeries({ series: S, group: { steps: { 'meet-1': { done: true } } }, role, now: NOW, video: V });

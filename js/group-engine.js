@@ -193,15 +193,32 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
     later = later || self;
   }
 
+  /* What each gate tick opens, and what holds each step shut (Wyatt, 27 Oct:
+     "it's not clear to users that they have to check the checkboxes before
+     moving on"). In words a person can act on, named by the step itself. */
+  const nextMeeting = (i) => base.slice(i + 1).find((b) => b.kind === 'together') || null;
+  const opensLine = (s, i) => {
+    const m = nextMeeting(i);
+    if (!m) return 'Tick this when you’ve met. It completes the series.';
+    return s.kind === 'together'
+      ? `Tick this after you meet. It opens Meeting ${m.n}.`
+      : `Tick this when everyone has one. It opens Meeting ${m.n}.`;
+  };
+  const heldBy = (gate) => gate.kind === 'together'
+    ? `Playable once Meeting ${gate.n} is ticked done above.`
+    : `Playable once “${GROUP_TICK_LABEL.prep}” is ticked above.`;
+
   let blocked = false;
-  const steps = base.map((s) => {
+  let blocker = null;
+  const steps = base.map((s, i) => {
     const st = shared[s.id] || {};
     const open = !blocked;
+    const held = blocker;
     let state;
     if (!can.inGroup) state = 'preview';
     else if (s.gate) state = doneGate[s.id].done ? 'done' : open ? 'open' : 'upcoming';
     else state = mine[s.id] ? 'done' : open ? 'open' : 'upcoming';
-    if (s.gate && !doneGate[s.id].done) blocked = true;
+    if (s.gate && !doneGate[s.id].done && !blocked) { blocked = true; blocker = s; }
 
     const actions = [];
     if (s.gate && can.tickGroup) {
@@ -211,7 +228,8 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
         label: s.kind === 'together' ? GROUP_TICK_LABEL.meet : GROUP_TICK_LABEL.prep,
         checked: g.done,
         locked: g.byDate || g.byLater,
-        note: g.byDate ? 'Done — the meeting time has passed.' : g.byLater ? 'Done — a later meeting is marked done.' : '',
+        note: g.byDate ? 'Done — the meeting time has passed.' : g.byLater ? 'Done — a later meeting is marked done.' : opensLine(s, i),
+        opens: true,
       });
     }
     /* Richard, 29 Sep call: a reminder that everyone has made a free account
@@ -254,7 +272,7 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
         note: playable
           ? (s.src.video ? '' : 'A placeholder film. This meeting’s own film is coming soon.')
           : can.playOpen
-            ? 'Opens once the step before it is done.'
+            ? (held ? heldBy(held) : 'Playable once the step above is ticked.')
             : 'Your facilitator plays this at the meeting. It opens here to re-watch once your group has met.',
       };
     }

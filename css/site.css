@@ -23,7 +23,7 @@
   --slate: #5b7e96;
   --ink: #24333e;
   --line: rgba(0, 61, 87, 0.14);
-  --muted: rgba(36, 51, 62, 0.66);
+  --muted: rgba(36, 51, 62, 0.76);   /* darker for older eyes (27 Oct polish) */
 
   --font-head: 'Poppins', 'Avenir Next', 'Trebuchet MS', sans-serif;
   --font-body: 'Nunito Sans', 'Avenir', 'Segoe UI', sans-serif;
@@ -138,7 +138,7 @@ main { flex: 1; width: 100%; }
 .section--navy .muted { color: rgba(242, 244, 240, 0.7); }
 .kicker {
   font-family: var(--font-head); font-weight: 600; font-size: 0.78rem;
-  letter-spacing: 0.14em; text-transform: uppercase; color: var(--plum);
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--teal-deep);
   margin: 0 0 0.7rem;
 }
 .section--navy .kicker { color: var(--mustard); }
@@ -201,7 +201,7 @@ button.btn { font-size: 1rem; }
 .door {
   display: flex; flex-direction: column; gap: 0.4rem;
   background: var(--white); border: 2px solid var(--line); border-radius: var(--radius-soft);
-  padding: 2.4rem 1.4rem 2.2rem;   /* Wyatt, 6 Oct: less cramped */
+  padding: 1.9rem 1.5rem 1.8rem;   /* Wyatt, 6 Oct: less cramped */
 }
 .door:hover { border-color: var(--teal); }
 .door .kicker { margin: 0 0 0.2rem; }
@@ -218,7 +218,7 @@ button.btn { font-size: 1rem; }
 .door-meta { font-size: 0.9rem; color: var(--muted); }
 .door-meta a { color: var(--teal-deep); }
 /* The one question the three doors answer. */
-.doors-ask { max-width: none; margin: 2.2rem 0 0; font-family: var(--font-head); font-weight: 600; font-size: clamp(1.25rem, 2.4vw, 1.55rem); color: var(--navy); }
+.doors-ask { max-width: none; margin: 2.6rem 0 0; font-family: var(--font-head); font-weight: 600; font-size: clamp(1.25rem, 2.4vw, 1.55rem); color: var(--navy); }
 .doors-ask + .doors { margin-top: 1rem; }
 
 /* Home hero: the three doors ARE the hero's call to action, so the lede stays
@@ -244,7 +244,7 @@ h1 i, h1 em { font-style: normal; color: var(--teal); }
 @media (min-width: 720px) {
   .doors { grid-template-rows: repeat(4, auto); row-gap: 0; }
   .doors > .door { display: grid; grid-row: span 4; grid-template-rows: subgrid; align-content: start; row-gap: 0; }
-  .doors > .door > h3 { align-self: end; }
+  .doors > .door > h3 { align-self: start; }
 }
 .video.video--feature { max-width: 60rem; margin: 0 auto; }
 
@@ -254,7 +254,7 @@ h1 i, h1 em { font-style: normal; color: var(--teal); }
 .stats { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); }
 .stat { text-align: center; padding: 0.9rem 0.4rem; }
 .stat b { display: block; font-family: var(--font-head); font-weight: 700; font-size: clamp(1.5rem, 3.4vw, 2.1rem); color: var(--teal-deep); }
-.stat span { font-size: 0.85rem; color: var(--muted); }
+.stat span { font-size: 0.92rem; color: var(--muted); }
 .section--navy .stat b { color: var(--mustard); }
 .section--navy .stat span { color: rgba(242, 244, 240, 0.7); }
 
@@ -354,7 +354,7 @@ ol.boxes--bare > li::before { top: 0; }
 .reach li:nth-child(4) .letter { background: var(--slate); }
 .reach li:nth-child(5) .letter { background: var(--sage); color: var(--navy); }
 .reach b { display: block; font-family: var(--font-head); font-size: 0.98rem; color: var(--navy); }
-.reach span { font-size: 0.85rem; color: var(--muted); }
+.reach span { font-size: 0.92rem; line-height: 1.45; color: var(--muted); }
 
 /* ------------------------------------------------ video */
 .video { position: relative; border-radius: var(--radius); overflow: hidden; background: var(--navy-deep); box-shadow: var(--shadow); }
@@ -368,7 +368,7 @@ figure.video:empty { aspect-ratio: 16 / 9; }
 /* ------------------------------------------------ quotes */
 .quote { background: var(--white); border-left: 4px solid var(--sage); border-radius: 0 var(--radius) var(--radius) 0; padding: 1.2rem 1.4rem; margin: 0; }
 .quote p { font-size: 1.02rem; margin-bottom: 0.6rem; }
-.quote footer { font-family: var(--font-head); font-weight: 500; font-size: 0.85rem; color: var(--muted); }
+.quote footer { font-family: var(--font-body); font-weight: 600; font-size: 0.92rem; color: var(--muted); }
 
 /* ------------------------------------------------ forms */
 .form { display: grid; gap: 0.9rem; max-width: 460px; }
@@ -610,24 +610,49 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 /* Only the step's words gray out; anything the viewer can still do (a date
    to add ahead of time, a tick) stays full strength. */
 .flow-step.is-upcoming .flow-body { background: rgba(0, 61, 87, 0.03); border-color: rgba(0, 61, 87, 0.25); }
-.flow-step.is-upcoming :is(.flow-tag, .flow-body > b, .flow-detail, .flow-when, .flow-video-locked) { opacity: 0.6; filter: grayscale(0.9); }
+.flow-step.is-upcoming :is(.flow-tag, .flow-body > b, .flow-detail, .flow-when) { opacity: 0.6; filter: grayscale(0.9); }
 .flow-step.is-saving { opacity: 0.6; pointer-events: none; }
 
 .flow-extras { display: grid; gap: 0.6rem; margin-top: 0.6rem; }
 .flow-extras:empty { display: none; }
 .flow-when { margin: 0; font-size: 0.95rem; }
 .flow-video { margin: 0; }
-.flow-video-locked { display: flex; align-items: center; gap: 0.5rem; margin: 0; padding: 0.55rem 0.75rem; border-radius: var(--radius); background: rgba(0, 61, 87, 0.06); font-size: 0.88rem; color: var(--muted); }
-.flow-video-locked svg { flex: none; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+/* A film not yet playable: its own 16:9 place, grayed, with a lock and
+   what opens it (js/series.js videoHtml). */
+.flow-video--locked { background: repeating-linear-gradient(135deg, #dfe3e2 0 14px, #e7eae9 14px 28px); box-shadow: none; border: 1.5px dashed rgba(0, 61, 87, 0.28); }
+.flow-video-shut { aspect-ratio: 16 / 9; display: grid; place-content: center; justify-items: center; gap: 0.6rem; padding: 1rem 1.4rem; text-align: center; color: var(--navy); font-weight: 600; font-size: 0.98rem; line-height: 1.4; }
+.flow-video-shut span { max-width: 26rem; }
+.flow-video-shut svg { width: 34px; height: 34px; padding: 0.55rem; box-sizing: content-box; border-radius: 50%; background: rgba(255, 255, 255, 0.85); fill: none; stroke: var(--navy); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .flow-materials { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; margin: 0; font-size: 0.9rem; }
 .flow-material { font-weight: 600; }
 .flow-material--soon { color: var(--plum); font-weight: 600; }
 .flow-tally { margin: 0; font-size: 0.88rem; color: var(--muted); }
 
-.flow-check { display: flex; align-items: flex-start; gap: 0.6rem; margin: 0; padding: 0.5rem 0.7rem; border-radius: var(--radius); background: #fff; border: 1px solid var(--line); cursor: pointer; font-weight: 600; font-size: 0.95rem; }
-.flow-check input { width: 1.25rem; height: 1.25rem; margin: 0.1rem 0 0; accent-color: var(--teal); flex: none; }
-.flow-check small { display: block; font-weight: 400; font-size: 0.82rem; color: var(--muted); }
+/* THE TO-DO (js/series.js todoHtml): a box headed "To do" holding the
+   step's ticks, each a large square box that reads as a checkbox. The real
+   input stays in place, invisible, so keyboard and screen readers use it. */
+.flow-todo { display: grid; gap: 0.5rem; padding: 0.8rem 0.9rem 0.9rem; border-radius: var(--radius); background: #fff; border: 2px solid var(--mustard); box-shadow: 0 6px 18px -12px rgba(0, 61, 87, 0.45); }
+.flow-todo-h { margin: 0; font-family: var(--font-head); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--navy); display: flex; align-items: center; gap: 0.45rem; }
+.flow-todo-h::before { content: ""; width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--mustard); }
+/* Only the step that is open now calls for attention; later ones wait. */
+.flow-step.is-upcoming .flow-todo:not(.is-done) { border-color: var(--line); box-shadow: none; }
+.flow-step.is-upcoming .flow-todo:not(.is-done) .flow-todo-h::before { background: var(--line); }
+.flow-todo.is-done { border-color: var(--teal); box-shadow: none; background: rgba(0, 136, 122, 0.06); }
+.flow-todo.is-done .flow-todo-h { color: var(--teal-deep); }
+.flow-todo.is-done .flow-todo-h::before { background: var(--teal); }
+.flow-check { position: relative; display: flex; align-items: flex-start; gap: 0.75rem; margin: 0; padding: 0.35rem 0.2rem; cursor: pointer; font-weight: 700; font-size: 1.02rem; color: var(--navy); line-height: 1.35; }
+.flow-check input { position: absolute; opacity: 0; width: 1.9rem; height: 1.9rem; margin: 0; left: 0.2rem; top: 0.35rem; cursor: pointer; }
+.flow-box { flex: none; width: 1.9rem; height: 1.9rem; display: grid; place-items: center; border-radius: 6px; border: 2.5px solid var(--navy); background: #fff; transition: background 0.15s, border-color 0.15s; }
+.flow-box svg { width: 1.3rem; height: 1.3rem; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+.flow-check:hover .flow-box { border-color: var(--teal); background: rgba(0, 136, 122, 0.08); }
+.flow-check input:checked + .flow-box { background: var(--teal); border-color: var(--teal); }
+.flow-check input:checked + .flow-box svg { opacity: 1; }
+.flow-check input:focus-visible + .flow-box { outline: 3px solid var(--mustard); outline-offset: 2px; }
+.flow-check > span:last-child { padding-top: 0.2rem; }
+.flow-check small { display: block; margin-top: 0.15rem; font-weight: 400; font-size: 0.92rem; color: var(--muted); }
+.flow-check--opens:not(.is-locked) input:not(:checked) ~ span small { color: var(--navy); font-weight: 600; }
 .flow-check.is-locked { cursor: default; }
+.flow-check.is-locked .flow-box { opacity: 0.7; }
 .flow-meet summary { cursor: pointer; font-weight: 600; font-size: 0.92rem; color: var(--teal-deep); }
 .flow-meet-form { display: grid; gap: 0.5rem; margin-top: 0.5rem; }
 .flow-meet-form label { display: grid; gap: 0.2rem; font-size: 0.88rem; font-weight: 600; }
@@ -925,20 +950,36 @@ html[data-shell-ready]:not([data-copy-editing]) .def[data-reveal]:not(.is-on) > 
 
 /* THE HFP LINE above a headline (js/site.js renderEyebrows; Kate, 14 Oct):
    the seal and the program's name, Home and Research. */
-.hfp-eyebrow { display: flex; align-items: center; gap: 0.7rem; margin: 0 0 1.1rem; font-family: var(--font-head); font-weight: 600; font-size: 1rem; letter-spacing: 0.02em; color: var(--plum); }
-.hfp-eyebrow img { width: 56px; height: 56px; flex: none; }
+/* Quiet on purpose (Wyatt and Visitor 4, 27 Oct): the plum fought the seal
+   and the headline, so the line is small, navy and set like a label. */
+.hfp-eyebrow { display: flex; align-items: center; gap: 0.7rem; margin: 0 0 1.4rem; font-family: var(--font-body); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--navy); }
+.hfp-eyebrow img { width: 44px; height: 44px; flex: none; }
 .hero-lede--center .hfp-eyebrow { justify-content: center; }
 @media (max-width: 560px) {
-  .hfp-eyebrow { flex-direction: column; align-items: flex-start; gap: 0.4rem; font-size: 0.95rem; }
-  .hero-lede--center .hfp-eyebrow { align-items: center; }
-  .hfp-eyebrow img { width: 44px; height: 44px; }
+  .hfp-eyebrow { font-size: 0.74rem; gap: 0.55rem; }
+  .hfp-eyebrow img { width: 36px; height: 36px; }
 }
 /* "The definition" sits on the definition's own left edge. */
 .def-kicker { max-width: 40rem; margin: 0 auto 0.4rem; padding: 0 0.5rem; }
 
-/* Home's hero, Kate 14 Oct: what forgiving does, then "Why forgive?". */
-.hero-benefits { text-wrap: balance; font-family: var(--font-head); font-weight: 500; font-size: clamp(1.15rem, 2.4vw, 1.45rem); line-height: 1.4; color: var(--navy); max-width: 36rem; margin: 0.6rem auto 0; }
-.hero-why { margin: 1.3rem auto 1.4rem; }
+/* HOME'S OPENING (Wyatt, 27 Oct): words left, one picture right, and only
+   two type styles — Poppins for the headline and the button, Nunito Sans for
+   everything else. Sized in rem, never by the window, and held inside the
+   one --page column, so a very wide screen gets the same opening with more
+   cream around it, and the three doors still start on the first screen. */
+.hero-band { padding-block: clamp(1.8rem, 4.5vw, 3rem) 0.4rem; }
+.hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 1.5rem 3rem; align-items: center; }
+.hero-text > * { margin-left: 0; margin-right: 0; }
+.hero h1 { font-size: clamp(2.1rem, 4.4vw, 3.1rem); line-height: 1.1; letter-spacing: -0.01em; margin: 0 0 0.9rem; max-width: 16ch; text-wrap: balance; }
+.hero-benefits { font-family: var(--font-body); font-weight: 400; font-size: clamp(1.15rem, 1.8vw, 1.3rem); line-height: 1.5; color: var(--ink); max-width: 30rem; margin: 0 0 1.6rem; text-wrap: pretty; }
+.hero-why { margin: 0 0 1.3rem; }
+.hero .hero-lead { font-size: 1rem; line-height: 1.55; color: var(--muted); max-width: 30rem; margin: 0; }
+.hero-art { width: 100%; max-width: 30rem; height: auto; justify-self: end; }
+@media (max-width: 860px) {
+  .hero { grid-template-columns: minmax(0, 1fr); }
+  .hero-art { order: -1; justify-self: start; max-width: 15rem; margin-bottom: -0.5rem; }
+}
+@media (max-width: 560px) { .hero-art { max-width: 10.5rem; } }
 
 /* WHAT FORGIVENESS ISN'T (js/site.js renderDefinitionNot): two halves under
    the definition. Three words struck through in plum, three ticked in teal;

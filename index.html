@@ -16,7 +16,6 @@
   <meta property="og:image:alt" content="The Global Forgiveness Movement logo on cream">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="description" content="Forgiveness can be learned, and we have a do-it-yourself version of one method that has been tested. Free workbooks from the Human Flourishing Program — do it solo, or start a Forgiveness Group.">
-  <meta name="robots" content="noindex">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z' fill='%2300887a' transform='rotate(40 12 12)'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/site.css">
 </head>
@@ -26,29 +25,28 @@
   <!-- Sections are named for /admin → Page order (js/page-order.js). Kate,
        27 Oct: "Why forgive?" bigger, then the three doors, then the two
        pictures. The three are separate sections that join into one band. -->
-  <section class="section section--paper" data-section="opening" data-section-label="Opening: the heading and Why forgive?" data-section-lock="first">
+  <section class="section section--paper hero-band" data-section="opening" data-section-label="Opening: the heading and Why forgive?" data-section-lock="first">
     <div class="wrap">
-      <!-- Kate, 6 Oct: the definition moves down, above the video; the line
-           that was under it becomes the headline. Both keep their keys, so
-           anything an editor already changed travels with them. Pictures and
-           words centered (Kate); the pictures are Gemini's, drawn in the
-           workbook's own botanical style, with no people in them (Kate: "not
-           so people-y"; Wyatt, 6 Oct). -->
-      <div class="hero-lede hero-lede--center">
-        <!-- October 6 call: Kate's tagline is the headline, the evidence-based
-             line a paragraph under it, then the pictures. The headline keeps
-             its key, which holds Kate's saved tagline; the line has its own
-             key, so neither can overwrite the other again.
-             Kate, 14 Oct (Wyatt: yes, with Harvard): the HFP line is back
-             above the headline; under it, what forgiving does (her idea, new
-             words — each claim is one of the trial's results: ill will,
-             depression, anxiety, flourishing; anger was not measured, so it
-             is left out), then "Why forgive?" to Research, above the doors. -->
-        <p class="hfp-eyebrow" data-render="hfp-eyebrow"></p>
-        <h1 data-copy="home.p.we-have-an-evidence-based">Are you ready for your <i>forgiveness journey?</i></h1>
-        <p class="hero-benefits" data-copy="home.p.learning-to-forgive-can-help">Learning to forgive can help you let go of resentment, ease depression and anxiety, and flourish.</p>
-        <p class="hero-why"><a class="btn btn--primary btn--lg btn--go" href="research/" data-copy="home.a.why-forgive">Why forgive?</a></p>
-        <p class="hero-lead" data-copy="home.p.an-evidence-based-workbook-you">Complete the evidence-based REACH Forgiveness Workbook alone or in a group.</p>
+      <!-- Wyatt, 27 Oct: a calmer, more professional opening. Words on the
+           left, left-aligned, in two type styles (Poppins for the headline
+           and button, Nunito Sans for the rest); one picture on the right,
+           drawn by scripts/art/gen-illustration.py (hero-path). Every line
+           keeps its data-copy key, so Kate's saved words travel with it.
+           This replaces Kate's 6 Oct "pictures and words centered" here;
+           Wyatt is taking it to her. The pictures below stay centered.
+           October 6 call: Kate's tagline is the headline, the evidence-based
+           line a paragraph under it. Kate, 14 Oct: the HFP line above the
+           headline; what forgiving does under it, then "Why forgive?" to
+           Research, above the doors. -->
+      <div class="hero">
+        <div class="hero-text">
+          <p class="hfp-eyebrow" data-render="hfp-eyebrow"></p>
+          <h1 data-copy="home.p.we-have-an-evidence-based">Are you ready for your <i>forgiveness journey?</i></h1>
+          <p class="hero-benefits" data-copy="home.p.learning-to-forgive-can-help">Learning to forgive can help you let go of resentment, ease depression and anxiety, and flourish.</p>
+          <p class="hero-why"><a class="btn btn--primary btn--lg btn--go" href="research/" data-copy="home.a.why-forgive">Why forgive?</a></p>
+          <p class="hero-lead" data-copy="home.p.an-evidence-based-workbook-you">Complete the evidence-based REACH Forgiveness Workbook alone or in a group.</p>
+        </div>
+        <img class="hero-art" src="assets/illustrations/hero-path.webp" alt="" width="720" height="553">
       </div>
     </div>
   </section>
@@ -159,7 +157,7 @@
   <!-- Kate, 6 Oct: "this is where we connect all the dots" — her section and
        words, with the numbers moved here from under the video. -->
   <section class="section section--paper" data-section="groups" data-section-label="Forgiveness Groups">
-    <div class="wrap center">
+    <div class="wrap">
       <h2 data-copy="home.h2.forgiveness-groups">Forgiveness Groups</h2>
       <p data-copy="home.p.on-this-website-you">On this website you will find all the tools to bring the evidence-based REACH Forgiveness Workbook to your community through Forgiveness Groups.</p>
       <div class="stats" data-render="group-stats"></div>
@@ -168,7 +166,7 @@
   </section>
   <section class="section" data-section="voices" data-section-label="What people say">
     <div class="wrap">
-      <h2 class="center" data-copy="home.h2.what-people-say">What people say</h2>
+      <h2 data-copy="home.h2.what-people-say">What people say</h2>
       <div class="grid grid--3" data-render="testimonials" style="margin-top:1.4rem"></div>
     </div>
   </section>

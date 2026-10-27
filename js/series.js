@@ -20,6 +20,7 @@ import { videoFrame } from './video.js';
 const ICON_TOGETHER = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8.5" cy="8" r="3.2"/><circle cx="15.5" cy="8" r="3.2"/><path d="M2.5 19c.6-3.4 3-5.3 6-5.3s5.4 1.9 6 5.3M9.5 19c.6-3.4 3-5.3 6-5.3s5.4 1.9 6 5.3"/></svg>';
 const ICON_OWN = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 19.5c.7-3.6 3.3-5.6 6.5-5.6s5.8 2 6.5 5.6"/></svg>';
 const ICON = { own: ICON_OWN, together: ICON_TOGETHER };
+const ICON_LOCK = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V7.8a3.5 3.5 0 0 1 7 0v2.7"/></svg>';
 /* The two lanes' names — ONE pair for the key and the lanes (Kate, 14 Oct:
    "on your own time prior to the meeting", not "on your own"). */
 const LANE = { own: 'On your own time, before the meeting', together: 'Together' };
@@ -57,15 +58,27 @@ export function meetingLine(m) {
   return bits.join(' · ');
 }
 
-function actionHtml(step, a) {
-  if (a.type === 'check') {
-    return `<label class="flow-check${a.locked ? ' is-locked' : ''}">
+/* THE TO-DO (Wyatt, 27 Oct: the ticks read as rounded squares, not as a
+   to-do list, so people missed that ticking opens the next step). Every
+   tick a step offers sits in one box headed "To do", each a large square
+   box with its words beside it; a tick that opens the next step says so
+   underneath (the engine's note), and turns into "Done" once ticked. */
+function checkHtml(step, a) {
+  return `<label class="flow-check${a.locked ? ' is-locked' : ''}${a.opens ? ' flow-check--opens' : ''}">
         <input type="checkbox" data-act="check" data-scope="${a.scope}" data-step="${a.target || step.id}"${a.checked ? ' checked' : ''}${a.locked ? ' disabled' : ''}>
+        <span class="flow-box" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
         <span>${esc(a.label)}${a.note ? `<small>${esc(a.note)}</small>` : ''}</span>
       </label>`;
-  }
-  if (a.type === 'meeting') return meetingForm(step.id, a);
-  return '';
+}
+
+function todoHtml(step) {
+  const checks = step.actions.filter((a) => a.type === 'check');
+  if (!checks.length) return '';
+  const done = checks.every((a) => a.checked);
+  return `<div class="flow-todo${done ? ' is-done' : ''}">
+      <p class="flow-todo-h">${done ? 'Done' : 'To do'}</p>
+      ${checks.map((a) => checkHtml(step, a)).join('')}
+    </div>`;
 }
 
 /* THE meeting form — one, wherever a date and place are set: folded inside
@@ -131,7 +144,11 @@ function videoHtml(v) {
         ${v.note ? `<figcaption>${esc(v.note)}</figcaption>` : ''}
       </figure>`;
   }
-  return `<p class="flow-video-locked">${ICON_TOGETHER}<span>${esc(v.note)}</span></p>`;
+  /* Not yet playable: the film's place, grayed, saying what opens it
+     (Wyatt, 27 Oct), so nobody wonders where the video went. */
+  return `<figure class="video flow-video flow-video--locked">
+        <div class="flow-video-shut">${ICON_LOCK}<span>${esc(v.note)}</span></div>
+      </figure>`;
 }
 
 function materialHtml(m, base) {
@@ -149,7 +166,8 @@ function stepHtml(view, s, base) {
     s.materials.filter((m) => m.kind === 'code').map((m) => `<ul class="flow-bullets"><li>${esc(m.label)} <span class="groupcode">${esc(m.code)}</span>${m.copy ? ` <button type="button" class="btn btn--outline btn--sm" data-copycode="${esc(m.code)}">${esc(m.copy)}</button>` : ''}</li></ul>`).join(''),
     s.materials.some((m) => m.kind !== 'code') ? `<p class="flow-materials">${s.materials.filter((m) => m.kind !== 'code').map((m) => materialHtml(m, base)).join('')}</p>` : '',
     s.tally ? `<p class="flow-tally">${s.tally.done} of ${s.tally.of} have ticked these lessons</p>` : '',
-    s.actions.map((a) => actionHtml(s, a)).join(''),
+    todoHtml(s),
+    s.actions.filter((a) => a.type === 'meeting').map((a) => meetingForm(s.id, a)).join(''),
   ].join('');
   return `
   <li class="flow-step flow-step--${s.kind}${state}" data-step="${s.id}">

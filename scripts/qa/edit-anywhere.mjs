@@ -85,7 +85,6 @@ try { ({ chromium } = await import('playwright')); } catch {
 const browser = await chromium.launch();
 try {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
-  await ctx.addInitScript(() => localStorage.setItem('gfm.gate.v2', 'open'));
   await ctx.route('**/js/firebase-config.js', (r) =>
     r.fulfill({ contentType: 'text/javascript', body: 'export const firebaseConfig = null;' }));
   await ctx.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());   // no network beyond the site

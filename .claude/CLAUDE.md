@@ -91,8 +91,8 @@ the way out always visible. "There's no hurry" is design language here.
 
 ## Safety
 
-- The password gate is a curtain, not a lock. Never present it as security, never put anything
-  behind it that would matter if read straight from the repo.
+- The site is public. Sign-in on the interactive workbook is a curtain, not a lock: never put
+  anything behind it that would matter if read straight from the repo.
 - `/plan/` is a client-facing document Kate has the link to. Don't edit or move it casually.
 - What's on `main` is what's live (GitHub Pages, no build step). Treat the diff as the thing to
   check, not the push. Bump the build stamp in `js/site.js` on every push so a stale page is
@@ -131,10 +131,9 @@ definition in `~/.claude/agents/`, as the GSD workflows' own fallback prescribes
   transferable to a successor — moved from his personal account 2026-08-21). Site serves at
   `global-forgiveness-movement.github.io/forgiveness-platform/` until the custom domain lands.
 - **Stack:** vanilla HTML/CSS/JS ES modules, no build, GitHub Pages from `main` root.
-- **Gate password:** `reach1` for the site. **Kate and Richard now have it** (Wyatt, 1 Sep) —
-  the earlier "don't let Kate see it yet" hold is lifted; they are reviewing via the feedback
-  page. The `/plan/` scope doc keeps its own separate password `reach`. To rotate either, change
-  `GATE_HASH` in `js/gate.js` and bump its `GATE_KEY`.
+- **No site password since 27 Oct** (Wyatt): the gate is gone and every public page is open to
+  search engines (`robots.txt`, `sitemap.xml`). `/plan/` keeps its own separate password `reach`;
+  /admin, My Path, Join and the 404 stay `noindex`.
 - **Brand:** the official GFM palette — cream `#F5F1E2`, teal `#00887A`, ink navy `#003D57`,
   plum `#770061`, mustard `#FAB812`, plus sage `#8FBCAD` as our derived accent (not in the
   official palette); Poppins / Nunito Sans / Sacramento, self-hosted. Official hexes adopted

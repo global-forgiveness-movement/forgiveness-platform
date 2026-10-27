@@ -1,5 +1,5 @@
 /* The one shell. Every standard page loads this module and nothing else.
-   It runs the pre-launch gate (js/gate.js), injects the shared header/nav/
+   It injects the shared header/nav/
    footer, hydrates video embeds from data.js, and counts workbook downloads.
    Written once, used everywhere — page files contain only their <main>. */
 
@@ -9,9 +9,12 @@ import { getVideos, getPages, fieldAttr, getCollection } from './content.js';
 import { applyPageOrder, cachedOrder, rememberOrder } from './page-order.js';
 import { recordDownload } from './metrics.js';
 import { videoFrame } from './video.js';
-import { ensureGate, leaf } from './gate.js';
 
-export const STAMP = 'GFM-V1 · 2026-10-27b';
+/* The header's stand-in mark, drawn while the brand file is missing. */
+const leaf = (fill) =>
+  `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z" fill="${fill}" transform="rotate(40 12 12)"/></svg>`;
+
+export const STAMP = 'GFM-V1 · 2026-10-27c';
 
 /* Resolve everything relative to the site root (js/ → root), so pages work
    at any depth and on any host (github.io project path or a custom domain). */
@@ -340,4 +343,4 @@ async function buildShell() {
   main?.dispatchEvent(new CustomEvent('shell:ready', { bubbles: true }));
 }
 
-ensureGate(buildShell);
+buildShell();
