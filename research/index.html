@@ -79,17 +79,19 @@
       <!-- "Participants worked through… a waitlist group… at two weeks…" now
            lives in the three steps and the charts below (12 Oct). -->
       <!-- Wyatt, 12 Oct: "what do the 3 numbers mean? what were they out of?"
-           Each result is drawn as both groups' averages, before and two weeks
-           later, on the questionnaire's full range; the effect size sits
-           underneath, named for what it is. Drawn from TRIAL.effects alone.
+           October 27 call (Richard and Wyatt): too much detail for
+           non-scientists, so each result is now two bars, both groups two
+           weeks later, on the questionnaire's own scale, in the style of the
+           clients' film. The before scores and effect sizes live in the
+           table. Drawn from TRIAL.effects alone.
            NEW copy and a NEW graphic, flagged for Kate (her own research
            graphics were still to come on 6 Oct). -->
       <div class="trial-explain" data-locked="research claim">
-        <h3>What the three numbers mean</h3>
+        <h3>How to read the charts</h3>
         <ol class="boxes boxes--bare boxes--3">
           <li><b>Two groups.</b> Half the participants did the workbook straight away; the other half waited two weeks for it.</li>
           <li><b>Same questions, twice.</b> Everyone answered standard questionnaires before, and again two weeks later.</li>
-          <li><b>The difference.</b> Each figure, like −0.53, is how much further the workbook group’s scores fell than the waiting group’s, in standard deviations (the usual spread of scores). By common convention, about 0.5 is a medium effect and about 0.2 a small one.</li>
+          <li><b>The bars.</b> Each bar is one group’s average score two weeks later. Lower is better: less ill will, fewer symptoms. The table under the charts gives the scores from before and the effect sizes.</li>
         </ol>
       </div>
       <div class="effects" data-render="effects"></div>
@@ -149,48 +151,48 @@
 
   const effects = document.querySelector('[data-render="effects"]');
   effects.dataset.locked = 'research claim';   // rule 12: trial figures stay traceable
-  /* One chart per result: a track from the questionnaire's lowest possible
-     score to its highest, and each group's average moving from before (open
-     dot) to two weeks later (filled dot). Lower is better on all three. */
+  /* One chart per result (October 27 call: plain bar graphs a non-scientist
+     can read, like the clients' own film): each group's average two weeks
+     later, side by side, on the questionnaire's own scale from its lowest
+     possible score. Lower is better on all three. The before scores and the
+     effect sizes stay in the table under the charts (rule 12). */
   const r1 = (n) => Math.round(n);
-  /* The common convention the explainer names (Cohen): about 0.5 medium, about 0.2 small. */
-  const size = (smd) => { const v = Math.abs(parseFloat(smd.replace('−', '-'))); return v >= 0.8 ? 'large' : v >= 0.5 ? 'medium' : v >= 0.2 ? 'small' : ''; };
   const chart = (e) => {
     const { min, max } = e.scale;
-    const x = (v) => 24 + ((v - min) / (max - min)) * 292;
-    /* Each group on its own faint track; the arrowhead only when the move is
-       long enough to carry one (the waiting group barely moves — that is the point). */
-    const row = (y, [a, b], cls, who) => `
-      <g class="tc-row ${cls}">
-        <line class="tc-lane" x1="24" y1="${y}" x2="316" y2="${y}"/>
-        <line class="tc-move" x1="${x(a)}" y1="${y}" x2="${x(b)}" y2="${y}"/>
-        ${x(a) - x(b) > 22 ? `<path d="M${x(b) + 15} ${y - 6} L${x(b) + 9} ${y} L${x(b) + 15} ${y + 6}"/>` : ''}
-        <circle class="tc-before" cx="${x(a)}" cy="${y}" r="6.5"><title>${who}, before: ${a.toFixed(1)}</title></circle>
-        <circle class="tc-after" cx="${x(b)}" cy="${y}" r="6.5"><title>${who}, two weeks later: ${b.toFixed(1)}</title></circle>
-      </g>`;
+    const did = e.did[1], waited = e.waited[1];
+    /* The axis starts at the lowest possible score, so the bars' heights
+       stay honest, and ends a round step above the taller bar, as the
+       clients' film does, so the bars are tall enough to read. */
+    const step = [1, 2, 4, 5, 10, 15, 20, 25].find((n) => n * 3 >= (Math.max(did, waited) - min) * 1.3) || 25;
+    const hi = Math.min(max, min + step * 3);
+    const top = 14, base = 182, left = 34, right = 304;
+    const y = (v) => base - ((v - min) / (hi - min)) * (base - top);
+    const ticks = [0, 1, 2, 3].map((i) => min + step * i).filter((t) => t <= hi);
+    const bar = (x, v, cls, who) => `
+        <rect class="tc-bar ${cls}" x="${x}" y="${y(v)}" width="78" height="${base - y(v)}" rx="3"><title>${who}: ${v.toFixed(1)}</title></rect>
+        <text class="tc-val ${cls}" x="${x + 39}" y="${y(v) + 24}" text-anchor="middle">${r1(v)}</text>`;
     return `
     <figure class="effect">
       <figcaption><b>${e.measure}</b><span>${e.about}</span></figcaption>
-      <p class="tc-key tc-key--did"><span class="tc-swatch"></span>Did the workbook: <b>${r1(e.did[0])} → ${r1(e.did[1])}</b></p>
-      <p class="tc-key tc-key--waited"><span class="tc-swatch"></span>Still waiting: <b>${r1(e.waited[0])} → ${r1(e.waited[1])}</b></p>
-      <svg class="trial-chart" viewBox="0 0 340 92" role="img" aria-label="${e.measure}: those who did the workbook went from ${r1(e.did[0])} to ${r1(e.did[1])}; those still waiting went from ${r1(e.waited[0])} to ${r1(e.waited[1])}, on a scale of ${min} to ${max}.">
-        <line class="tc-tick" x1="24" y1="8" x2="24" y2="66"/><line class="tc-tick" x1="316" y1="8" x2="316" y2="66"/>
-        ${row(20, e.did, 'tc-did', 'Did the workbook')}
-        ${row(52, e.waited, 'tc-waited', 'Still waiting')}
-        <text class="tc-axis" x="24" y="86" text-anchor="start">${min} · none</text>
-        <text class="tc-axis tc-better" x="170" y="86" text-anchor="middle">← lower is better</text>
-        <text class="tc-axis" x="316" y="86" text-anchor="end">${max} · most</text>
+      <svg class="trial-chart" viewBox="0 0 320 228" role="img" aria-label="${e.measure}, two weeks later: people who did the workbook averaged ${r1(did)}; people still waiting averaged ${r1(waited)}, on a scale of ${min} to ${max}. Lower is better.">
+        ${ticks.map((t) => `<line class="tc-grid" x1="${left}" y1="${y(t)}" x2="${right}" y2="${y(t)}"/><text class="tc-axis" x="${left - 6}" y="${y(t) + 4}" text-anchor="end">${r1(t)}</text>`).join('')}
+        ${bar(84, did, 'tc-did', 'Did the workbook')}
+        ${bar(170, waited, 'tc-waited', 'Still waiting')}
+        <line class="tc-base" x1="${left}" y1="${base}" x2="${right}" y2="${base}"/>
+        <text class="tc-axis" x="${(left + right) / 2}" y="204" text-anchor="middle">Average score, two weeks later</text>
+        <text class="tc-axis tc-better" x="${(left + right) / 2}" y="222" text-anchor="middle">Lower is better</text>
       </svg>
-      <p class="tc-size">Effect size <b>${e.smd}</b><i>${size(e.smd)}</i><span>95% CI ${e.ci} · ${e.scale.name}, scored ${min}\u2060–\u2060${max}</span></p>
+      <p class="tc-key tc-key--did">${'<svg viewBox="0 0 10 15" aria-hidden="true"><circle cx="5" cy="3" r="3"/><path d="M1 15v-5.5a4 4 0 0 1 8 0V15z"/></svg>'}Did the workbook</p>
+      <p class="tc-key tc-key--waited">${'<svg viewBox="0 0 10 15" aria-hidden="true"><circle cx="5" cy="3" r="3"/><path d="M1 15v-5.5a4 4 0 0 1 8 0V15z"/></svg>'}Still waiting for it</p>
     </figure>`;
   };
   effects.innerHTML = TRIAL.effects.map(chart).join('');
   document.querySelector('[data-render="effects-table"]').innerHTML = `
     <table>
-      <thead><tr><th scope="col">Measure (range)</th><th scope="col">Did the workbook</th><th scope="col">Still waiting</th><th scope="col">Effect size (95% CI)</th></tr></thead>
+      <thead><tr><th scope="col">Measure (range)</th><th scope="col">Did the workbook, before → two weeks</th><th scope="col">Still waiting, before → two weeks</th><th scope="col">Effect size (95% CI)</th></tr></thead>
       <tbody>${TRIAL.effects.map((e) => `<tr><th scope="row">${e.measure} (${e.scale.min}–${e.scale.max})</th><td>${e.did[0].toFixed(1)} → ${e.did[1].toFixed(1)}</td><td>${e.waited[0].toFixed(1)} → ${e.waited[1].toFixed(1)}</td><td>${e.smd} (${e.ci})</td></tr>`).join('')}</tbody>
     </table>
-    <p class="small muted">Group averages before and two weeks after the workbook group began. Source: Ho et al., BMJ Public Health 2024, Supplementary Table S7; effect sizes from the paper's results.</p>`;
+    <p class="small muted">Group averages before and two weeks after the workbook group began. Each effect size, like −0.53, is how much further the workbook group’s scores fell than the waiting group’s, in standard deviations (the usual spread of scores); by common convention about 0.5 is a medium effect and about 0.2 a small one. Source: Ho et al., BMJ Public Health 2024, Supplementary Table S7; effect sizes from the paper's results.</p>`;
   /* Flourishing, the secondary result (Table 3): an effect size only. */
   const F = TRIAL.flourishing;
   document.querySelector('[data-render="flourishing"]').innerHTML =

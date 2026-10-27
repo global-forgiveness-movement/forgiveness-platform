@@ -266,29 +266,22 @@ h1 i, h1 em { font-style: normal; color: var(--teal); }
 .effect { margin: 0; background: var(--white); border-radius: var(--radius); border: 1px solid var(--line); padding: 1rem 1rem 0.9rem; }
 .effect figcaption b { display: block; font-family: var(--font-head); font-size: 1.1rem; color: var(--navy); }
 .effect figcaption span { display: block; font-size: 0.9rem; color: var(--muted); margin-bottom: 0.5rem; }
-.tc-key { margin: 0; font-size: 0.92rem; display: flex; align-items: center; gap: 0.45rem; }
-.tc-key b { font-family: var(--font-head); }
-.tc-swatch { width: 1.4rem; height: 0; border-top: 3px solid var(--teal); flex: none; }
-.tc-key--waited .tc-swatch { border-top: 3px dashed #a9b2b8; }
-.trial-chart { display: block; width: 100%; height: auto; margin-top: 0.4rem; overflow: visible; }
-.tc-tick { stroke: var(--line); stroke-width: 1.5; }
-.tc-row .tc-lane { stroke: var(--line); stroke-width: 6; stroke-dasharray: none; }
-.tc-better { fill: var(--teal-deep); }
-.tc-axis { font: 500 12px var(--font-head); fill: var(--muted); }
-.tc-row .tc-move { stroke-width: 4; stroke-linecap: round; }
-.tc-row path { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-.tc-row circle { stroke-width: 3; }
-.tc-did .tc-move, .tc-did path { stroke: var(--teal); }
-.tc-did .tc-before { fill: var(--white); stroke: var(--teal); }
-.tc-did .tc-after { fill: var(--teal); stroke: var(--teal); }
-.tc-waited .tc-move { stroke: #a9b2b8; stroke-dasharray: 4 4; }
-.tc-waited path { stroke: #a9b2b8; }
-.tc-waited .tc-before { fill: var(--white); stroke: #8a949b; }
-.tc-waited .tc-after { fill: #8a949b; stroke: #8a949b; }
-.tc-size { margin: 0.5rem 0 0; font-size: 0.95rem; }
-.tc-size b { font-family: var(--font-head); color: var(--plum); font-size: 1.2rem; }
-.tc-size i { font-style: normal; font-family: var(--font-head); font-weight: 600; font-size: 0.85rem; color: var(--plum); margin-left: 0.35rem; }
-.tc-size span { display: block; font-size: 0.82rem; color: var(--muted); }
+/* THE TRIAL BARS (research/index.html; October 27 call): two bars per
+   result, the workbook group in mustard and the waiting group in plum, as
+   in the clients' own film. */
+.tc-grid { stroke: var(--line); stroke-width: 1; }
+.tc-base { stroke: var(--navy); stroke-width: 1.5; }
+.tc-axis { font: 600 13px var(--font-body); fill: var(--muted); }
+.tc-better { font-weight: 700; fill: var(--teal-deep); }
+.tc-bar.tc-did { fill: var(--mustard); }
+.tc-bar.tc-waited { fill: var(--plum); }
+.tc-val { font: 700 18px var(--font-head); }
+.tc-val.tc-did { fill: var(--navy); }
+.tc-val.tc-waited { fill: #fff; }
+.tc-key { margin: 0.2rem 0 0; font-size: 0.95rem; font-weight: 600; color: var(--navy); display: flex; align-items: center; gap: 0.5rem; }
+.tc-key svg { width: 0.75rem; height: 1.1rem; flex: none; }
+.tc-key--did svg { fill: var(--mustard); }
+.tc-key--waited svg { fill: var(--plum); }
 .trial-explain { background: var(--white); border-radius: var(--radius); padding: 1rem 1.2rem; margin-block: 1.2rem 0; }
 .trial-explain h3 { margin-bottom: 0.6rem; }
 /* THE BOXES — one pattern for every run of prose broken into pieces
