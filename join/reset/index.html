@@ -37,7 +37,7 @@
         </div>
 
         <form class="form" id="resetForm" data-state="choose" hidden>
-          <h1 style="font-size:1.6rem;margin:0">Choose a new password</h1>
+          <h1 class="join-title" style="margin:0">Choose a new password</h1>
           <p style="margin:0">For <strong data-render="email"></strong>. Once it’s set, we’ll sign you straight in.</p>
           <!-- The address, invisibly, so a password manager saves the new
                password against the right account. -->
@@ -50,13 +50,13 @@
         </form>
 
         <div data-state="done" hidden>
-          <h1 style="font-size:1.6rem">You’re all set</h1>
+          <h1 class="join-title">You’re all set</h1>
           <p data-render="done-line"></p>
           <p><a class="btn btn--primary" href="../../my-path/">Go to My Path</a></p>
         </div>
 
         <div data-state="broken" hidden>
-          <h1 style="font-size:1.6rem">This link didn’t work</h1>
+          <h1 class="join-title">This link didn’t work</h1>
           <p class="form-msg form-msg--err" data-render="why"></p>
           <p>There’s no harm done — ask for a fresh link and use the newest email.</p>
           <p><a class="btn btn--primary" href="../#forgot">Send me a new link</a></p>

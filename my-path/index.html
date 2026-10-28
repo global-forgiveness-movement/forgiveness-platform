@@ -52,7 +52,7 @@
         <!-- Only for an account we have no name for (A36). Asked once, kept on
              the profile, never shown again. -->
         <div class="card" style="margin-bottom:1rem" data-render="name-ask" hidden>
-          <h3 style="font-size:1.05rem">What should we call you?</h3>
+          <h3>What should we call you?</h3>
           <form class="form" id="nameForm" style="max-width:340px">
             <label>Your name <input name="name" autocomplete="name" required maxlength="80"></label>
             <button class="btn btn--primary" type="submit">Save</button>
@@ -96,7 +96,7 @@
              links. -->
         <div class="card kit-card" data-render="kit"  hidden></div>
         <div class="card">
-            <h3 style="font-size:1rem" data-copy="mypath.h3.reach-forgiveness-workbook">REACH Forgiveness Workbook</h3>
+            <h3 data-copy="mypath.h3.reach-forgiveness-workbook">REACH Forgiveness Workbook</h3>
             <p class="small muted" data-copy="mypath.p.every-edition-and-language">Every edition and language, always free.</p>
             <a class="btn btn--outline" href="../workbooks/" data-copy="mypath.a.get-the-pdf">Get the Workbook Editions</a>
         </div>
@@ -144,7 +144,7 @@
     const started = !!(p.progress || done);
     return `<h3 class="wb-title">The interactive workbook</h3>
       <p class="small">${done} of ${TOTAL_LESSONS} lessons complete</p>
-      <a class="btn btn--juicy btn--go" href="../workbook/">${started ? 'Continue' : 'Begin'}</a>`;
+      <a class="btn btn--primary btn--lg btn--go" href="../workbook/">${started ? 'Continue' : 'Begin'}</a>`;
   }
 
   let currentUserId = null;

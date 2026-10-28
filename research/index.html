@@ -204,7 +204,7 @@
 
   getCollection('publications').then((pubs) => {
     document.querySelector('[data-render="publications"]').innerHTML = pubs
-      .map((p, i) => `<div class="card"><h3 style="font-size:1rem" ${fieldAttr('publications', p, i, 'title')}>${p.title}</h3><p class="small muted" style="margin:0"><span ${fieldAttr('publications', p, i, 'meta')}>${p.meta}</span> · <a href="${p.doi}" target="_blank" rel="noopener" data-copy="research.pub.doi-link">DOI →</a></p></div>`).join('');
+      .map((p, i) => `<div class="card"><h3 ${fieldAttr('publications', p, i, 'title')}>${p.title}</h3><p class="small muted" style="margin:0"><span ${fieldAttr('publications', p, i, 'meta')}>${p.meta}</span> · <a href="${p.doi}" target="_blank" rel="noopener" data-copy="research.pub.doi-link">DOI →</a></p></div>`).join('');
   });
 </script>
 <script type="module" src="../js/site.js"></script>
