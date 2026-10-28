@@ -23,8 +23,8 @@
 <main data-page="home">
 
   <!-- Sections are named for /admin → Page order (js/page-order.js). Kate,
-       27 Oct: "Why forgive?" bigger, then the three doors, then the two
-       pictures. The three are separate sections that join into one band. -->
+       27 Oct: "Why forgive?" bigger, then the three doors, each with its own
+       drawing (Wyatt, 27 Oct). -->
   <section class="section section--paper hero-band" data-section="opening" data-section-label="Opening: the heading and Why forgive?" data-section-lock="first">
     <div class="wrap">
       <!-- Wyatt, 27 Oct: a calmer, more professional opening. Words on the
@@ -60,14 +60,17 @@
            one line under its button. -->
       <p class="doors-ask" data-copy="home.p.which-sounds-best">Which sounds best to you?</p>
       <div class="grid grid--3 doors">
+        <!-- Wyatt, 27 Oct: each door carries its own drawing and one line; the
+             band of two pictures that sat under the doors is gone. Doors 1 and 3
+             reuse that band's keys, so any saved edit travels with the words. -->
         <div class="door">
           <h3 data-copy="home.h3.do-it-solo">I’ll do it solo</h3>
           <p class="door-actions">
             <a class="btn btn--primary btn--down" data-render="workbook-download" href="workbooks/" data-copy="home.a.download-the-workbook">Download the workbook</a>
             <span class="door-meta"><span data-render="workbook-size">Free PDF</span> · <a href="workbooks/" data-copy="home.a.other-languages">other languages</a></span>
           </p>
-          <p data-copy="home.p.download-the-reach-forgiveness">Work through the free workbook at your own pace. No account, ever.</p>
-          <p class="small" data-copy="home.p.prefer-the-screen-the">Prefer the screen? <a href="workbook/">Start the interactive workbook</a> — free, with an account that keeps your place.</p>
+          <p data-copy="home.span.work-through-the-workbook">Work through the free workbook at your own pace.</p>
+          <img class="door-art" src="assets/illustrations/on-your-own.webp" alt="" width="720" height="557">
         </div>
         <div class="door">
           <h3 data-copy="home.h3.start-a-group">I want to start a Forgiveness Group</h3>
@@ -75,9 +78,8 @@
             <a class="btn btn--plum btn--go" href="join/?next=group" data-copy="home.a.create-your-group">Create your group</a>
             <span class="door-meta"><a href="groups/" data-copy="home.a.how-forgiveness-groups-work">How Forgiveness Groups work</a></span>
           </p>
-          <p data-copy="home.p.run-the-workbook-with">People do the lessons in their own time, then meet to talk. We provide the videos.</p>
-          <!-- Testers, 12 Oct: starting a group makes you its facilitator. New copy (Wyatt, 12 Oct), flagged for Kate. -->
-          <p class="small" data-copy="home.p.youll-be-the-facilitator">You’ll be the facilitator. That just means gathering your people and pressing play. The video does the guiding.</p>
+          <p data-copy="home.p.run-the-workbook-with">Gather your people and press play on videos that guide the meetings.</p>
+          <img class="door-art" src="assets/illustrations/start-a-group.webp" alt="" width="720" height="625">
         </div>
         <div class="door">
           <h3 data-copy="home.h3.i-m-already-in">I’m already in a Forgiveness Group</h3>
@@ -85,26 +87,8 @@
             <a class="btn btn--navy btn--go" href="my-path/" data-copy="home.a.enter-your-group-code">Enter your group code</a>
             <span class="door-meta" data-copy="home.span.no-code-ask-your">No code? Ask your facilitator.</span>
           </p>
-          <p data-copy="home.p.if-your-group-has">Your facilitator gave you a code. It keeps your place and lets you rewatch the videos.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section--paper" data-section="two-ways" data-section-label="On your own, or in a group (the two pictures)" data-band="join">
-    <div class="wrap">
-      <div class="hero-lede hero-lede--center">
-        <div class="two-ways">
-          <figure>
-            <img src="assets/illustrations/on-your-own.webp" alt="" width="720" height="557">
-            <figcaption><b data-copy="home.b.on-your-own">On your own</b>
-              <span data-copy="home.span.work-through-the-workbook">Work through the free workbook at your own pace.</span></figcaption>
-          </figure>
-          <figure>
-            <img src="assets/illustrations/in-a-group.webp" alt="" width="720" height="550">
-            <figcaption><b data-copy="home.b.in-a-forgiveness-group">In a Forgiveness Group</b>
-              <span data-copy="home.span.do-the-lessons-on">Do the lessons on your own, then meet to talk them through, for solidarity, accountability, and community. Short videos guide each meeting.</span></figcaption>
-          </figure>
+          <p data-copy="home.span.do-the-lessons-on">Do the workbook lessons on your own, and meet to talk about them.</p>
+          <img class="door-art" src="assets/illustrations/in-a-group.webp" alt="" width="720" height="550">
         </div>
       </div>
     </div>

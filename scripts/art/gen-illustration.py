@@ -38,6 +38,7 @@ SUBJECTS = {
     'trial-flask': "Subject: one small laboratory flask (Erlenmeyer) drawn as a thin navy outline, with one slender leafy branch growing up out of its neck.",
     'globe': "Subject: a simple round globe drawn as a thin navy outline with a few curved latitude and longitude lines, with two slender leafy branches curving around it.",
     'hero-path': "Subject: a gentle winding path drawn as two thin navy lines, rising from the bottom left toward a small half sun on a low horizon at the upper right. Slender leafy branches grow beside the path, and a few loose leaves drift upward and away from it, light and free. Calm, hopeful, open.",
+    'start-a-group': "Subject: one small rounded screen shape in flat navy outline with a small flat teal play-triangle in its center, and in front of it three small open books in a gentle arc, as if gathered to watch together. A slender leafy branch grows up from each book, the three curving toward the screen. Lots of empty space, nothing touching the edges.",
     'sunrise': "Subject: a half sun rising above a straight horizon line, drawn as a thin navy outline with a few short rays, and one slender branch in fresh leaf rising beside it.",
 }
 

@@ -224,6 +224,9 @@ button.btn { font-size: var(--fs-label); }
 .door h3 { font-size: var(--fs-heading); margin: 0; }
 .door p { margin: 0 0 1rem; }
 .door .btn { align-self: flex-start; margin-top: auto; }
+/* Each door's drawing sits at its foot, so the three line up across the row. */
+.door .door-art { width: 100%; max-width: 13rem; height: auto; margin: auto auto 0; padding-top: 0.6rem; }
+@media (max-width: 760px) { .door .door-art { max-width: 10rem; } }
 /* Every door's action sits in the same place: directly under its heading. */
 .door-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem; }
 /* Room between the title and its button (Wyatt, 6 Oct). Scoped to .door so
