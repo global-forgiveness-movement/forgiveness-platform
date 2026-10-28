@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Runs before every `git push` from this checkout (git config core.hooksPath
+# scripts/hooks). Wyatt, 27 Oct 2026: a push must never make his or Kate's
+# saved page edits disappear. A red stops the push; fix it, don't skip it.
+cd "$(git rev-parse --show-toplevel)" || exit 1
+node scripts/qa/saved-edits-survive.mjs
+status=$?
+if [ $status -ne 0 ]; then
+  echo "pre-push: stopped. Push anyway only if Wyatt says so: git push --no-verify" >&2
+fi
+exit $status

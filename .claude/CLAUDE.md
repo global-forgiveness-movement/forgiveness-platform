@@ -100,6 +100,12 @@ the way out always visible. "There's no hurry" is design language here.
   can run the previous version for up to 10 minutes after a push (verified 2026-09-21). An old stamp
   means one of two things: it isn't on `main`, or the browser is holding a cached copy. Check `main` first,
   then have him hard-reload (⌥⌘R in Safari) before calling it a bug.
+- **A push must never make a saved page edit disappear** (Wyatt, 27 Oct). Kate's and Wyatt's
+  on-page edits live in the store and win at load, so a push can't overwrite them, but renaming,
+  deleting or hiding the element that carries a key orphans them. `scripts/hooks/pre-push` runs
+  `scripts/qa/saved-edits-survive.mjs` (live edits vs. origin/main vs. your tree) on every push;
+  set it up in a fresh checkout with `git config core.hooksPath scripts/hooks`. Red = stop.
+  Retiring an edit on purpose goes in its `HIDDEN_ON_PURPOSE` list with who and when.
 - The interactive workbook at `/workbook/` is canonical here; the standalone `forgiveness` repo
   stays untouched. Never let the two drift silently — changes happen here.
 

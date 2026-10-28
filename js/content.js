@@ -13,7 +13,7 @@ import {
    in WORKBOOKS, read by downloadFor() alone — see getWorkbooks(). */
 const WORKBOOK_WORDS = ['badge', 'name', 'desc', 'pills'];
 
-const DEFAULTS = {
+export const DEFAULTS = {
   testimonials: TESTIMONIALS,
   videos: Object.entries(VIDEOS).map(([key, v]) => ({ key, ...v })),
   events: EVENTS,
