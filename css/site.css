@@ -965,13 +965,20 @@ html[data-shell-ready]:not([data-copy-editing]) .def[data-reveal]:not(.is-on) > 
 .hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 1.5rem 3rem; align-items: center; }
 .hero-text > * { margin-left: 0; margin-right: 0; }
 .hero h1 { font-size: var(--fs-display); line-height: 1.1; letter-spacing: -0.01em; margin: 0 0 0.9rem; max-width: 16ch; text-wrap: balance; }
-.hero-benefits { font-family: var(--font-body); font-weight: 400; font-size: var(--fs-body); line-height: 1.5; color: var(--ink); max-width: 30rem; margin: 0 0 1.6rem; text-wrap: pretty; }
+/* The hero's two paragraphs are set alike (Wyatt, 27 Oct): one rule, two margins. */
+.hero-benefits, .hero .hero-lead { font-family: var(--font-body); font-weight: 400; font-size: var(--fs-body); line-height: 1.5; color: var(--ink); max-width: 30rem; text-wrap: pretty; }
+.hero-benefits { margin: 0 0 1.6rem; }
 .hero-why { margin: 0 0 1.3rem; }
-.hero .hero-lead { font-size: var(--fs-body); line-height: 1.55; color: var(--muted); max-width: 30rem; margin: 0; }
+.hero .hero-lead { margin: 0; }
 .hero-art { width: 100%; max-width: 30rem; height: auto; justify-self: end; }
+/* One column: the drawing sits under the headline (Wyatt, 27 Oct). The text
+   column dissolves so the picture can slot between its pieces. */
 @media (max-width: 860px) {
-  .hero { grid-template-columns: minmax(0, 1fr); }
-  .hero-art { order: -1; justify-self: start; max-width: 15rem; margin-bottom: -0.5rem; }
+  .hero { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
+  .hero-text { display: contents; }
+  .hero-text > * { order: 2; }
+  .hero-text > .hfp-eyebrow, .hero-text > h1 { order: 0; }
+  .hero-art { order: 1; justify-self: start; max-width: 15rem; margin: 0 0 1.2rem; }
 }
 @media (max-width: 560px) { .hero-art { max-width: 10.5rem; } }
 
