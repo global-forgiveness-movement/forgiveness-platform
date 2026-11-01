@@ -275,6 +275,10 @@ export const WORKBOOKS = [
     badge: 'For churches & Christian groups',
     name: 'Downloadable REACH Forgiveness Workbook Adapted for Churches',
     desc: 'The same five steps, framed within Christian faith. Adds scripture engagement and lectio divina, prayer integration, and the offering of forgiveness to God. Built in sections of about an hour each — the basis of the 6-session series.',
+    /* Who made it — Kate's words, 1 Nov sheet (typos fixed). ONE copy: the
+       Workbooks card and the Groups page both draw it from here, editable
+       on either as workbooks/church/about. */
+    about: 'The church adaptation offers an ecumenical approach to forgiveness by connecting forgiveness to Scripture. It was adapted by an interdisciplinary group of academic theologians and psychologists in consultation with a diverse, ecumenical team of pastors and church leaders across the globe.',
     pills: ['Christian', 'Group-ready'],
     languages: false,
     url: HFH,

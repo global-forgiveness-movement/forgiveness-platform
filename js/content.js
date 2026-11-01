@@ -13,7 +13,7 @@ import {
    in WORKBOOKS, read by downloadFor() alone — see getWorkbooks(). `link` and
    `button` belong to a resource Kate adds herself (1 Nov): a card with no
    file of ours, whose button opens the address she gives it. */
-const WORKBOOK_WORDS = ['badge', 'name', 'desc', 'pills', 'link', 'button'];
+const WORKBOOK_WORDS = ['badge', 'name', 'desc', 'about', 'pills', 'link', 'button'];
 
 export const DEFAULTS = {
   testimonials: TESTIMONIALS,

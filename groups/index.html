@@ -191,7 +191,7 @@
   import { deriveSeries, roleFor } from '../js/group-engine.js';
   import { seriesLanes, seriesName, seriesFraming } from '../js/series.js';
   import { mountCodeEntry } from '../js/code-entry.js';
-  import { getCollection, fieldAttr } from '../js/content.js';
+  import { getCollection, getWorkbooks, fieldAttr } from '../js/content.js';
   import { loadSeries } from '../js/groups.js';
   import { mountCreateGroup, preselectSeries } from '../js/group-create.js';
   import { onAuth } from '../js/auth.js';
@@ -221,6 +221,9 @@
      sees it — this page is public, whoever is signed in. */
   const role = roleFor({ surface: 'public' });
   const allSeries = await loadSeries();
+  /* Who made an edition (Kate, 1 Nov): the same words the Workbooks card
+     shows, read from the one workbooks list, never copied here. */
+  const editions = Object.fromEntries((await getWorkbooks()).top.map((w) => [w.id, w]));
   const slot = document.querySelector('[data-render="series"]');
 
   function show(id) {
@@ -235,6 +238,8 @@
         <p class="small"><span data-copy="groups.series.uses-the">Uses the</span> <span data-field="series/${s.id}/workbook">${s.workbook}</span>. <span data-copy="groups.series.meeting-length">Each meeting runs 1 hour, guided by about 10 minutes of video.</span> <span data-copy="groups.series.once-a-week">We suggest meeting once a week, so there’s a week for the lessons before each meeting.</span></p>
         <!-- Wyatt, 12 Oct: the steps as a two-lane picture, not a long list.
              The lane names are the key (Kate, 6 Oct: the key inside). -->
+        ${editions[s.id]?.about ? `<p class="small" ${fieldAttr('workbooks', editions[s.id], editions[s.id].key, 'about')}>${editions[s.id].about}</p>
+        <p class="small"><b data-copy="groups.series.read-it-first">Before your group starts, read the whole workbook yourself.</b></p>` : ''}
         ${seriesLanes(view)}
         <figure class="video" data-video="${s.videoKey}" style="margin-top:1rem"></figure>
       </div>`;

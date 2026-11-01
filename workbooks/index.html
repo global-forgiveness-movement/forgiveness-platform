@@ -108,6 +108,7 @@
       ${brief || !w.badge ? '' : `<p class="kicker" ${fieldAttr('workbooks', w, w.key, 'badge')}>${w.badge}</p>`}
       <h3 ${fieldAttr('workbooks', w, w.key, 'name')}>${w.name}</h3>
       ${brief ? `<p class="small" data-copy="workbooks.p.for-anyone">For anyone, on your own or in a group.</p>` : ''}
+      ${w.about ? `<p class="small muted" ${fieldAttr('workbooks', w, w.key, 'about')}>${w.about}</p>` : ''}
       ${brief ? '' : `${w.desc ? `<p ${fieldAttr('workbooks', w, w.key, 'desc')}>${w.desc}</p>` : ''}
       ${(w.pills || []).length ? `<p class="dl-row">${w.pills.map((p, n) => `<span class="pill" ${fieldAttr('workbooks', w, w.key, `pills.${n}`)}>${p}</span>`).join('')}</p>` : ''}`}
       <div class="dl-row">${button(w, brief)}</div>
