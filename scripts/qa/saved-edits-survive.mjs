@@ -47,6 +47,10 @@ const HIDDEN_ON_PURPOSE = {
   'workbooks/church/desc': 'same',
   'home.b.on-your-own': 'Home: the two-picture band folded into the doors; the door headings name them (Wyatt, 27 Oct)',
   'home.b.in-a-forgiveness-group': 'same',
+  'why.b.tested-at-harvard': 'Research: the trial-in-pictures block repeated the trial section; removed (Kate, 1 Nov, sheet row 3). Still drawn on the /home2 draft',
+  'why.span.harvards-human-flourishing': 'same',
+  'why.b.two-weeks-later': 'same',
+  'why.span.they-were-less-depressed': 'same',
 };
 
 /* ------------------------------------------------------------ serve */
