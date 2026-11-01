@@ -17,7 +17,7 @@
 import { SERIES, PLAYLIST } from './data.js';
 import { store, withPatience } from './store.js';
 import { getCollection } from './content.js';
-import { applyGroupAction, applyMyTick, createdBy, facilitatorOf, runsGroup, FACILITATOR_SEES_MEMBER_TICKS } from './group-engine.js';
+import { applyGroupAction, applyMyTick, createdBy, facilitatorOf, meetingsHeld, runsGroup, FACILITATOR_SEES_MEMBER_TICKS } from './group-engine.js';
 
 /* No 0/O/1/I/L/S/5/2/Z — these get read aloud and written on whiteboards. */
 const ALPHABET = 'ACDEFGHJKMNPQRTUVWXY34679';
@@ -443,10 +443,22 @@ export async function peopleRows() {
   /* Kate, 27 Oct: each group's expected size, from the leader's optional
      "Tell us about your group" answer (groups/, editor-read). The newest
      answer for a code wins; a list that can't be read leaves the column blank. */
-  const [members, codes, regs] = await Promise.all([
+  /* Kate, 1 Nov: "did they actually lead the group?" — Meetings held, "2 of
+     3", from the ticks and dates already stored in groupState, counted by
+     the engine's meetingsHeld: the same walk My Path draws from, never a
+     second count. A state that can't be read leaves the column blank. */
+  const [members, codes, regs, states, series] = await Promise.all([
     store.list('members'), store.list('groupCodes'), store.list('groups').catch(() => []),
+    store.list('groupState').catch(() => null), loadSeries().catch(() => SERIES),
   ]);
   const codeDoc = Object.fromEntries(codes.map((c) => [c.id, c]));
+  const stateOf = states && Object.fromEntries(states.map((s) => [s.id, s]));
+  const heldOf = (code, seriesId) => {
+    const s = series[seriesId];
+    if (!stateOf || !s) return '';
+    const n = meetingsHeld({ series: s, group: stateOf[code] || null });
+    return `${n.held} of ${n.of}`;
+  };
   const sizeOf = {};
   for (const r of [...regs].sort((a, b) => (a.submittedAt || '').localeCompare(b.submittedAt || ''))) {
     if (r.code && String(r.size || '').trim()) sizeOf[r.code] = String(r.size).trim();
@@ -459,13 +471,14 @@ export async function peopleRows() {
       joined: (doc.createdAt || '').slice(0, 10),
     };
     const groups = Object.entries(doc.groups || {});
-    if (!groups.length) { rows.push({ ...person, leads: false, group: '', code: '', edition: '', size: '', status: '' }); continue; }
+    if (!groups.length) { rows.push({ ...person, leads: false, group: '', code: '', edition: '', size: '', held: '', status: '' }); continue; }
     for (const [code, g] of groups) {
       rows.push({
         ...person,
         leads: runsGroup(codeDoc[code], m.id),
         group: g.groupName || '', code, edition: SERIES[g.seriesId]?.name || g.seriesId || '',
         size: sizeOf[code] || '',
+        held: heldOf(code, codeDoc[code]?.seriesId || g.seriesId),
         status: g.status === 'past' ? 'Past' : 'Active',
       });
     }
