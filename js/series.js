@@ -65,7 +65,7 @@ export function meetingLine(m) {
    underneath (the engine's note), and turns into "Done" once ticked. */
 function checkHtml(step, a) {
   return `<label class="flow-check${a.locked ? ' is-locked' : ''}${a.opens ? ' flow-check--opens' : ''}">
-        <input type="checkbox" data-act="check" data-scope="${a.scope}" data-step="${a.target || step.id}"${a.checked ? ' checked' : ''}${a.locked ? ' disabled' : ''}>
+        <input type="checkbox" data-act="check" data-scope="${a.scope}" data-step="${a.target || step.id}"${a.earlier ? ` data-earlier="${esc(a.earlier.join(' '))}" data-later="${esc(a.later.join(' '))}"` : ''}${a.checked ? ' checked' : ''}${a.locked ? ' disabled' : ''}>
         <span class="flow-box" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
         <span>${esc(a.label)}${a.note ? `<small>${esc(a.note)}</small>` : ''}</span>
       </label>`;
@@ -229,7 +229,8 @@ export function wireSeries(root, onAction) {
     const box = e.target.closest('input[data-act="check"]');
     if (!box) return;
     busy(box, true);
-    try { await onAction({ type: 'check', scope: box.dataset.scope, stepId: box.dataset.step, value: box.checked }); }
+    const ids = (k) => (box.dataset[k] || '').split(' ').filter(Boolean);
+    try { await onAction({ type: 'check', scope: box.dataset.scope, stepId: box.dataset.step, value: box.checked, earlier: ids('earlier'), later: ids('later') }); }
     catch { box.checked = !box.checked; alert('That didn’t save. Please try again.'); }
     busy(box, false);
   });

@@ -7,7 +7,7 @@
    2. Wyatt's rulings 4–6 and the call's rules, each as an assertion.
 
    Run: node scripts/qa/group-engine-roles.mjs   (exit 1 on any failure) */
-import { deriveSeries, roleFor, applyGroupAction, applyMyTick, ROLES, FACILITATOR_SEES_MEMBER_TICKS } from '../../js/group-engine.js';
+import { deriveSeries, roleFor, applyGroupAction, applyMyTick, meetingsHeld, ROLES, FACILITATOR_SEES_MEMBER_TICKS } from '../../js/group-engine.js';
 import { SERIES } from '../../js/data.js';
 
 let failed = 0;
@@ -36,14 +36,11 @@ ok(roleFor({ surface: 'mypath', user: { id: 'u' }, membership: { seriesId: 'secu
 ok(roleFor({ surface: 'mypath', user: { id: 'u' }, membership: { seriesId: 'secular' }, codeDoc: { facilitator: 'u' } }) === 'facilitator', 'the code’s record names you: facilitator');
 ok(roleFor({ surface: 'mypath', user: { id: 'u' }, membership: { seriesId: 'secular' }, codeDoc: { seriesId: 'secular' } }) === 'member', 'a pre-28 Sep code naming nobody: member, so no tick is offered that the database would refuse');
 
-console.log('Each tick says what it opens; each locked film says what opens it (27 Oct)');
+console.log('Each tick says what it opens (27 Oct)');
 {
   const v = deriveSeries({ series: S, group: { steps: {} }, me: {}, role: 'facilitator', now: NOW, video: V });
   ok(/opens Meeting 1/.test(act(step(v, 'prep'), 'group').note), 'the first tick says it opens Meeting 1');
   ok(/opens Meeting 2/.test(act(step(v, 'meet-1'), 'group').note), 'the Meeting 1 tick says it opens Meeting 2');
-  ok(!step(v, 'meet-1').video.playable && /Everyone has their workbook/.test(step(v, 'meet-1').video.note), 'Meeting 1’s film, still shut, names the tick that opens it');
-  const v2 = deriveSeries({ series: S, group: { steps: { prep: { done: true } } }, me: {}, role: 'facilitator', now: NOW, video: V });
-  ok(/Meeting 1 is ticked/.test(step(v2, 'meet-2').video.note), 'Meeting 2’s film names Meeting 1');
 }
 
 console.log('Visitor and none see the plain map');
@@ -67,7 +64,13 @@ let m = deriveSeries({ series: S, group: g, role: 'member', now: NOW, video: V }
 ok(step(m, 'meet-1').video.playable, 'member: a done meeting’s video can be re-watched');
 ok(!step(m, 'meet-2').video.playable, 'member: an open, not-yet-held meeting’s video is not playable yet');
 ok(step(f, 'meet-2').video.playable, 'facilitator: can play the open meeting’s video in the room');
-ok(!step(f, 'meet-3').video.playable, 'facilitator: an upcoming meeting’s video is not playable');
+ok(step(f, 'meet-3').state === 'upcoming' && step(f, 'meet-3').video.playable, 'facilitator: an upcoming meeting’s video plays too — a preview, no tick needed (Kate, 1 Nov)');
+ok(!step(m, 'meet-3').video.playable && /Your facilitator plays this/.test(step(m, 'meet-3').video.note), 'member: an upcoming meeting’s video stays shut, as before');
+{
+  const fresh = deriveSeries({ series: S, group: null, role: 'facilitator', now: NOW, video: V });
+  ok(fresh.steps.filter((s) => s.video).every((s) => s.video.playable), 'facilitator, fresh group, nothing ticked: every meeting’s film plays');
+  ok(fresh.steps.every((s) => s.state !== 'done'), 'and previewing ticked nothing');
+}
 ok(step(m, 'meet-1').video.src === V, 'every slot uses the placeholder (ruling 8)');
 
 console.log('A forgotten tick: the date passes (ruling 4)');
@@ -75,13 +78,63 @@ let g4 = applyGroupAction({ steps: {} }, 'meet-2', { type: 'meeting', when: '202
 f = deriveSeries({ series: S, group: g4, role: 'facilitator', now: NOW, video: V });
 ok(step(f, 'meet-2').state === 'done', 'meeting 2 is done once its time has passed, unticked');
 ok(step(f, 'meet-1').state === 'done' && step(f, 'prep').state === 'done', 'and everything the group did before it is done too');
-ok(act(step(f, 'meet-2'), 'group').locked && act(step(f, 'meet-2'), 'group').checked, 'its box shows ticked, locked, with a note');
+ok(!act(step(f, 'meet-2'), 'group').locked && act(step(f, 'meet-2'), 'group').checked, 'its box shows ticked, with a note — and can still be unticked (Kate, 1 Nov)');
 ok(step(f, 'meet-3').state === 'open', 'meeting 3 opens by itself');
 ok(step(f, 'meet-2').meeting.link === 'https://zoom.us/j/1', 'a typed link becomes a real https link');
 ok(safeScheme(), 'a javascript: link is refused');
 function safeScheme() {
   const x = applyGroupAction({ steps: {} }, 'meet-1', { type: 'meeting', link: 'javascript:alert(1)' });
   return !x.steps['meet-1'].link.startsWith('javascript');
+}
+
+console.log('Undo goes back (Kate, 1 Nov)');
+{
+  const gates = deriveSeries({ series: S, group: null, role: 'facilitator', now: NOW, video: V }).steps.filter((s) => s.actions.some((a) => a.opens));
+  const meets = gates.filter((s) => s.kind === 'together');
+  const tick = (grp, id, value, at = NOW) => {
+    const a = act(step(deriveSeries({ series: S, group: grp, role: 'facilitator', now: at, video: V }), id), 'group');
+    return applyGroupAction(grp, id, { type: 'check', value, earlier: a.earlier, later: a.later }, at);
+  };
+  const view = (grp, at = NOW) => deriveSeries({ series: S, group: grp, role: 'facilitator', now: at, video: V });
+  const last = meets[meets.length - 1];
+  let u = { steps: {} };
+  for (const s of gates) u = tick(u, s.id, true);
+  ok(view(u).finished, `ticked through to Meeting ${last.n}: the series is finished`);
+  ok(view(u).steps.every((s) => s.actions.every((a) => !a.locked)), 'no tick is locked, not even ones a later tick implies');
+  u = tick(u, 'meet-1', false);
+  const back = view(u);
+  ok(step(back, 'meet-1').state === 'open' && meets.slice(1).every((s) => step(back, s.id).state === 'upcoming'), 'untick Meeting 1: Meeting 1 is open again, every later meeting is not done');
+  ok(back.next?.stepId === 'meet-1' && back.currentId === 'meet-1', 'and the top says Meeting 1 again');
+  ok(step(back, 'prep').state === 'done', 'the step before Meeting 1 stays done');
+  ok(meetingsHeld({ series: S, group: u, now: NOW }).held === 0, 'Meetings held agrees: 0');
+
+  let j = tick({ steps: {} }, `meet-${meets[2].n}`, true);
+  ok(['prep', 'meet-1', 'meet-2'].every((id) => j.steps[id]?.done), 'ticking a later meeting ticks every earlier step too, so stored ticks read as the page does');
+  const legacy = { steps: { [last.id]: { done: true } } };
+  ok(step(view(legacy), 'meet-1').state === 'done', 'an old group with only a later tick still reads its earlier meetings as done');
+  ok(step(view(tick(legacy, 'meet-1', false)), last.id).state !== 'done', 'and unticking Meeting 1 there clears the later tick');
+
+  /* A meeting whose time has passed (byDate). */
+  const dated = applyGroupAction({ steps: { prep: { done: true } } }, 'meet-1', { type: 'meeting', when: '2026-10-01T23:00:00.000Z' });
+  ok(step(view(dated), 'meet-1').state === 'done', 'Meeting 1’s time has passed: done by itself');
+  const undone = tick(dated, 'meet-1', false);
+  ok(step(view(undone), 'meet-1').state === 'open', 'untick it after the meeting: it stays unticked, the date does not tick it again');
+  ok(step(view(tick(undone, 'meet-1', true)), 'meet-1').state === 'done', 'tick it again: done');
+  const early = tick(applyGroupAction({ steps: { prep: { done: true } } }, 'meet-1', { type: 'meeting', when: '2026-10-20T23:00:00.000Z' }), 'meet-1', false);
+  ok(step(view(early, new Date('2026-10-21T12:00:00Z')), 'meet-1').state === 'done', 'an untick made BEFORE the meeting does not stop its date from counting once it has passed');
+  const later2 = applyGroupAction(dated, 'meet-2', { type: 'meeting', when: '2026-10-03T23:00:00.000Z' });
+  ok(step(view(later2), 'meet-1').state === 'done' && step(view(later2), 'meet-2').state === 'done', 'two past meetings: both done');
+  const back2 = tick(later2, 'meet-1', false);
+  ok(step(view(back2), 'meet-1').state === 'open' && step(view(back2), 'meet-2').state === 'upcoming', 'untick Meeting 1: the past Meeting 2 goes back too');
+}
+
+console.log('Meetings held, for /admin (Kate, 1 Nov)');
+{
+  const n = meetingsHeld({ series: S, group: g, now: NOW });
+  const total = S.sessions.length;
+  ok(n.held === 1 && n.of === total, `the group above: ${n.held} of ${n.of}`);
+  ok(meetingsHeld({ series: S, group: null, now: NOW }).held === 0, 'no group state: 0');
+  ok(meetingsHeld({ series: S, group: g4, now: NOW }).held === 2, 'a meeting whose time has passed counts, and so does the one before it');
 }
 
 console.log('Someone who joins late (ruling 6)');

@@ -14,6 +14,10 @@
    code's record, or if firestore.rules decides it from anything but
    groupCodes.
 
+   Kate, 1 Nov adds "a meeting is done": ONE walk in the engine (gatesDone)
+   feeds both My Path and /admin's "Meetings held" (meetingsHeld). Red if a
+   stored tick or untick time is read anywhere else.
+
    Run: node scripts/qa/group-engine-onehelm.mjs */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
@@ -29,6 +33,10 @@ const RULES = [
   { re: /\bcase\s+['"](visitor|member|facilitator)['"]/, why: 'switches on a role name' },
   { re: /\.facilitator\b(?![-\w])(?!\s*[:=][^=])/, why: 'reads the facilitator flag' },
   { re: /\bFACILITATOR_SEES_MEMBER_TICKS\s*=/, why: 'defines the member-ticks switch' },
+  /* Kate, 1 Nov: "a meeting is done" — the page's ticks and /admin's
+     "Meetings held" both come from the engine's one walk (gatesDone). Red if
+     anything else reads a stored tick, an untick time, or the meeting length. */
+  { re: /\.done\b(?!\s*\})|\bundoneAt\b|\bMEETING_LENGTH_MS\b/, why: 'decides whether a meeting is done (only gatesDone / meetingsHeld in the engine may)' },
 ];
 
 /* Writing the account id onto the code's record is the fact itself. */

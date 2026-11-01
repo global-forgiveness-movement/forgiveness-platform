@@ -14,15 +14,19 @@
    The facts it owns, in the site's own words:
    - WHO IS LOOKING: a visitor, someone in no group, a member, a facilitator.
    - A MEETING IS DONE when the facilitator ticked it, OR its date and time
-     have passed (ruling 4), OR a later meeting is done (you cannot have met
-     for meeting 3 without meeting 2 having happened).
+     have passed (ruling 4) and nobody has unticked it since, OR a later
+     meeting is done (you cannot have met for meeting 3 without meeting 2
+     having happened). Every one of these can be unticked (Kate, 1 Nov):
+     unticking a meeting unticks every meeting after it, so the page goes
+     back to that meeting.
    - A STEP IS OPEN once everything the group does before it is done. Nothing
      about when a person joined enters into it, so someone who joins late
      sees everything already done as open (ruling 6).
-   - A VIDEO CAN BE PLAYED by the facilitator from the moment its meeting is
-     open (they play it in the room), and by everyone in the group once that
-     meeting is done (Richard, 24 Sep: "once they finished it, they just have
-     full access").
+   - A VIDEO CAN BE PLAYED by the facilitator at any time, ticked or not, so
+     they can look ahead without ticking (Kate, 1 Nov: ticks record only what
+     the group has done), and by everyone in the group once that meeting is
+     done (Richard, 24 Sep: "once they finished it, they just have full
+     access").
    - A MEMBER'S LESSON TICKS ARE THEIRS. Only they tick them, only they see
      them — unless FACILITATOR_SEES_MEMBER_TICKS is switched on (ruling 5,
      OFF until Kate and Richard answer). */
@@ -109,14 +113,50 @@ const past = (iso, now) => {
   return !Number.isNaN(t) && t + MEETING_LENGTH_MS <= now.getTime();
 };
 
+/* Whether the date passing counts: not when the facilitator unticked the
+   meeting after it was over (Kate, 1 Nov — undo must really go back). An
+   untick before the meeting ended does not stop the date from counting. */
+const pastAndKept = (st, now) => past(st.when, now)
+  && !(st.undoneAt && new Date(st.undoneAt).getTime() >= new Date(st.when).getTime() + MEETING_LENGTH_MS);
+
+/* Done, for the steps the group does together — ONE walk, used by the page
+   (deriveSeries) and by /admin's "Meetings held" (meetingsHeld), so the two
+   can never count differently. A later done step makes every earlier one
+   done, so walk backwards. */
+function gatesDone(base, shared, now) {
+  const doneGate = {};
+  let later = false;
+  for (let i = base.length - 1; i >= 0; i--) {
+    const s = base[i];
+    if (!s.gate) continue;
+    const st = shared[s.id] || {};
+    const byDate = !st.done && s.kind === 'together' && pastAndKept(st, now);
+    const self = !!st.done || byDate;
+    doneGate[s.id] = { done: self || later, ticked: !!st.done, byDate, byLater: !self && later };
+    later = later || self;
+  }
+  return doneGate;
+}
+
+/* How many of a group's meetings are done, for /admin → Accounts (Kate,
+   1 Nov: "did they actually lead the group?"). The same walk as the page. */
+export function meetingsHeld({ series, group = null, now = new Date() }) {
+  const base = stepsOf(series);
+  const gates = gatesDone(base, group?.steps || {}, now);
+  const meetings = base.filter((s) => s.kind === 'together');
+  return { held: meetings.filter((s) => gates[s.id].done).length, of: meetings.length };
+}
+
 /* Per role, everything that differs: what it may do, what it is told. This
    table IS the anti-drift property — a new rule for one role is one line
-   here, and every other role's rows sit beside it. */
+   here, and every other role's rows sit beside it.
+   `preview`: plays every meeting's film, ticked or not (Kate, 1 Nov).
+   `playDone`: plays a film once its meeting is done. */
 const CAN = {
-  visitor:     { inGroup: false, tickGroup: false, tickMine: false, setMeeting: false, playOpen: false, playDone: false, guide: false, seesTicks: false },
-  none:        { inGroup: false, tickGroup: false, tickMine: false, setMeeting: false, playOpen: false, playDone: false, guide: false, seesTicks: false },
-  member:      { inGroup: true,  tickGroup: false, tickMine: true,  setMeeting: false, playOpen: false, playDone: true,  guide: false, seesTicks: false },
-  facilitator: { inGroup: true,  tickGroup: true,  tickMine: true,  setMeeting: true,  playOpen: true,  playDone: true,  guide: true,  seesTicks: FACILITATOR_SEES_MEMBER_TICKS },
+  visitor:     { inGroup: false, tickGroup: false, tickMine: false, setMeeting: false, preview: false, playDone: false, guide: false, seesTicks: false },
+  none:        { inGroup: false, tickGroup: false, tickMine: false, setMeeting: false, preview: false, playDone: false, guide: false, seesTicks: false },
+  member:      { inGroup: true,  tickGroup: false, tickMine: true,  setMeeting: false, preview: false, playDone: true,  guide: false, seesTicks: false },
+  facilitator: { inGroup: true,  tickGroup: true,  tickMine: true,  setMeeting: true,  preview: true,  playDone: true,  guide: true,  seesTicks: FACILITATOR_SEES_MEMBER_TICKS },
 };
 
 /* What My Path puts in "Your group" for each role: the cards, in order,
@@ -180,18 +220,8 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
   const mine = (can.inGroup && me) || {};
   const base = stepsOf(series);
 
-  /* Done, for the steps the group does together. A later done step makes
-     every earlier one done, so walk backwards. */
-  const doneGate = {};
-  let later = false;
-  for (let i = base.length - 1; i >= 0; i--) {
-    const s = base[i];
-    if (!s.gate) continue;
-    const st = shared[s.id] || {};
-    const self = !!st.done || (s.kind === 'together' && past(st.when, now));
-    doneGate[s.id] = { done: self || later, ticked: !!st.done, byDate: !st.done && past(st.when, now), byLater: !self && later };
-    later = later || self;
-  }
+  const doneGate = gatesDone(base, shared, now);
+  const gateIds = base.filter((b) => b.gate).map((b) => b.id);
 
   /* What each gate tick opens, and what holds each step shut (Wyatt, 27 Oct:
      "it's not clear to users that they have to check the checkboxes before
@@ -204,32 +234,32 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
       ? `Tick this after you meet. It opens Meeting ${m.n}.`
       : `Tick this when everyone has one. It opens Meeting ${m.n}.`;
   };
-  const heldBy = (gate) => gate.kind === 'together'
-    ? `Playable once Meeting ${gate.n} is ticked done above.`
-    : `Playable once “${GROUP_TICK_LABEL.prep}” is ticked above.`;
 
   let blocked = false;
-  let blocker = null;
   const steps = base.map((s, i) => {
     const st = shared[s.id] || {};
     const open = !blocked;
-    const held = blocker;
     let state;
     if (!can.inGroup) state = 'preview';
     else if (s.gate) state = doneGate[s.id].done ? 'done' : open ? 'open' : 'upcoming';
     else state = mine[s.id] ? 'done' : open ? 'open' : 'upcoming';
-    if (s.gate && !doneGate[s.id].done && !blocked) { blocked = true; blocker = s; }
+    if (s.gate && !doneGate[s.id].done) blocked = true;
 
     const actions = [];
     if (s.gate && can.tickGroup) {
+      /* Nothing is locked any more (Kate, 1 Nov): `earlier` and `later` are
+         the gates a tick or an untick carries with it (applyGroupAction). */
       const g = doneGate[s.id];
+      const at = gateIds.indexOf(s.id);
       actions.push({
         type: 'check', scope: 'group',
         label: s.kind === 'together' ? GROUP_TICK_LABEL.meet : GROUP_TICK_LABEL.prep,
         checked: g.done,
-        locked: g.byDate || g.byLater,
+        locked: false,
         note: g.byDate ? 'Done — the meeting time has passed.' : g.byLater ? 'Done — a later meeting is marked done.' : opensLine(s, i),
         opens: true,
+        earlier: gateIds.slice(0, at),
+        later: gateIds.slice(at + 1),
       });
     }
     /* Richard, 29 Sep call: a reminder that everyone has made a free account
@@ -262,7 +292,7 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
 
     let videoOut = null;
     if (s.kind === 'together' && can.inGroup) {
-      const playable = state === 'done' ? can.playDone : state === 'open' ? can.playOpen : false;
+      const playable = can.preview || (state === 'done' && can.playDone);
       videoOut = {
         src: s.src.video || video,
         title: `Meeting ${s.n} · ${s.src.title}`,
@@ -271,9 +301,7 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
            It belongs only to a meeting with no film of its own. */
         note: playable
           ? (s.src.video ? '' : 'A placeholder film. This meeting’s own film is coming soon.')
-          : can.playOpen
-            ? (held ? heldBy(held) : 'Playable once the step above is ticked.')
-            : 'Your facilitator plays this at the meeting. It opens here to re-watch once your group has met.',
+          : 'Your facilitator plays this at the meeting. It opens here to re-watch once your group has met.',
       };
     }
 
@@ -333,11 +361,29 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
 }
 
 /* The one place that says which way round a tick goes. Group state is a
-   whole document written back in full (so a cleared date really clears). */
-export function applyGroupAction(group, stepId, action) {
+   whole document written back in full (so a cleared date really clears).
+
+   Kate, 1 Nov: a leader clicked through to meeting 5 and could not get back.
+   So a tick carries every earlier step with it (`action.earlier`), and an
+   untick carries every later one (`action.later`) — the stored ticks always
+   read as the series reads, and unticking meeting 1 really is meeting 1
+   again. An untick also notes when (`undoneAt`), so a meeting whose time has
+   already passed stays unticked instead of counting itself done again. */
+export function applyGroupAction(group, stepId, action, now = new Date()) {
   const steps = { ...(group?.steps || {}) };
   const cur = { ...(steps[stepId] || {}) };
-  if (action.type === 'check') cur.done = !!action.value;
+  const mark = (o, on) => {
+    o.done = on;
+    if (on) delete o.undoneAt; else o.undoneAt = now.toISOString();
+    return o;
+  };
+  if (action.type === 'check') {
+    const on = !!action.value;
+    mark(cur, on);
+    for (const id of (on ? action.earlier : action.later) || []) {
+      if (id !== stepId) steps[id] = mark({ ...(steps[id] || {}) }, on);
+    }
+  }
   if (action.type === 'meeting') {
     cur.when = action.when || '';
     cur.place = String(action.place || '').trim().slice(0, 140);
