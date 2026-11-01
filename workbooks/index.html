@@ -71,7 +71,7 @@
   <section class="section section--paper" data-section="next" data-section-label="Where to go next" data-band="own">
     <div class="wrap">
       <h2 data-copy="workbooks.h2.if-reach-helped-here">If REACH Forgiveness helped, here is where to go next</h2>
-      <p class="muted" data-copy="workbooks.p.the-reach-forgiveness-workbook-2">The REACH Forgiveness Workbook is about forgiving someone who hurt you. These two take up different questions, and both are free.</p>
+      <p class="muted" data-copy="workbooks.p.the-reach-forgiveness-workbook-2">The REACH Forgiveness Workbook is about forgiving someone who hurt you. These take up different questions, and all of them are free.</p>
       <div class="grid grid--2" data-render="workbooks-more"></div>
     </div>
   </section>
@@ -89,25 +89,32 @@
     </select>`;
 
   /* A card's words are the editor's (the workbooks collection); its button is
-     the file's — label, format and size come from downloadFor() alone. */
-  /* brief: the top row shows only the name and the button (Wyatt, 27 Oct). */
-  const card = (w, i, brief = false) => `
-    <div class="card wb-card" id="${w.id}">
-      ${brief ? '' : `<p class="kicker" ${fieldAttr('workbooks', w, i, 'badge')}>${w.badge}</p>`}
-      <h3 ${fieldAttr('workbooks', w, i, 'name')}>${w.name}</h3>
-      ${brief ? '' : `<p ${fieldAttr('workbooks', w, i, 'desc')}>${w.desc}</p>
-      <p class="dl-row">${w.pills.map((p, n) => `<span class="pill" ${fieldAttr('workbooks', w, i, `pills.${n}`)}>${p}</span>`).join('')}</p>`}
-      <div class="dl-row">
-        ${w.languages ? langSelect(w.id) : ''}
-        <a class="btn ${brief ? 'btn--outline' : 'btn--primary'} btn--down" href="${w.url}" data-download="${w.id}:en" data-locked="file facts" target="_blank" rel="noopener">Download PDF</a>
-      </div>
+     the file's — label, format and size come from downloadFor() alone. A
+     resource Kate added herself (1 Nov) has no file of ours: its button opens
+     her link. */
+  const httpOnly = (u) => { try { const x = new URL(String(u || '').trim()); return /^https?:$/.test(x.protocol) ? x.href : ''; } catch { return ''; } };
+  const button = (w, brief) => {
+    if (w.files) {
+      return `${w.languages ? langSelect(w.id) : ''}
+        <a class="btn ${brief ? 'btn--outline' : 'btn--primary'} btn--down" href="${w.url}" data-download="${w.id}:en" data-locked="file facts" target="_blank" rel="noopener">Download PDF</a>`;
+    }
+    const href = httpOnly(w.link);
+    return href ? `<a class="btn btn--primary btn--go" href="${href}" target="_blank" rel="noopener" ${fieldAttr('workbooks', w, w.key, 'button')}>${w.button || 'Open'}</a>` : '';
+  };
+  /* brief: the top row shows only the name and the button (Wyatt, 27 Oct),
+     plus the one line saying both editions are for anyone (Kate, 1 Nov). */
+  const card = (w, brief = false) => `
+    <div class="card wb-card" id="${w.id || w.key}">
+      ${brief || !w.badge ? '' : `<p class="kicker" ${fieldAttr('workbooks', w, w.key, 'badge')}>${w.badge}</p>`}
+      <h3 ${fieldAttr('workbooks', w, w.key, 'name')}>${w.name}</h3>
+      ${brief ? '' : `${w.desc ? `<p ${fieldAttr('workbooks', w, w.key, 'desc')}>${w.desc}</p>` : ''}
+      ${(w.pills || []).length ? `<p class="dl-row">${w.pills.map((p, n) => `<span class="pill" ${fieldAttr('workbooks', w, w.key, `pills.${n}`)}>${p}</span>`).join('')}</p>` : ''}`}
+      <div class="dl-row">${button(w, brief)}</div>
     </div>`;
 
-  const books = await getWorkbooks();
-  document.querySelector('[data-render="workbooks-main"]').innerHTML =
-    books.filter((w) => ['reach', 'church'].includes(w.id)).map((w, i) => card(w, i, true)).join('');
-  document.querySelector('[data-render="workbooks-more"]').innerHTML =
-    books.filter((w) => ['receive', 'activity'].includes(w.id)).map((w, i) => card(w, i)).join('');
+  const { top, more } = await getWorkbooks();
+  document.querySelector('[data-render="workbooks-main"]').innerHTML = top.map((w) => card(w, true)).join('');
+  document.querySelector('[data-render="workbooks-more"]').innerHTML = more.map((w) => card(w)).join('');
   /* These looked exactly like buttons and were inert spans — a Spanish speaker
      pressed one, nothing happened, and the reasonable conclusion was that the
      site is broken. Every language here has a hosted file, so they ARE links

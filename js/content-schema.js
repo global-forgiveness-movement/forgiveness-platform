@@ -78,17 +78,21 @@ export const COLLECTIONS = {
       { key: 'label', label: 'What it counts', type: 'text' },
     ],
   },
-  /* Words only: each card's download button, file, format and size come from
-     WORKBOOKS in js/data.js, so editions are added in code, not here. */
+  /* One list for every card on the Workbooks page (Kate, 1 Nov). The two
+     editions in the top row always show; every other row is a card under
+     "where to go next", in this order. An edition the site hosts takes its
+     download button from WORKBOOKS in js/data.js; a row added here opens its
+     own link. See workbookRows() in js/content.js. */
   workbooks: {
-    label: 'Workbook cards',
-    help: 'The cards on the Workbooks page. Their words can also be changed right on that page. Files and sizes aren’t set here — a new edition needs its file added to the site first.',
-    fixed: true,
+    label: 'Workbooks and resources',
+    help: 'The cards on the Workbooks page. The first two (reach and church) always sit in the top row. Every other row is a card under “If REACH Forgiveness helped, here is where to go next”, in this order. To add a new resource, press “+ add another”, give it a name, a line or two, and the link its button opens (a Google Drive or Dropbox share link works). Words can also be changed right on the page.',
     fields: [
-      { key: 'id', label: 'Edition', type: 'text', readonly: true },
+      { key: 'id', label: 'Edition (set by the site)', type: 'text', readonly: true },
       { key: 'badge', label: 'Small line above the title', type: 'text' },
       { key: 'name', label: 'Name', type: 'text' },
       { key: 'desc', label: 'Description', type: 'textarea' },
+      { key: 'link', label: 'Link (only for a resource you add)', type: 'url', help: 'Where its button goes. The site’s own editions use their own files and ignore this.' },
+      { key: 'button', label: 'Button words (optional)', type: 'text', help: 'Leave empty for “Open”.' },
     ],
   },
   facilitatorKit: {

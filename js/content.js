@@ -10,8 +10,10 @@ import {
 } from './data.js';
 
 /* Workbook cards: only their words are content. Files, sizes and links stay
-   in WORKBOOKS, read by downloadFor() alone — see getWorkbooks(). */
-const WORKBOOK_WORDS = ['badge', 'name', 'desc', 'pills'];
+   in WORKBOOKS, read by downloadFor() alone — see getWorkbooks(). `link` and
+   `button` belong to a resource Kate adds herself (1 Nov): a card with no
+   file of ours, whose button opens the address she gives it. */
+const WORKBOOK_WORDS = ['badge', 'name', 'desc', 'pills', 'link', 'button'];
 
 export const DEFAULTS = {
   testimonials: TESTIMONIALS,
@@ -52,16 +54,28 @@ export async function getVideos() {
   return Object.fromEntries(list.map((v) => [v.key, v]));
 }
 
-/* The workbook cards: every structural fact (files, sizes, languages, the
-   landing page) from WORKBOOKS, with an editor's words laid over the top.
-   Editions are fixed in code, so an added or removed item here changes
-   nothing — a new edition needs its files first. */
+/* The workbook cards — ONE list, the `workbooks` collection, edited in
+   /admin with the same add-a-row editor as the About team (Kate, 1 Nov: "make
+   it so I can add new resources as we create them").
+   - `top`: the two editions in the Workbooks page's first row. They always
+     show, whatever the list says, because their files are the site's.
+   - `more`: every other row, in the list's order — the cards under "If REACH
+     Forgiveness helped, here is where to go next". RECEIVE and the activity
+     book are rows like any other: remove one and it goes; add one and it
+     appears. A row that matches an edition in WORKBOOKS takes its files,
+     sizes and languages from there; a row Kate added has its own `link`.
+   `key` is the address its words are saved under (fieldAttr), so on-page
+   edits land on the right row however the list is ordered. Pure, so
+   scripts/qa/one-resource-list.mjs can test it. */
+export const TOP_EDITIONS = ['reach', 'church'];
+export function workbookRows(edited) {
+  const code = Object.fromEntries(WORKBOOKS.map((w) => [w.id, w]));
+  const rows = (edited || []).map((e, i) => ({ ...(code[e.id] || {}), ...pick(e, WORKBOOK_WORDS), key: itemKey(e, i) }));
+  const top = TOP_EDITIONS.map((id) => rows.find((r) => r.id === id) || { ...code[id] });
+  return { top, more: rows.filter((r) => !TOP_EDITIONS.includes(r.id)) };
+}
 export async function getWorkbooks() {
-  const edited = await getCollection('workbooks');
-  return WORKBOOKS.map((w) => {
-    const e = edited.find((x) => x.id === w.id);
-    return e ? { ...w, ...pick(e, WORKBOOK_WORDS) } : w;
-  });
+  return workbookRows(await getCollection('workbooks'));
 }
 
 function pick(obj, keys) {
