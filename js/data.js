@@ -453,7 +453,8 @@ export const PUBLICATIONS = [
    chrome" ruling expressly allows. The chrome itself stays HFP-only. */
 export const PEOPLE = [
   /* Kate, 29 Sep call: Tyler, Kate and Richard make the first row; everyone
-     else follows in the order they had. */
+     else follows in the order Kate set in the editor. Glen's and Micah's words
+     are as Kate entered them there. */
   {
     slug: 'tyler-vanderweele',
     photo: 'assets/people/tyler-vanderweele.jpg',
@@ -485,6 +486,15 @@ export const PEOPLE = [
     link: 'https://hfh.fas.harvard.edu/team/richard-cowden',
   },
   {
+    slug: 'glen-comiso',
+    photo: 'assets/people/glen-comiso.jpg',
+    initials: 'GC',
+    name: 'Glen Comiso',
+    role: 'Executive Director, Human Flourishing Program, Harvard University',
+    bio: 'Glen Comiso is the Executive Director of the Human Flourishing Program at Harvard University\'s Institute for Quantitative Social Science (IQSS). In this role, Glen oversees all aspects of the program\'s strategic vision, donor relations, external partnerships, day-to-day operations, and program leadership. He has extensive experience building organizations, policies and programs at the intersection of academia, government, and industry. Prior to joining Harvard, Glen worked in the president\'s office at MIT in various roles including Chief of Staff and Senior Director for Institute Affairs. His background also includes strategy consulting at the Boston Consulting Group, leadership of the Massachusetts Life Sciences Collaborative, and oversight of the Mayor\'s Economic Initiatives group and Life Tech Boston initiative for the City of Boston. Glen began his career as an electrical engineer at Motorola. Glen received his Masters of Business Administration from the Wharton School of Business at the University of Pennsylvania, and his Bachelors of Science in Electrical Engineering and Computer Science from the University of California at Berkeley.',
+    link: 'https://hfh.fas.harvard.edu/team/glen-comiso',
+  },
+  {
     slug: 'isaiah-baldissera',
     photo: 'assets/people/isaiah-baldissera.jpg',
     initials: 'IB',
@@ -505,23 +515,14 @@ export const PEOPLE = [
     link: 'https://hfh.fas.harvard.edu/team/reece-brown',
   },
   {
-    slug: 'cooper-harris',
-    photo: 'assets/people/cooper-harris.jpg',
-    initials: 'CH',
-    name: 'Cooper Harris',
-    role: 'Graduate Assistant, Human Flourishing Program, Harvard University',
-    line: 'Studying counseling at Boston University, with a focus on sport and performance psychology.',
-    bio: 'Cooper Harris is currently pursuing his Master’s of Education in counseling with a focus on sport/performance psychology at Boston University. Harris graduated from the University of Rochester in 2025 with a Bachelor of Arts in psychology and religion. He was the president of the club baseball team, a member of the Medallion Program, worked with the Mindful University Project, and served as a Jewish learning fellow. Harris is also a student delegate for the Association of Applied Sport Psychology and was a psychology honors research student at the University of Rochester.',
-  },
-  {
-    slug: 'suzanne-ouyang',
-    photo: 'assets/people/suzanne-ouyang.jpg',
-    initials: 'SO',
-    name: 'Suzanne Ouyang',
-    role: 'Associate Director of Special Projects, Human Flourishing Program, Harvard University',
-    line: 'Strategic partner in the program’s projects, including the Global Flourishing Study.',
-    bio: 'Suzanne Ouyang is the Associate Director of Special Projects, serving as a strategic partner to the Program Director in the development of the program’s projects and initiatives, including the Global Flourishing Study and the Academic Flourishing Initiative. Prior to coming to the Human Flourishing Program, she worked in project management for the development of the O’Donnell School of Public Health at the University of Texas Southwestern Medical Center. She has worked in research coordination and non-profit management. She holds an S.T.B. from the Pontifical University of the Holy Cross in Rome and a B.S. in Biological Sciences from the University of Notre Dame.',
-    link: 'https://hfh.fas.harvard.edu/team/suzanne-ouyang',
+    slug: 'ying-chen',
+    photo: 'assets/people/ying-chen.jpg',
+    initials: 'YC',
+    name: 'Ying Chen',
+    role: 'Research Scientist, Human Flourishing Program, Harvard University',
+    line: 'Studies pathways to flourishing — the psychosocial assets that help people flourish across the life course.',
+    bio: 'Ying Chen, ScD, is a Research Scientist with the Human Flourishing Program at Harvard University.\n\nShe specializes in social epidemiology, with research interests in understanding pathways to flourishing. Her work focuses particularly on identifying psychosocial assets that may help promote flourishing across the life course.\n\nYing’s research agenda centers on understanding the role of positive psychological attributes, social relationships, and community participation in promoting flourishing, and advancing methodological approaches to strengthen causal inference in observational research. She has authored over 80 peer-reviewed articles and book chapters on these topics.\n\nThrough interdisciplinary collaboration and population-based research, Ying is also involved in projects that inform evidence-based strategies to assess and cultivate well-being across diverse populations.\n\nShe earned her ScD in Social and Behavioral Sciences from the Harvard T.H. Chan School of Public Health.',
+    link: 'https://hfh.fas.harvard.edu/team/ying-chen',
   },
   {
     slug: 'sophie-frushell',
@@ -534,14 +535,31 @@ export const PEOPLE = [
     link: 'https://hfh.fas.harvard.edu/team/sophie-frushell',
   },
   {
-    slug: 'ying-chen',
-    photo: 'assets/people/ying-chen.jpg',
-    initials: 'YC',
-    name: 'Ying Chen',
-    role: 'Research Scientist, Human Flourishing Program, Harvard University',
-    line: 'Studies pathways to flourishing — the psychosocial assets that help people flourish across the life course.',
-    bio: 'Ying Chen, ScD, is a Research Scientist with the Human Flourishing Program at Harvard University.\n\nShe specializes in social epidemiology, with research interests in understanding pathways to flourishing. Her work focuses particularly on identifying psychosocial assets that may help promote flourishing across the life course.\n\nYing’s research agenda centers on understanding the role of positive psychological attributes, social relationships, and community participation in promoting flourishing, and advancing methodological approaches to strengthen causal inference in observational research. She has authored over 80 peer-reviewed articles and book chapters on these topics.\n\nThrough interdisciplinary collaboration and population-based research, Ying is also involved in projects that inform evidence-based strategies to assess and cultivate well-being across diverse populations.\n\nShe earned her ScD in Social and Behavioral Sciences from the Harvard T.H. Chan School of Public Health.',
-    link: 'https://hfh.fas.harvard.edu/team/ying-chen',
+    slug: 'cooper-harris',
+    photo: 'assets/people/cooper-harris.jpg',
+    initials: 'CH',
+    name: 'Cooper Harris',
+    role: 'Graduate Assistant, Human Flourishing Program, Harvard University',
+    line: 'Studying counseling at Boston University, with a focus on sport and performance psychology.',
+    bio: 'Cooper Harris is currently pursuing his Master’s of Education in counseling with a focus on sport/performance psychology at Boston University. Harris graduated from the University of Rochester in 2025 with a Bachelor of Arts in psychology and religion. He was the president of the club baseball team, a member of the Medallion Program, worked with the Mindful University Project, and served as a Jewish learning fellow. Harris is also a student delegate for the Association of Applied Sport Psychology and was a psychology honors research student at the University of Rochester.',
+  },
+  {
+    slug: 'micah-hoffman',
+    photo: 'assets/people/micah-hoffman.jpg',
+    initials: 'MH',
+    name: 'Micah Hoffman',
+    role: 'Graduate Assistant, Human Flourishing Program, Harvard University',
+    bio: 'Micah Hoffman has a background in social psychology (B.S. Cornell 23\') and is currently assisting with administration and research on the impact of forgiveness and the experience of divine judgement on health and well-being with the Harvard Human Flourishing Program. He is also the program coordinator for a non-profit initiative called The Christian Mind Project, a program that supports Christian college students pursuing academic careers. He lives in Boston with his wife Hannah, who is a PhD candidate studying Classics at Harvard.',
+  },
+  {
+    slug: 'suzanne-ouyang',
+    photo: 'assets/people/suzanne-ouyang.jpg',
+    initials: 'SO',
+    name: 'Suzanne Ouyang',
+    role: 'Associate Director of Special Projects, Human Flourishing Program, Harvard University',
+    line: 'Strategic partner in the program’s projects, including the Global Flourishing Study.',
+    bio: 'Suzanne Ouyang is the Associate Director of Special Projects, serving as a strategic partner to the Program Director in the development of the program’s projects and initiatives, including the Global Flourishing Study and the Academic Flourishing Initiative. Prior to coming to the Human Flourishing Program, she worked in project management for the development of the O’Donnell School of Public Health at the University of Texas Southwestern Medical Center. She has worked in research coordination and non-profit management. She holds an S.T.B. from the Pontifical University of the Holy Cross in Rome and a B.S. in Biological Sciences from the University of Notre Dame.',
+    link: 'https://hfh.fas.harvard.edu/team/suzanne-ouyang',
   },
   {
     slug: 'everett-worthington',
