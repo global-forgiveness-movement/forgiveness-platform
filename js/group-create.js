@@ -5,7 +5,7 @@
 
    The page decides only what to say once the code exists (`onCreated`). */
 
-import { registerGroup, sendGroupDetails, doneAskingAboutGroup } from './groups.js';
+import { registerGroup, sendGroupDetails } from './groups.js';
 import { currentUser } from './auth.js';
 
 export function createGroupForm({ series = 'secular' } = {}) {
@@ -24,24 +24,25 @@ export function createGroupForm({ series = 'secular' } = {}) {
     </form>`;
 }
 
-/* The optional questions — asked once, beside a new group's code on My Path
-   (Richard, 28 Sep), never before the code exists. */
+/* The questions — asked once, beside a new group's code on My Path
+   (Richard, 28 Sep), never before the code exists. Kate, 1 Nov: the
+   expected size is required (she accepts the extra step); where and notes
+   stay optional. Leaders who skipped it before are not asked again (the ask
+   is marked once per new group), and /admin → Accounts shows them blank. */
 export function mountGroupDetails(slot, { code, onDone }) {
   slot.innerHTML = `
     <h3>Tell us about your group</h3>
-    <p class="small muted" data-copy="groups.p.none-of-this-is">None of this is required. It helps us support you and understand where this work is taking root.</p>
+    <p class="small muted" data-copy="groups.p.only-the-size-is">Only the number of people is needed. The rest is up to you; it helps us support you and understand where this work is taking root.</p>
     <form class="form" data-group-details>
       <label>Where is your group? (city, country) <input name="location"></label>
-      <label>How many people do you expect? <input name="size" type="number" min="2" max="99"></label>
+      <label>How many people do you expect? <input name="size" type="number" min="2" max="99" inputmode="numeric" required></label>
       <label>Anything you’d like us to know? <textarea name="notes" rows="3"></textarea></label>
       <div class="dl-row">
         <button class="btn btn--primary" type="submit">Send</button>
-        <button class="linkish" type="button" data-skip>Skip</button>
       </div>
       <div class="form-msg" hidden role="status"></div>
     </form>`;
   const form = slot.querySelector('form');
-  slot.querySelector('[data-skip]').addEventListener('click', () => { doneAskingAboutGroup(); onDone?.(); });
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = form.querySelector('button[type="submit"]');
@@ -52,7 +53,7 @@ export function mountGroupDetails(slot, { code, onDone }) {
     } catch {
       const msg = form.querySelector('.form-msg');
       msg.className = 'form-msg form-msg--err';
-      msg.textContent = 'That didn’t send. Please try again, or skip it.';
+      msg.textContent = 'That didn’t send. Please try again.';
       msg.hidden = false;
       btn.disabled = false;
     }
