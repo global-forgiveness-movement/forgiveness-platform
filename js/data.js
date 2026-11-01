@@ -549,7 +549,7 @@ export const PEOPLE = [
     initials: 'MH',
     name: 'Micah Hoffman',
     role: 'Graduate Assistant, Human Flourishing Program, Harvard University',
-    bio: 'Micah Hoffman has a background in social psychology (B.S. Cornell 23\') and is currently assisting with administration and research on the impact of forgiveness and the experience of divine judgement on health and well-being with the Harvard Human Flourishing Program. He is also the program coordinator for a non-profit initiative called The Christian Mind Project, a program that supports Christian college students pursuing academic careers. He lives in Boston with his wife Hannah, who is a PhD candidate studying Classics at Harvard.',
+    bio: 'Micah Hoffman has a background in social psychology (B.S. Cornell ’23) and is currently assisting with administration and research on the impact of forgiveness and the experience of divine judgement on health and well-being with the Harvard Human Flourishing Program. He is also the program coordinator for a non-profit initiative called The Christian Mind Project, a program that supports Christian college students pursuing academic careers. He lives in Boston with his wife Hannah, who is a PhD candidate studying Classics at Harvard.',
   },
   {
     slug: 'suzanne-ouyang',
