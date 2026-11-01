@@ -571,6 +571,7 @@ function viewWelcome() {
         <p>${LEAF()}<span><b>12 experiences</b>, each 10–20 minutes</span></p>
         <p>${LEAF()}<span>Evidence-based: tested in randomized trials with 4,500+ participants</span></p>
         <p>${LEAF()}<span>Pick up right where you left off, any time</span></p>
+        <p>${LEAF()}<span><b>You’ll see how you changed:</b> it compares where you start with where you end</span></p>
       </div>
       <div class="welcome-cta">
         ${started ? `<a class="btn btn--primary btn--big" href="#/journey">Continue your journey</a>` : `<a class="btn btn--primary btn--big" href="#/letter">Begin</a>`}
