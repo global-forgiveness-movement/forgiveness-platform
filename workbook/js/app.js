@@ -564,7 +564,7 @@ function viewWelcome() {
         ${CHECKLEAF}
         <div>
           <h2>Everything you write stays with you.</h2>
-          <p>This workbook asks you to write about real hurts. So <b>your words are saved only in this browser, on this device</b> — they are never sent anywhere, and we couldn't read them even if we wanted to. No account is needed; if you sign in on this site, we remember only how far you've gotten — never a word you write. <a href="#/privacy">How this works →</a></p>
+          <p>This workbook asks you to write about real hurts. So <b>your words are saved only in this browser, on this device</b> — they are never sent anywhere, and we couldn't read them even if we wanted to. Your free account remembers only how far you've gotten — never a word you write. <a href="#/privacy">How this works →</a></p>
         </div>
       </div>
       <div class="welcome-facts">

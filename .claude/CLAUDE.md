@@ -135,7 +135,9 @@ definition in `~/.claude/agents/`, as the GSD workflows' own fallback prescribes
 
 - **Home:** `github.com/global-forgiveness-movement/forgiveness-platform` (org owned by Wyatt,
   transferable to a successor — moved from his personal account 2026-08-21). Site serves at
-  `global-forgiveness-movement.github.io/forgiveness-platform/` until the custom domain lands.
+  **`globalforgiveness.org`** (custom domain via `CNAME`; the old
+  `global-forgiveness-movement.github.io/forgiveness-platform/` address 301-redirects there —
+  verified 2026-11-02). Check a push's build stamp on the custom domain, not the github.io one.
 - **Stack:** vanilla HTML/CSS/JS ES modules, no build, GitHub Pages from `main` root.
 - **No site password since 27 Oct** (Wyatt): the gate is gone and every public page is open to
   search engines (`robots.txt`, `sitemap.xml`). `/plan/` keeps its own separate password `reach`;
