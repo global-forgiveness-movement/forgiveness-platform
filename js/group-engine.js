@@ -256,15 +256,17 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
 
     const actions = [];
     if (s.gate && can.tickGroup) {
-      /* Nothing is locked any more (Kate, 1 Nov): `earlier` and `later` are
-         the gates a tick or an untick carries with it (applyGroupAction). */
+      /* Ticks go strictly in order (Wyatt, 2 Nov): a meeting still greyed
+         out — the step before it not yet ticked — can't be ticked. A done
+         tick is never locked (Kate, 1 Nov: undo goes back). `earlier` and
+         `later` are the gates a tick or an untick carries with it. */
       const g = doneGate[s.id];
       const at = gateIds.indexOf(s.id);
       actions.push({
         type: 'check', scope: 'group',
         label: s.kind === 'together' ? GROUP_TICK_LABEL.meet : GROUP_TICK_LABEL.prep,
         checked: g.done,
-        locked: false,
+        locked: state === 'upcoming',
         note: g.byDate ? 'Done — the meeting time has passed.' : g.byLater ? 'Done — a later meeting is marked done.' : opensLine(s, i),
         opens: true,
         earlier: gateIds.slice(0, at),

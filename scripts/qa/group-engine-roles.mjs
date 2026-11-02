@@ -108,8 +108,14 @@ console.log('Undo goes back (Kate, 1 Nov)');
   ok(step(back, 'prep').state === 'done', 'the step before Meeting 1 stays done');
   ok(meetingsHeld({ series: S, group: u, now: NOW }).held === 0, 'Meetings held agrees: 0');
 
+  const fresh = view({ steps: {} });
+  ok(gates.slice(1).every((s) => act(step(fresh, s.id), 'group').locked) && !act(step(fresh, 'prep'), 'group').locked,
+    'fresh group: only the first tick can be pressed; every later meeting is locked (Wyatt, 2 Nov: strictly in order)');
+  const one = view(tick(tick({ steps: {} }, 'prep', true), 'meet-1', true));
+  ok(!act(step(one, 'meet-2'), 'group').locked && act(step(one, 'meet-3'), 'group').locked, 'meeting 1 ticked: meeting 2 can be ticked, meeting 3 still locked');
+  ok(!act(step(one, 'meet-1'), 'group').locked && !act(step(one, 'prep'), 'group').locked, 'done ticks stay pressable, so they can be undone');
   let j = tick({ steps: {} }, `meet-${meets[2].n}`, true);
-  ok(['prep', 'meet-1', 'meet-2'].every((id) => j.steps[id]?.done), 'ticking a later meeting ticks every earlier step too, so stored ticks read as the page does');
+  ok(['prep', 'meet-1', 'meet-2'].every((id) => j.steps[id]?.done), 'the engine, given a later tick (an old group, or a date passing), still ticks every earlier step, so stored ticks read as the page does');
   const legacy = { steps: { [last.id]: { done: true } } };
   ok(step(view(legacy), 'meet-1').state === 'done', 'an old group with only a later tick still reads its earlier meetings as done');
   ok(step(view(tick(legacy, 'meet-1', false)), last.id).state !== 'done', 'and unticking Meeting 1 there clears the later tick');

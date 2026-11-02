@@ -57,3 +57,7 @@ columns are empty. Wyatt answered the clarifying questions in the handoff brief.
   who answered before this change are asked once more, because their answers sit in editor-only records.
 - My Path: a group's name is shown once, as its title, renamed in place with a pencil. The separate
   "Name this group" box and the repeated series line are gone; one group or several, it is the same tray.
+- Meeting ticks go strictly in order (Wyatt, 2 Nov, confirmed by two questions): the leader can tick only
+  the meeting that is open now; later meetings are locked until the one before is ticked. Unticking still
+  unticks every later meeting. Lesson ticks people already made are left as they are (his answer).
+- My Path: "Your forgiveness" is now "Your workbook" (Wyatt, 2 Nov).
