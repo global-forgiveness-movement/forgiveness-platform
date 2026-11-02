@@ -222,7 +222,14 @@
      (scripts/qa/one-held-code.sh). With none chosen, the newest group shows —
      so a group just created on the Groups page is the one you land on. */
   let chosen = null;
-  function choose(code) { chosen = code; }
+  /* Wyatt, 2 Nov: the arrow on the open group closes it. `closed` folds the
+     chosen group without forgetting which one it is. */
+  let closed = false;
+  function choose(code) {
+    if (code === chosen && !closed) { closed = true; return; }
+    chosen = code;
+    closed = false;
+  }
   const newestFirst = (a, b) => String(b.joinedAt || '').localeCompare(String(a.joinedAt || ''));
 
   wireSeries(groupSlot, async (a) => {
@@ -300,7 +307,7 @@
       if (isChosen && me) known.ticks.set(g.code, me);
       const role = roleFor({ surface: 'mypath', user, membership: g, codeDoc });
       const view = deriveSeries({ series: allSeries[g.seriesId], group, me, ticks, role, now: new Date(), video: SESSION_VIDEO, code: g.code });
-      return { g, view, isChosen };
+      return { g, view, isChosen, isOpen: isChosen && !closed };
     }));
     if (mine !== drawNo) return;
 
@@ -322,9 +329,9 @@
        title itself into the field. The whole row opens and closes the group;
        the pencil sits above that, so it never toggles the row. One group or
        several, it is the same tray, so there is one way to draw a group. */
-    const head = ({ g, view, isChosen }) => `
+    const head = ({ g, view, isOpen }) => `
       <div class="tray-head">
-        <button type="button" class="tray-toggle" data-choose="${esc(g.code)}" aria-expanded="${isChosen}"
+        <button type="button" class="tray-toggle" data-choose="${esc(g.code)}" aria-expanded="${isOpen}"
           aria-label="${esc(g.label || `${meetings(view)} sessions, ${g.code}`)}"></button>
         <div class="group-title">
           <b>${g.label ? esc(g.label) : `${meetings(view)} sessions · <span class="groupcode">${esc(g.code)}</span>`}</b>
@@ -338,9 +345,9 @@
         <small>${esc(view.series.name)} · ${esc(view.panel.tag)} · ${view.next ? `Next: meeting ${view.next.n}` : 'All meetings done'}</small>
       </div>`;
     groupSlot.innerHTML = groups.map((x) => `
-        <section class="tray${x.isChosen ? ' is-open' : ''}${groups.length < 2 ? ' tray--solo' : ''}">
+        <section class="tray${x.isOpen ? ' is-open' : ''}${groups.length < 2 ? ' tray--solo' : ''}">
           ${head(x)}
-          ${x.isChosen ? `<div class="tray-body">${groupHtml(x)}</div>` : ''}
+          ${x.isOpen ? `<div class="tray-body">${groupHtml(x)}</div>` : ''}
         </section>`).join('');
     const ask = groupSlot.querySelector('[data-render="details"]');
     if (ask) mountGroupDetails(ask, { code: shown.g.code, onDone: () => renderGroup(ctx.userId) });

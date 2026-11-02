@@ -149,6 +149,16 @@ console.log('Tell us about your group: asked from the group state, on any device
   ok(meetingsHeld({ series: S, group: sent, now: NOW }).held === meetingsHeld({ series: S, group: g, now: NOW }).held, 'and nothing about Meetings held');
 }
 
+console.log('A greyed-out step’s tick can’t be pressed (Wyatt, 2 Nov)');
+{
+  const v = deriveSeries({ series: S, group: { steps: { prep: { done: true } } }, me: {}, role: 'member', now: NOW, video: V });
+  const lessons = v.steps.filter((s) => s.kind === 'own' && s.id !== 'prep');
+  ok(lessons.filter((s) => s.state === 'upcoming').every((s) => act(s, 'mine').locked), 'every upcoming block of lessons: its tick is locked');
+  ok(lessons.filter((s) => s.state === 'open').every((s) => !act(s, 'mine').locked), 'an open block: its tick can be pressed');
+  const done = deriveSeries({ series: S, group: { steps: { prep: { done: true } } }, me: { 'own-3': true }, role: 'member', now: NOW, video: V });
+  ok(!act(step(done, 'own-3'), 'mine').locked && step(done, 'own-3').state === 'done', 'a tick already made stays pressable, so it can be undone');
+}
+
 console.log('Someone who joins late (ruling 6)');
 const late = deriveSeries({ series: S, group: g, me: null, role: 'member', now: NOW, video: V });
 ok(step(late, 'meet-1').state === 'done' && step(late, 'meet-1').video.playable, 'a brand-new member sees meeting 1 done and its video open');

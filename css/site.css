@@ -672,8 +672,10 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .flow-check > span:last-child { padding-top: 0.2rem; }
 .flow-check small { display: block; margin-top: 0.15rem; font-weight: 400; font-size: var(--fs-small); color: var(--muted); }
 .flow-check--opens:not(.is-locked) input:not(:checked) ~ span small { color: var(--navy); font-weight: 600; }
-.flow-check.is-locked { cursor: default; }
-.flow-check.is-locked .flow-box { opacity: 0.7; }
+/* A tick that can't be pressed yet reads as resting, not as a button
+   (Wyatt, 2 Nov: a greyed-out step's tick looked live). */
+.flow-check.is-locked { cursor: not-allowed; opacity: 0.5; }
+.flow-check.is-locked input { cursor: not-allowed; }
 .flow-meet summary { cursor: pointer; font-weight: 600; font-size: var(--fs-small); color: var(--teal-deep); }
 .flow-meet-form { display: grid; gap: 0.5rem; margin-top: 0.5rem; }
 .flow-meet-form label { display: grid; gap: 0.2rem; font-size: var(--fs-small); font-weight: 600; }
@@ -932,7 +934,10 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
    Four beats, ~3.5s: the word writes on, how to say it, "definition:", then
    the meaning wipes in from the left. Hidden only once the shell is ready
    (so with no script it simply shows), and never while editing. */
-.def { max-width: 40rem; margin: 0 auto 2rem; padding: 0 0.5rem; }
+/* Wyatt, 2 Nov: the label, the definition and its two boxes share the page's
+   one left edge (the 6 Oct one-column rule), instead of a narrower block
+   centered inside the page. */
+.def { max-width: 40rem; margin: 0 0 2rem; padding: 0; }
 .def p { margin: 0; max-width: none; }
 .def-word { font-family: var(--font-script); font-size: clamp(3.6rem, 9vw, 5.6rem); line-height: 1.1; color: var(--plum); -webkit-text-stroke: 0.6px var(--plum); }
 .def-say { font-size: var(--fs-body); color: var(--plum); letter-spacing: 0.02em; margin-top: 0.1rem !important; }
@@ -946,7 +951,10 @@ html[data-shell-ready]:not([data-copy-editing]) .def[data-reveal]:not(.is-on) > 
 .def.is-on .def-text { animation: def-wipe 1.3s cubic-bezier(.4, 0, .2, 1) 2s both;
   -webkit-mask-image: linear-gradient(90deg, #000 40%, transparent 60%); mask-image: linear-gradient(90deg, #000 40%, transparent 60%);
   -webkit-mask-size: 260% 100%; mask-size: 260% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
-@keyframes def-write { from { clip-path: inset(0 100% 0 0); opacity: 1; } to { clip-path: inset(0 0 0 0); opacity: 1; } }
+/* The writing reveals left to right through a clip that reaches past the
+   word's box on every side, so the script's tails (the g) and the F's swash
+   are never cut (Wyatt, 2 Nov). */
+@keyframes def-write { from { clip-path: inset(-0.4em 100% -0.6em -0.4em); opacity: 1; } to { clip-path: inset(-0.4em -0.4em -0.6em -0.4em); opacity: 1; } }
 @keyframes def-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes def-wipe { from { opacity: 1; -webkit-mask-position: 100% 0; mask-position: 100% 0; } to { opacity: 1; -webkit-mask-position: 0 0; mask-position: 0 0; } }
 @media (prefers-reduced-motion: reduce) { .def.is-on > * { animation: none !important; -webkit-mask-image: none !important; mask-image: none !important; } }
@@ -984,7 +992,7 @@ html[data-shell-ready]:not([data-copy-editing]) .def[data-reveal]:not(.is-on) > 
   .hfp-eyebrow img { width: 36px; height: 36px; }
 }
 /* "The definition" sits on the definition's own left edge. */
-.def-kicker { max-width: 40rem; margin: 0 auto 0.4rem; padding: 0 0.5rem; }
+.def-kicker { margin-bottom: 0.4rem; }
 
 /* HOME'S OPENING (Wyatt, 27 Oct): words left, one picture right, and only
    two type styles — Poppins for the headline and the button, Nunito Sans for
@@ -1016,7 +1024,7 @@ html[data-shell-ready]:not([data-copy-editing]) .def[data-reveal]:not(.is-on) > 
    the definition. Three words struck through in plum, three ticked in teal;
    each mark draws itself in, one after another, when the block comes into
    view. Reduced motion, or no observer: shown finished. */
-.def-not { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; max-width: 44rem; margin: 0 auto 2.4rem; }
+.def-not { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; max-width: 44rem; margin: 0 0 2.4rem; }
 .def-half { border-radius: var(--radius); padding: 1.1rem 1.3rem 1.2rem; }
 .def-half--not { background: rgba(119, 0, 97, 0.05); border: 1.5px dashed rgba(119, 0, 97, 0.45); }
 .def-half--with { background: rgba(0, 136, 122, 0.08); border: 1.5px solid rgba(0, 136, 122, 0.5); }

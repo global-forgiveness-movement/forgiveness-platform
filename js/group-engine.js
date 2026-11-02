@@ -278,8 +278,11 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
       actions.push({ type: 'check', scope: 'group', target: ACCOUNTS_TICK, label: 'Everyone has made a free account',
         checked: !!shared[ACCOUNTS_TICK]?.done, locked: false, note: 'So they can join with your code.' });
     }
+    /* Wyatt, 2 Nov: a greyed-out step's tick can't be pressed — the lessons
+       open with the meeting before them. A tick already made stays
+       un-tickable, so nobody is stuck with one. */
     if (!s.gate && can.tickMine) {
-      actions.push({ type: 'check', scope: 'mine', label: 'I’ve done these lessons', checked: !!mine[s.id], locked: false,
+      actions.push({ type: 'check', scope: 'mine', label: 'I’ve done these lessons', checked: !!mine[s.id], locked: state === 'upcoming',
         note: 'Only you see this tick.' });
     }
     if (s.kind === 'together' && can.setMeeting) {
