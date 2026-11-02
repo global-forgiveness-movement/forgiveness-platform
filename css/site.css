@@ -542,6 +542,13 @@ hr.leafline { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
   max-width: min(36rem, calc(100vw - 2rem)); padding: 0.6rem 0.8rem; background: var(--navy-deep); color: #F2F4F0;
   border-radius: var(--radius); box-shadow: var(--shadow); font-size: var(--fs-small); }
 .copybar-msg { flex: 1 1 12rem; }
+/* At rest: one round pencil (Wyatt, 2 Nov). */
+.copybar--rest { padding: 0.25rem; gap: 0.3rem; border-radius: 999px; }
+.copybar--rest .copybar-msg { flex: 0 1 auto; padding-right: 0.8rem; }
+.copybar-pencil { display: grid; place-items: center; width: var(--tap); height: var(--tap); padding: 0; border: 0; border-radius: 999px;
+  background: none; color: #F2F4F0; cursor: pointer; }
+.copybar-pencil:hover { background: rgba(242, 244, 240, 0.14); }
+.copybar-pencil:focus-visible { outline: 3px solid var(--mustard); outline-offset: 2px; }
 .copybar-msg--err { color: var(--mustard); flex-basis: 100%; }
 .copybar-btn { font: 600 var(--fs-label) var(--font-head); padding: 0.45rem 0.9rem; border-radius: 999px; cursor: pointer;
   background: transparent; color: #F2F4F0; border: 1px solid rgba(242, 244, 240, 0.5); }
