@@ -355,10 +355,12 @@
   /* The chosen group: its code, the one next thing, then every step. */
   function groupHtml({ g, view }) {
     const p = view.panel;
-    /* A group just created gets its optional questions beside its code, once. */
+    /* A group just created gets its questions once, above the meeting dates,
+       on every screen (Wyatt, 2 Nov: beside the code it squeezed the dates
+       into a narrow column on wide screens). */
     const asking = groupToAskAbout() === g.code;
     return `
-      <div class="group-top${asking ? ' is-asking' : ''}">
+      <div class="group-top">
         <div>
           <!-- 29 Sep call: people name their own groups; the name is theirs
                alone and shows on the switcher. -->
@@ -368,9 +370,9 @@
           </form>
           <!-- The code moved into step 1 (Wyatt, 6 Oct); the version stays here. -->
           <p class="small muted group-sub">${seriesName(view, 'span')}</p>
+          ${asking ? '<aside class="card group-details" data-render="details"></aside>' : ''}
           ${nextBox(view)}
         </div>
-        ${asking ? '<aside class="card group-details" data-render="details"></aside>' : ''}
       </div>
       ${seriesFlow(view)}
       <p class="group-finish"><button type="button" class="linkish" data-finish="${esc(g.code)}">${esc(p.finish)}</button></p>`;

@@ -41,3 +41,13 @@ columns are empty. Wyatt answered the clarifying questions in the handoff brief.
 
 - **Richard hasn't voted.** He needs to confirm the depression and anxiety bars (6 vs 8, 6 vs 7).
 - Kate hasn't voted on the four "New since Oct 27" rows, which carry new wording: for the **3 Nov agenda**.
+
+## Follow-ups, 2 Nov (Wyatt)
+
+- Pushed live on Wyatt's "push live now" (build `2026-11-02a`). The site serves at globalforgiveness.org.
+- The interactive workbook's welcome no longer says "No account is needed". It now says "Your free
+  account remembers only how far you've gotten — never a word you write." (true to `workbook/bridge.js`
+  and `js/progress-sync.js`).
+- My Path: a new group's "Tell us about your group" sits **above** "Next · Plan your meetings" on every
+  screen, full width. This replaces "beside its code" (Richard, 28 Sep), which squeezed the meeting dates
+  into a narrow column on wide screens.
