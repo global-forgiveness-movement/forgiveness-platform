@@ -17,7 +17,7 @@
 import { SERIES, PLAYLIST } from './data.js';
 import { store, withPatience } from './store.js';
 import { getCollection } from './content.js';
-import { applyGroupAction, applyMyTick, createdBy, facilitatorOf, meetingsHeld, runsGroup, FACILITATOR_SEES_MEMBER_TICKS } from './group-engine.js';
+import { applyGroupAction, applyMyTick, createdBy, facilitatorOf, meetingsHeld, runsGroup, DETAILS_STEP, FACILITATOR_SEES_MEMBER_TICKS } from './group-engine.js';
 
 /* No 0/O/1/I/L/S/5/2/Z — these get read aloud and written on whiteboards. */
 const ALPHABET = 'ACDEFGHJKMNPQRTUVWXY34679';
@@ -96,27 +96,16 @@ export async function registerGroup(fields, userId) {
     ...(userId ? { facilitator: userId } : {}),
   });
   if (userId) await enroll(userId, { code, seriesId, groupName: fields.location || '' });
-  if (userId) askAboutGroup(code);
   return { code, seriesId, series: SERIES[seriesId] };
 }
 
-/* Richard, 28 Sep: the optional questions (where, how many, anything else)
-   come AFTER the code appears, beside it — not as a fold in the create form.
-   So a new group is marked "not yet asked" in this browser, My Path asks once
-   beside its code, and Send or Skip clears the mark. The answers arrive in
-   the /admin inbox as a follow-up to the registration (a second `groups`
-   entry: anyone may add one, only an editor may read it — firestore.rules
-   unchanged). */
-const ASK = 'gfm.askAboutGroup.v1';
-function askAboutGroup(code) {
-  try { localStorage.setItem(ASK, code); } catch { /* private window: we just won't ask */ }
-}
-export function groupToAskAbout() {
-  try { return localStorage.getItem(ASK); } catch { return null; }
-}
-export function doneAskingAboutGroup() {
-  try { localStorage.removeItem(ASK); } catch { /* nothing to clear */ }
-}
+/* Richard, 28 Sep: the questions (where, how many, anything else) come
+   AFTER the code appears — not as a fold in the create form. The answers
+   arrive in the /admin inbox as a follow-up to the registration (a second
+   `groups` entry: anyone may add one, only an editor may read it). Then the
+   group's shared state is marked (DETAILS_STEP, written through the one
+   writer, applyGroupAction), so My Path stops asking on every device
+   (Wyatt, 2 Nov: the mark used to live in the browser that made the group). */
 export async function sendGroupDetails(code, fields, user) {
   const parsed = parseGroupCode(code);
   await store.add('groups', {
@@ -125,7 +114,7 @@ export async function sendGroupDetails(code, fields, user) {
     location: String(fields.location || '').trim(), size: String(fields.size || '').trim(), notes: String(fields.notes || '').trim(),
     submittedAt: new Date().toISOString(),
   });
-  doneAskingAboutGroup();
+  await actOnGroup(code, DETAILS_STEP, { type: 'check', value: true });
 }
 
 /* A member entering a code. The parse decides; the lookup only adds detail. */

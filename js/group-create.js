@@ -27,8 +27,8 @@ export function createGroupForm({ series = 'secular' } = {}) {
 /* The questions — asked once, beside a new group's code on My Path
    (Richard, 28 Sep), never before the code exists. Kate, 1 Nov: the
    expected size is required (she accepts the extra step); where and notes
-   stay optional. Leaders who skipped it before are not asked again (the ask
-   is marked once per new group), and /admin → Accounts shows them blank. */
+   stay optional. Its leader is asked until they answer, on any device: the
+   engine reads a mark in the group's shared state (Wyatt, 2 Nov). */
 export function mountGroupDetails(slot, { code, onDone }) {
   slot.innerHTML = `
     <h3>Tell us about your group</h3>

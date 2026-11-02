@@ -182,6 +182,15 @@ const FINISH = {
 
 const ACCOUNTS_TICK = 'prep-accounts';
 
+/* WHETHER A GROUP HAS TOLD US ABOUT ITSELF (where, how many — Kate, 1 Nov:
+   the size is required). ONE mark, in the group's shared state beside the
+   accounts tick, written by its leader when they send the answers. Every
+   device reads the same mark, so the leader is asked on whichever device
+   they open, until they answer (Wyatt, 2 Nov: it was a note in the browser
+   that made the group, lost with that browser's data). The answers
+   themselves go to groups/, which only editors read. */
+export const DETAILS_STEP = 'group-details';
+
 const GROUP_TICK_LABEL = {
   prep: 'Everyone has their workbook',
   meet: 'We met and played the videos',
@@ -347,6 +356,8 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
 
   return {
     role,
+    /* Ask "Tell us about your group" — whoever runs it, until it's sent. */
+    askDetails: can.tickGroup && !shared[DETAILS_STEP]?.done,
     series: { id: series.id, name: series.name, framing: series.framing, workbook: series.workbook },
     steps,
     next,

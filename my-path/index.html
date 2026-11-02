@@ -125,10 +125,10 @@
   import {
     myGroups, joinGroup, finishGroup, bringBackGroup, codeRecord, CODE_SHAPE,
     applyHeldGroupCode,
-    loadSeries, groupState, myTicks, groupTicks, actOnGroup, tickMine, SESSION_VIDEO, groupToAskAbout, nameGroup,
+    loadSeries, groupState, myTicks, groupTicks, actOnGroup, tickMine, SESSION_VIDEO, nameGroup,
   } from '../js/groups.js';
   import { deriveSeries, pathView, roleFor } from '../js/group-engine.js';
-  import { seriesFlow, seriesName, nextBox, wireSeries, esc } from '../js/series.js';
+  import { seriesFlow, nextBox, wireSeries, esc } from '../js/series.js';
   import { videoFrame } from '../js/video.js';
   import { getCollection, fieldAttr } from '../js/content.js';
   import { mountCreateGroup, mountGroupDetails } from '../js/group-create.js';
@@ -316,20 +316,34 @@
     sw.innerHTML = '';
     const shown = groups.find((x) => x.isChosen);
     ctx = shown ? { userId, code: shown.g.code } : null;
+    /* ONE title per group, drawn here and nowhere else (Wyatt, 2 Nov: the
+       name showed twice — in the row and again in a box under it). The name,
+       or "6 sessions · code" until it has one, with a pencil that turns the
+       title itself into the field. The whole row opens and closes the group;
+       the pencil sits above that, so it never toggles the row. One group or
+       several, it is the same tray, so there is one way to draw a group. */
     const head = ({ g, view, isChosen }) => `
-      <button type="button" class="tray-head" data-choose="${esc(g.code)}" aria-expanded="${isChosen}">
-        <b>${g.label ? esc(g.label) : `${meetings(view)} sessions · <span class="groupcode">${esc(g.code)}</span>`}</b>
+      <div class="tray-head">
+        <button type="button" class="tray-toggle" data-choose="${esc(g.code)}" aria-expanded="${isChosen}"
+          aria-label="${esc(g.label || `${meetings(view)} sessions, ${g.code}`)}"></button>
+        <div class="group-title">
+          <b>${g.label ? esc(g.label) : `${meetings(view)} sessions · <span class="groupcode">${esc(g.code)}</span>`}</b>
+          <button type="button" class="group-rename" data-rename aria-label="${g.label ? 'Rename this group' : 'Name this group'}" title="${g.label ? 'Rename' : 'Name this group'} · only you see this name">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </button>
+        </div>
+        <form class="group-name" data-name-form data-code="${esc(g.code)}" hidden>
+          <input name="label" value="${esc(g.label || '')}" maxlength="60" placeholder="Name this group" aria-label="Group name (only you see it)">
+        </form>
         <small>${esc(view.series.name)} · ${esc(view.panel.tag)} · ${view.next ? `Next: meeting ${view.next.n}` : 'All meetings done'}</small>
-      </button>`;
-    groupSlot.innerHTML = groups.length < 2
-      ? (shown ? groupHtml(shown) : '')
-      : groups.map((x) => `
-        <section class="tray${x.isChosen ? ' is-open' : ''}">
+      </div>`;
+    groupSlot.innerHTML = groups.map((x) => `
+        <section class="tray${x.isChosen ? ' is-open' : ''}${groups.length < 2 ? ' tray--solo' : ''}">
           ${head(x)}
           ${x.isChosen ? `<div class="tray-body">${groupHtml(x)}</div>` : ''}
         </section>`).join('');
     const ask = groupSlot.querySelector('[data-render="details"]');
-    if (ask) mountGroupDetails(ask, { code: shown.g.code, onDone: () => ask.remove() });
+    if (ask) mountGroupDetails(ask, { code: shown.g.code, onDone: () => renderGroup(ctx.userId) });
 
     /* No group yet: the two ways in are the section. Otherwise they fold
        below the group, with Past groups beside them. */
@@ -355,21 +369,15 @@
   /* The chosen group: its code, the one next thing, then every step. */
   function groupHtml({ g, view }) {
     const p = view.panel;
-    /* A group just created gets its questions once, above the meeting dates,
-       on every screen (Wyatt, 2 Nov: beside the code it squeezed the dates
-       into a narrow column on wide screens). */
-    const asking = groupToAskAbout() === g.code;
+    /* Its leader is asked about the group until they answer, on any device
+       (the engine reads the mark in the group's state), above the meeting
+       dates on every screen (Wyatt, 2 Nov). */
+    const asking = view.askDetails;
     return `
       <div class="group-top">
         <div>
-          <!-- 29 Sep call: people name their own groups; the name is theirs
-               alone and shows on the switcher. -->
-          <form class="group-name" data-name-form>
-            <input name="label" value="${esc(g.label || '')}" maxlength="60" placeholder="Name this group" aria-label="Name this group (only you see it)" title="Only you see this name">
-            <button class="linkish" type="submit" hidden>Save</button>
-          </form>
-          <!-- The code moved into step 1 (Wyatt, 6 Oct); the version stays here. -->
-          <p class="small muted group-sub">${seriesName(view, 'span')}</p>
+          <!-- 29 Sep call: people name their own groups — in the title above,
+               with its pencil. The code moved into step 1 (Wyatt, 6 Oct). -->
           ${asking ? '<aside class="card group-details" data-render="details"></aside>' : ''}
           ${nextBox(view)}
         </div>
@@ -378,18 +386,26 @@
       <p class="group-finish"><button type="button" class="linkish" data-finish="${esc(g.code)}">${esc(p.finish)}</button></p>`;
   }
 
-  /* A group's name saves when the field is left or Enter is pressed. */
+  /* A group's name saves when the field is left or Enter is pressed;
+     Escape puts the title back unchanged. */
   const saveName = async (form) => {
-    if (!currentUserId || !ctx) return;
+    if (!currentUserId || form.dataset.saving) return;
+    form.dataset.saving = '1';
     const label = form.label.value.trim();
-    if (label === (form.dataset.saved ?? form.label.defaultValue)) return;
-    form.dataset.saved = label;
-    const code = ctx.code;
-    await nameGroup(currentUserId, code, label);
-    const g = known.groups?.find((x) => x.code === code);
-    if (g) g.label = label;
+    const code = form.dataset.code;
+    if (label !== form.label.defaultValue) {
+      await nameGroup(currentUserId, code, label);
+      const g = known.groups?.find((x) => x.code === code);
+      if (g) g.label = label;
+    }
     await renderGroup(currentUserId, { fresh: false });
   };
+  home.addEventListener('keydown', (e) => {
+    const form = e.target.closest?.('[data-name-form]');
+    if (!form || e.key !== 'Escape') return;
+    form.label.value = form.label.defaultValue;
+    saveName(form);
+  });
   home.addEventListener('submit', (e) => {
     const form = e.target.closest('[data-name-form]');
     if (!form) return;
@@ -403,6 +419,16 @@
 
   /* One listener for the section's own buttons. */
   home.addEventListener('click', async (e) => {
+    const rename = e.target.closest('[data-rename]');
+    if (rename) {
+      const headEl = rename.closest('.tray-head');
+      const form = headEl.querySelector('[data-name-form]');
+      headEl.querySelector('.group-title').hidden = true;
+      form.hidden = false;
+      form.label.focus();
+      form.label.select();
+      return;
+    }
     const pick = e.target.closest('[data-choose]');
     if (pick && currentUserId) { choose(pick.dataset.choose); await renderGroup(currentUserId, { fresh: false }); return; }
 

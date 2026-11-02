@@ -7,7 +7,7 @@
    2. Wyatt's rulings 4–6 and the call's rules, each as an assertion.
 
    Run: node scripts/qa/group-engine-roles.mjs   (exit 1 on any failure) */
-import { deriveSeries, roleFor, applyGroupAction, applyMyTick, meetingsHeld, ROLES, FACILITATOR_SEES_MEMBER_TICKS } from '../../js/group-engine.js';
+import { deriveSeries, roleFor, applyGroupAction, applyMyTick, meetingsHeld, DETAILS_STEP, ROLES, FACILITATOR_SEES_MEMBER_TICKS } from '../../js/group-engine.js';
 import { SERIES } from '../../js/data.js';
 
 let failed = 0;
@@ -135,6 +135,18 @@ console.log('Meetings held, for /admin (Kate, 1 Nov)');
   ok(n.held === 1 && n.of === total, `the group above: ${n.held} of ${n.of}`);
   ok(meetingsHeld({ series: S, group: null, now: NOW }).held === 0, 'no group state: 0');
   ok(meetingsHeld({ series: S, group: g4, now: NOW }).held === 2, 'a meeting whose time has passed counts, and so does the one before it');
+}
+
+console.log('Tell us about your group: asked from the group state, on any device (Wyatt, 2 Nov)');
+{
+  const ask = (grp, role) => deriveSeries({ series: S, group: grp, role, now: NOW, video: V }).askDetails;
+  ok(ask(null, 'facilitator') === true, 'a new group: its leader is asked');
+  ok(ask(g, 'facilitator') === true, 'a group with ticks but no answers: still asked');
+  ok(['member', 'none', 'visitor'].every((r) => ask(null, r) === false), 'members, people in no group and visitors are never asked');
+  const sent = applyGroupAction(g, DETAILS_STEP, { type: 'check', value: true });
+  ok(ask(sent, 'facilitator') === false, 'answers sent: not asked again');
+  ok(step(deriveSeries({ series: S, group: sent, role: 'facilitator', now: NOW, video: V }), 'meet-2').state === 'open', 'the mark changes nothing about the meetings');
+  ok(meetingsHeld({ series: S, group: sent, now: NOW }).held === meetingsHeld({ series: S, group: g, now: NOW }).held, 'and nothing about Meetings held');
 }
 
 console.log('Someone who joins late (ruling 6)');

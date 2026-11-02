@@ -37,6 +37,9 @@ const RULES = [
      "Meetings held" both come from the engine's one walk (gatesDone). Red if
      anything else reads a stored tick, an untick time, or the meeting length. */
   { re: /\.done\b(?!\s*\})|\bundoneAt\b|\bMEETING_LENGTH_MS\b/, why: 'decides whether a meeting is done (only gatesDone / meetingsHeld in the engine may)' },
+  /* Wyatt, 2 Nov: "has this group told us about itself" lives in the group's
+     state, read by the engine (askDetails) — never in one browser again. */
+  { re: /['"]group-details['"]|askAboutGroup|localStorage[^;]*ask/i, why: 'decides whether to ask about a group (only the engine, from the group state, may)' },
 ];
 
 /* Writing the account id onto the code's record is the fact itself. */

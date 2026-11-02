@@ -51,3 +51,9 @@ columns are empty. Wyatt answered the clarifying questions in the handoff brief.
 - My Path: a new group's "Tell us about your group" sits **above** "Next · Plan your meetings" on every
   screen, full width. This replaces "beside its code" (Richard, 28 Sep), which squeezed the meeting dates
   into a narrow column on wide screens.
+- "Tell us about your group": whether a group has answered is now a mark in the group's shared state
+  (`DETAILS_STEP` in `js/group-engine.js`), read on every device. It was a note in the browser that made
+  the group, lost when that browser's data was cleared (Wyatt: "why would it be tied to a browser"). Leaders
+  who answered before this change are asked once more, because their answers sit in editor-only records.
+- My Path: a group's name is shown once, as its title, renamed in place with a pencil. The separate
+  "Name this group" box and the repeated series line are gone; one group or several, it is the same tray.
