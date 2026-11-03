@@ -34,7 +34,6 @@ one here.** It stays short so it survives being read.
 | 14 | **`git fetch` before you trust any ref; absolute paths always** |
 | 15 | **This repo is public: web config is fine, secrets never** — no service keys, no tokens, nothing you wouldn't print |
 | 16 | **Kill every server and headless browser you start, before you reply** |
-| 17 | **Work through GSD** — and in a cloud container, install it first (§GSD) |
 
 ## Design — Wyatt's two principles (2026-08-21, his words distilled)
 
@@ -108,24 +107,6 @@ the way out always visible. "There's no hurry" is design language here.
   Retiring an edit on purpose goes in its `HIDDEN_ON_PURPOSE` list with who and when.
 - The interactive workbook at `/workbook/` is canonical here; the standalone `forgiveness` repo
   stays untouched. Never let the two drift silently — changes happen here.
-
-## GSD
-
-Start work through GSD so planning artifacts stay true: `/gsd-progress` to orient,
-`/gsd-plan-phase N` / `/gsd-execute-phase N` for phase work, `/gsd-quick` for small fixes,
-`/gsd-debug` for investigation. Read `.planning/STATE.md` at session start.
-
-**Cloud containers (claude.ai/code) don't have gsd-core preinstalled.** First thing, every cloud
-session:
-
-```bash
-command -v node >/dev/null && ls ~/.claude/gsd-core/bin/gsd-tools.cjs 2>/dev/null \
-  || npx -y @opengsd/gsd-core -g --claude
-```
-
-Installed skills register live in the session (verified 2026-08-21). Subagent *types* (e.g.
-gsd-roadmapper) do not register mid-session — run those roles inline following the agent
-definition in `~/.claude/agents/`, as the GSD workflows' own fallback prescribes.
 
 ## Project facts
 

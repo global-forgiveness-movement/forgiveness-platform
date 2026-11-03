@@ -18,7 +18,7 @@ labeled in-browser demo mode when it doesn't).
 - `/workbook/` — the interactive REACH workbook (12 lessons, answers stay on-device;
   signed-in users sync only their position — see `js/progress-sync.js`)
 - `/plan/` — the client-facing scope & process plan (separately encrypted)
-- `.planning/` — GSD project state (`STATE.md` is the place to start)
+- `.planning/` — project records: client rulings in `qa/`, briefs, art, and the backlog
 - `.claude/CLAUDE.md` — the working rules for sessions on this project
 
 ## Development
