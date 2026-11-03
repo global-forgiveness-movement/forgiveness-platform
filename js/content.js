@@ -34,6 +34,10 @@ export const DEFAULTS = {
    `src`, so a meeting added to SERIES still gets its row after a save. */
 const ROWS_FROM_CODE = { meetingVideos: ['src'] };
 
+/* Fields added after an editor saved a list: a saved row takes them from the
+   committed row with its id until the editor saves its own. */
+const FILLED_FROM_CODE = { facilitatorKit: ['edition'] };
+
 export async function getCollection(name) {
   let items = null;
   try {
@@ -45,7 +49,22 @@ export async function getCollection(name) {
     const byId = Object.fromEntries((items || []).map((x) => [x.id, x]));
     return DEFAULTS[name].map((row) => ({ ...row, ...pick(byId[row.id] || {}, keep) }));
   }
+  const fill = FILLED_FROM_CODE[name];
+  if (fill && items) {
+    const byId = Object.fromEntries(DEFAULTS[name].map((x) => [x.id, x]));
+    return items.map((it) => ({ ...pick(byId[it.id] || {}, fill), ...it }));
+  }
   return items || (DEFAULTS[name] ?? []);
+}
+
+/* The facilitator's materials — ONE list, the `facilitatorKit` collection,
+   edited in /admin with the same add-a-row editor as Workbooks and resources.
+   Whether someone gets any is the engine's (view.kit: the editions they lead);
+   which rows they get is this. Pure, so scripts/qa/one-facilitator-list.mjs
+   can test it. */
+const KIT_EDITION = { 'REACH Forgiveness': 'secular', 'Adapted for Churches': 'church' };
+export function kitRows(kit, seriesIds) {
+  return (kit || []).filter((k) => !KIT_EDITION[k.edition] || seriesIds.includes(KIT_EDITION[k.edition]));
 }
 
 /* Videos as a map keyed by slot, for the shell's embed hydration. */

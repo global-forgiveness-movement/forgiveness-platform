@@ -129,8 +129,8 @@
   } from '../js/groups.js';
   import { deriveSeries, pathView, roleFor } from '../js/group-engine.js';
   import { seriesFlow, nextBox, wireSeries, esc } from '../js/series.js';
-  import { videoFrame } from '../js/video.js';
-  import { getCollection, fieldAttr } from '../js/content.js';
+  import { videoFrame, isFilm } from '../js/video.js';
+  import { getCollection, kitRows, fieldAttr } from '../js/content.js';
   import { mountCreateGroup, mountGroupDetails } from '../js/group-create.js';
   import { mountCodeEntry } from '../js/code-entry.js';
 
@@ -246,19 +246,11 @@
     const box = slot('kit');
     box.hidden = !ids.length;
     if (!ids.length) { box.innerHTML = ''; return; }
-    const kit = await getCollection('facilitatorKit');
-    const item = (id) => { const i = kit.findIndex((k) => k.id === id); return [kit[i], i]; };
-    const rows = ids.map((id) => {
-      const [k, i] = item(id);
-      if (!k) return '';
+    const rows = kitRows(await getCollection('facilitatorKit'), ids).map((k, i) => {
       const label = `<b ${fieldAttr('facilitatorKit', k, i, 'label')}>${k.label}</b>`;
-      if (id === 'film') {
-        const frame = k.link ? videoFrame(k.link, k.label) : '';
-        return frame ? `<div class="kit-item">${label}<figure class="video" style="margin-top:0.5rem">${frame}</figure></div>`
-          : `<div class="kit-item">${label} <span class="pill pill--plum">Arrives soon</span></div>`;
-      }
-      return k.link ? `<div class="kit-item">${label} <a class="btn btn--outline" href="${esc(k.link)}" target="_blank" rel="noopener">Open the manual</a></div>`
-        : `<div class="kit-item">${label} <span class="pill pill--plum">Arrives soon</span></div>`;
+      if (!k.link) return `<div class="kit-item">${label} <span class="pill pill--plum">Arrives soon</span></div>`;
+      if (isFilm(k.link)) return `<div class="kit-item">${label}<figure class="video" style="margin-top:0.5rem">${videoFrame(k.link, k.label)}</figure></div>`;
+      return `<div class="kit-item">${label} <a class="btn btn--outline" href="${esc(k.link)}" target="_blank" rel="noopener" ${fieldAttr('facilitatorKit', k, i, 'button')}>${k.button || 'Open'}</a></div>`;
     }).join('');
     box.innerHTML = `<p class="kicker" style="margin-bottom:0.3rem">For facilitators</p>${rows}`;
   }

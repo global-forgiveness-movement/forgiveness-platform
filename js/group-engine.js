@@ -368,9 +368,9 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
     next,
     plan,
     currentId: current?.id || null,
-    /* Which facilitator materials this viewer gets: the manual for this
-       edition and the one film — or none. */
-    kit: can.guide ? [`manual-${series.id}`, 'film'] : [],
+    /* The edition whose facilitator materials this viewer gets, or none.
+       Which rows those are is the list's: kitRows() in js/content.js. */
+    kit: can.guide ? [series.id] : [],
     finished: can.inGroup && steps.every((s) => s.kind !== 'together' || s.state === 'done'),
     ...pathView(role),
   };

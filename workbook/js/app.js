@@ -707,8 +707,8 @@ function viewPrivacy() {
       <h1 class="page-title">Privacy &amp; your data</h1>
       <div class="promise slim">${CHECKLEAF}<div><p><b>The short version:</b> everything you write stays on this device. Nothing is ever sent anywhere.</p></div></div>
       <h2>How it works</h2>
-      <p>This workbook is a set of static files — there is <b>no database of your answers and no analytics</b>, and it works without any account. When you type a response, it is saved by your browser using a feature called <i>localStorage</i>, which lives entirely on your device. Your responses are never transmitted over the internet. You can verify this: open your browser's developer tools and watch the network tab — after the page loads, no requests carry anything you typed.</p>
-      <p>One honest distinction: this workbook is part of the Global Forgiveness Movement site, where it opens with a free account. The site syncs <b>your place</b> — which lesson and step you're on, and which lessons you've completed — so you can pick up on another device. It never syncs your answers. What you write stays here.</p>
+      <p>This workbook is a set of static files — there is <b>no database of your answers and no analytics</b>. When you type a response, it is saved by your browser using a feature called <i>localStorage</i>, which lives entirely on your device. Your responses are never transmitted over the internet. You can verify this: open your browser's developer tools and watch the network tab — after the page loads, no requests carry anything you typed.</p>
+      <p>It opens with a free account, which keeps your place. The site syncs <b>your place</b> — which lesson and step you're on, and which lessons you've completed — so you can pick up on another device. It never syncs your answers. What you write stays here.</p>
       <h2>What that means in practice</h2>
       <ul>
         <li>${LEAF()}<span>Your writing persists between visits, so you can complete the 12 lessons over days or weeks. It stays until <b>you</b> delete it.</span></li>

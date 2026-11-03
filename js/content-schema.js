@@ -97,12 +97,13 @@ export const COLLECTIONS = {
   },
   facilitatorKit: {
     label: 'Facilitator materials',
-    help: 'What a group’s facilitator sees under “Your materials” on My Path: one manual for each edition, and one film for both. Put the file somewhere that gives a share link (Google Drive, Dropbox, Vimeo) and paste the link here. Leave a link empty and it reads “arrives soon”.',
-    fixed: true,
+    help: 'What a group’s facilitator sees under “Your materials” on My Path. To add one, press “+ add another”, name it, choose who sees it, and paste a link. Put the file somewhere that gives a share link (Google Drive, Dropbox, Adobe) or a film on Vimeo or YouTube. A row with no link yet reads “arrives soon”.',
     fields: [
-      { key: 'id', label: 'Which one', type: 'text', readonly: true },
+      { key: 'id', label: 'Set by the site', type: 'text', readonly: true },
       { key: 'label', label: 'What it is called', type: 'text' },
-      { key: 'link', label: 'Link', type: 'url', help: 'A PDF share link for a manual; a Vimeo or YouTube link for the film.' },
+      { key: 'edition', label: 'Who sees it', type: 'select', options: ['Both editions', 'REACH Forgiveness', 'Adapted for Churches'] },
+      { key: 'link', label: 'Link', type: 'url', help: 'A share link to a file, or a Vimeo or YouTube link. A film plays on the page; anything else gets a button.' },
+      { key: 'button', label: 'Button words (optional)', type: 'text', help: 'Leave empty for “Open”. Films have no button.' },
     ],
   },
   reach: {

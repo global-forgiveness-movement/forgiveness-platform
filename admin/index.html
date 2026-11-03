@@ -280,7 +280,7 @@
       /* A row added here gets a lasting id, so words edited on the page stay
          with it when the list is reordered (an index would move). */
       if (schema.fields.some((f) => f.key === 'id')) {
-        items.forEach((it) => { if (!it.id) it.id = `${slugify(it.name || 'item') || 'item'}-${Math.random().toString(36).slice(2, 6)}`; });
+        items.forEach((it) => { if (!it.id) it.id = `${slugify(it.name || it.label || 'item') || 'item'}-${Math.random().toString(36).slice(2, 6)}`; });
       }
       await saveCollection(name, items, editor.email);
       flash('Saved — it’s live.');

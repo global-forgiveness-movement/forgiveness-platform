@@ -61,3 +61,9 @@ columns are empty. Wyatt answered the clarifying questions in the handoff brief.
   the meeting that is open now; later meetings are locked until the one before is ticked. Unticking still
   unticks every later meeting. Lesson ticks people already made are left as they are (his answer).
 - My Path: "Your forgiveness" is now "Your workbook" (Wyatt, 2 Nov).
+
+## Follow-ups, 3 Nov (Wyatt)
+
+- Privacy page: the "reviewed before launch" sentence is gone.
+- Account wording: the site says the PDF never needs an account and the interactive workbook opens with a free one, everywhere. No line claims the workbook as a whole needs none.
+- /admin → Facilitator materials has add-a-row, like Workbooks and resources. Kate names a row, chooses who sees it, and pastes a share link; `kitRows()` in `js/content.js` decides what a facilitator sees.

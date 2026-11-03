@@ -92,6 +92,13 @@ export function embedUrl(link) {
   return u.protocol === 'https:' ? u.href : null;
 }
 
+/* Is this link a film that can play on the page, rather than a file to open? */
+export function isFilm(link) {
+  const u = parse(link);
+  const host = u?.hostname.replace(/^(www|m)\./, '');
+  return ['youtube.com', 'youtube-nocookie.com', 'youtu.be', 'music.youtube.com', 'vimeo.com', 'player.vimeo.com'].includes(host);
+}
+
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 /* The one <iframe> on the site. `link` is whatever the editor pasted. */

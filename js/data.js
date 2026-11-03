@@ -388,11 +388,12 @@ export const MEETING_VIDEOS = Object.values(SERIES).flatMap((s) =>
 /* What a group's facilitator gets (Kate, 6 Oct): ONE facilitator manual for
    the whole series, one per edition, and ONE facilitator film, shared by both
    editions for now. Not per meeting. Links are pasted in /admin → Facilitator
-   materials; an empty link reads "arrives soon". */
+   materials; an empty link reads "arrives soon". Kate adds more there herself
+   (Wyatt, 3 Nov); `edition` says whose My Path each one shows on. */
 export const FACILITATOR_KIT = [
-  { id: 'manual-secular', label: 'Facilitator manual · REACH Forgiveness Workbook', link: '' },
-  { id: 'manual-church', label: 'Facilitator manual · Adapted for Churches', link: '' },
-  { id: 'film', label: 'How to facilitate a Forgiveness Group (film)', link: '' },
+  { id: 'manual-secular', label: 'Facilitator manual · REACH Forgiveness Workbook', edition: 'REACH Forgiveness', link: '' },
+  { id: 'manual-church', label: 'Facilitator manual · Adapted for Churches', edition: 'Adapted for Churches', link: '' },
+  { id: 'film', label: 'How to facilitate a Forgiveness Group (film)', edition: 'Both editions', link: '' },
 ];
 
 export const PUBLICATIONS = [
