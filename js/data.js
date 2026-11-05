@@ -358,6 +358,9 @@ export const SERIES = {
     id: 'church',
     name: '6-Session Forgiveness Group Series for Churches',
     workbook: 'REACH Forgiveness Workbook, Adapted for Churches',
+    /* No interactive edition yet (Wyatt, 5 Nov), so My Path hands a member of
+       this series this edition's PDF. Delete this line when one exists. */
+    pdfOnly: 'church',
     framing: 'Christian — scripture, prayer, and reflection woven through',
     videoKey: 'churchTrailer',
     prep: { title: 'Get the workbook', detail: 'Everyone has their own copy: free PDF or print.' },

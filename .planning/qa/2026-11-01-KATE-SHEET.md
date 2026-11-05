@@ -67,3 +67,8 @@ columns are empty. Wyatt answered the clarifying questions in the handoff brief.
 - Privacy page: the "reviewed before launch" sentence is gone.
 - Account wording: the site says the PDF never needs an account and the interactive workbook opens with a free one, everywhere. No line claims the workbook as a whole needs none.
 - /admin → Facilitator materials has add-a-row, like Workbooks and resources. Kate names a row, chooses who sees it, and pastes a share link; `kitRows()` in `js/content.js` decides what a facilitator sees.
+
+## Follow-ups, 5 Nov (Wyatt)
+
+- My Path: while a church edition has no interactive version, a person whose open group is a 6-session church series gets the church PDF in "Your workbook". Anyone already partway through the REACH interactive workbook keeps a small link back to it. `SERIES.church.pdfOnly` in `js/data.js` decides this; delete that line when the interactive church workbook ships.
+- Groups page: the line saying the facilitator guide and film are "in production" is gone, along with its "Coming with the videos" pill. Kate's saved copy of it is listed in `HIDDEN_ON_PURPOSE`.

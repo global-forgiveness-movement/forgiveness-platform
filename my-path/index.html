@@ -133,18 +133,35 @@
   import { getCollection, kitRows, fieldAttr } from '../js/content.js';
   import { mountCreateGroup, mountGroupDetails } from '../js/group-create.js';
   import { mountCodeEntry } from '../js/code-entry.js';
+  import { downloadFor, SERIES } from '../js/data.js';
 
   const TOTAL_LESSONS = 12;
 
   /* Wyatt, 6 Oct: "we want someone to WANT to pick their work back up, not
      drown in text." The name of the thing, how far they are, one big button
      — the same button that started it on the Workbooks page. */
-  function progressCard(p) {
+  function progressCard(p, series) {
     const done = p.completed.length;
     const started = !!(p.progress || done);
+    /* Wyatt, 5 Nov: the group on screen uses an edition with no interactive
+       version, so its workbook is that edition's PDF, not the REACH app. Someone
+       already partway through the app keeps a way back to their place. */
+    if (series?.pdfOnly) {
+      const dl = downloadFor(series.pdfOnly, 'en', '../');
+      return `<h3 class="wb-title">${esc(series.workbook)}</h3>
+        <a class="btn btn--primary btn--lg btn--down" style="margin-top:0.8rem" href="${dl.href}" data-download="${dl.tag}" download>${dl.label}</a>
+        ${started ? `<p class="small" style="margin-top:0.8rem"><a href="../workbook/">Continue the interactive REACH Forgiveness Workbook</a> (${done} of ${TOTAL_LESSONS} lessons complete)</p>` : ''}`;
+    }
     return `<h3 class="wb-title">The interactive workbook</h3>
       <p class="small">${done} of ${TOTAL_LESSONS} lessons complete</p>
       <a class="btn btn--primary btn--lg btn--go" href="../workbook/">${started ? 'Continue' : 'Begin'}</a>`;
+  }
+  /* The card is drawn from two things that load side by side: this person's
+     progress and the group on screen. Each paints when it arrives. */
+  let cardProgress = null;
+  let cardSeries = null;
+  function paintProgressCard() {
+    if (cardProgress) document.querySelector('[data-render="progress-card"]').innerHTML = progressCard(cardProgress, cardSeries);
   }
 
   let currentUserId = null;
@@ -160,7 +177,8 @@
     /* The workbook and the groups load side by side — neither waits for the
        other (each box says "Loading…" until its own answer arrives). */
     const progress = syncProgress(u.id).then((p) => {
-      document.querySelector('[data-render="progress-card"]').innerHTML = progressCard(p);
+      cardProgress = p;
+      paintProgressCard();
     });
     /* A code they typed before they had an account, attached now — and
        shown, since it is the group they came for. */
@@ -315,6 +333,8 @@
     sw.innerHTML = '';
     const shown = groups.find((x) => x.isChosen);
     ctx = shown ? { userId, code: shown.g.code } : null;
+    cardSeries = shown ? SERIES[shown.g.seriesId] : null;
+    paintProgressCard();
     /* ONE title per group, drawn here and nowhere else (Wyatt, 2 Nov: the
        name showed twice — in the row and again in a box under it). The name,
        or "6 sessions · code" until it has one, with a pencil that turns the
