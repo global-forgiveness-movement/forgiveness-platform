@@ -7,14 +7,14 @@ import { NAV, FOOTER_COLS, BRAND, ACCOUNT_LINKS, FORGIVING_BENEFITS, TRIAL } fro
 import { changeCard, percentChange } from './change-bar.js';
 import { getVideos, getPages, fieldAttr, getCollection } from './content.js';
 import { applyPageOrder, cachedOrder, rememberOrder } from './page-order.js';
-import { recordDownload } from './metrics.js';
+import { recordDownload, recordVisit, recordPlay } from './metrics.js';
 import { videoFrame } from './video.js';
 
 /* The header's stand-in mark, drawn while the brand file is missing. */
 const leaf = (fill) =>
   `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z" fill="${fill}" transform="rotate(40 12 12)"/></svg>`;
 
-export const STAMP = 'GFM-V1 · 2026-11-09b';
+export const STAMP = 'GFM-V1 · 2026-11-09c';
 
 /* Resolve everything relative to the site root (js/ → root), so pages work
    at any depth and on any host (github.io project path or a custom domain). */
@@ -291,6 +291,26 @@ function watchDownloads() {
   });
 }
 
+/* Visit and play counting (SOW, 5 Nov; js/metrics.js says what is kept).
+   A visit is this page's name: its folder under the site root ("home" for the
+   root), so an editor's new page is counted under its own slug. /admin is
+   not counted: that's the team, not visitors. The interactive workbook is
+   not counted either: it never loads this file, and its privacy page
+   promises no analytics. */
+function countVisit() {
+  const path = location.pathname.slice(ROOT.pathname.length).split('/').filter((p) => p && p !== 'index.html');
+  if (path[0] === 'admin') return;
+  recordVisit(path[0] && path[0] !== '404.html' ? path[0] : 'home');
+}
+/* A film plays in another site's frame, which tells this page nothing; but
+   pressing play moves focus into that frame, and that this page can see. */
+function watchPlays() {
+  addEventListener('blur', () => setTimeout(() => {
+    const f = document.activeElement;
+    if (f?.tagName === 'IFRAME' && f.dataset.film) recordPlay(f.dataset.film);
+  }));
+}
+
 /* Every link that leaves this site opens in a new tab — decided once, at click
    time, so it holds for static markup, data-driven links, and pages Kate
    creates in /admin alike (Wyatt's ruling, 1 Sep). Capture phase: attributes
@@ -336,6 +356,8 @@ async function buildShell() {
     console.warn('page text unavailable:', err);
   });
   watchDownloads();
+  watchPlays();
+  countVisit();
   document.documentElement.setAttribute('data-shell-ready', '');
   keepAnchorAligned();
   /* Auth is optional dressing on every page; it must never block the shell. */

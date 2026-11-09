@@ -101,10 +101,25 @@ export function isFilm(link) {
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-/* The one <iframe> on the site. `link` is whatever the editor pasted. */
+/* Which film this is, for counting plays (js/metrics.js): the service and the
+   film's own id, so the count follows the film, not its title or the page.
+   "youtube-<id>", "youtube-list-<id>", "vimeo-<id>"; another embed address
+   passed through, by its host and path. */
+export function filmTag(link) {
+  const src = embedUrl(link);
+  if (!src) return '';
+  const u = new URL(src);
+  const part = u.pathname.split('/')[2];
+  if (u.hostname === 'player.vimeo.com') return `vimeo-${part}`;
+  if (src.startsWith(YT_EMBED)) return part === 'videoseries' ? `youtube-list-${u.searchParams.get('list')}` : `youtube-${part}`;
+  return `${u.hostname}${u.pathname}`.replace(/[^A-Za-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);
+}
+
+/* The one <iframe> on the site. `link` is whatever the editor pasted.
+   data-film lets js/site.js count a play when someone starts it. */
 export function videoFrame(link, title = 'Video') {
   const src = embedUrl(link);
   if (!src) return '';
-  return `<iframe src="${esc(src)}" title="${esc(title)}" loading="lazy"
+  return `<iframe src="${esc(src)}" title="${esc(title)}" loading="lazy" data-film="${esc(filmTag(link))}"
     allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
 }

@@ -128,6 +128,10 @@
     listHistory, restoreHistory, isEditor, slugify,
   } from '../js/content.js';
   import { esc } from '../js/blocks.js';
+  import { store } from '../js/store.js';
+  import { COUNTERS } from '../js/metrics.js';
+  import { filmTag } from '../js/video.js';
+  import { WORKBOOKS, LANGUAGES } from '../js/data.js';
   import { listInbox, SUBMISSIONS } from '../js/inbox.js';
   import { repairFacilitators, peopleRows } from '../js/groups.js';
   import { ORDERED_PAGES, orderedNames, sectionsOf, rememberOrder } from '../js/page-order.js';
@@ -201,10 +205,11 @@
      can never silently lose a section. A tab's name must not repeat a
      collection's: the Inbox list was once also called "people", which hid
      the About team (Kate, 20 Oct) — scripts/qa/one-admin-tab.mjs checks. */
-  const LABELS = { messages: 'Messages', accounts: 'Accounts', order: 'Page order', pages: 'New pages', history: 'History — undo a change' };
+  const LABELS = { messages: 'Messages', accounts: 'Accounts', counts: 'Visits, downloads & plays', order: 'Page order', pages: 'New pages', history: 'History — undo a change' };
   const HOME = ['stats', 'reach', 'testimonials'];
   const MENU = [
     { group: 'Inbox', items: ['messages', 'accounts'] },
+    { group: 'Numbers', items: ['counts'] },
     { group: 'Homepage', items: HOME },
     { group: 'Around the site', items: Object.keys(COLLECTIONS).filter((k) => !HOME.includes(k)) },
     { group: 'Pages', items: ['order', 'pages'] },
@@ -231,6 +236,7 @@
     if (name === 'pages') return renderPagesTab();
     if (name === 'messages') return renderMessagesTab();
     if (name === 'accounts') return renderPeopleTab();
+    if (name === 'counts') return renderCountsTab();
     if (name === 'history') return renderHistoryTab();
     if (name === 'order') return renderOrderTab();
     renderCollectionTab(name);
@@ -395,6 +401,49 @@
       ${rows.length
         ? rows.map(messageRow).join('')
         : '<p class="muted">Nothing yet. Messages from the Contact page and new group registrations will appear here.</p>'}`;
+  }
+
+  /* ---------------------------------------------- counts */
+  /* SOW, 5 Nov: "a simple /admin stats area" — totals for page visits,
+     workbook downloads and video plays. Totals only: the counters hold a
+     number per page, edition or film and nothing about anyone (js/metrics.js),
+     so nothing here can follow a person or show workbook progress. */
+  const pageName = (id) => ORDERED_PAGES.find((p) => p.id === id)?.label || `/${id}/`;
+  const downloadName = (id) => {
+    const [ed, lang] = id.split('_');
+    const w = WORKBOOKS.find((x) => x.id === ed);
+    const l = LANGUAGES.find(([c]) => c === lang);
+    return `${w?.name || ed}${l ? ` · ${l[1]}` : lang ? ` · ${lang}` : ''}`;
+  };
+  async function filmNames() {
+    const names = {};
+    const [videos, meetings, kit] = await Promise.all(['videos', 'meetingVideos', 'facilitatorKit'].map((c) => getCollection(c).catch(() => [])));
+    videos.forEach((v) => { if (v.src) names[filmTag(v.src)] = v.title || v.key; });
+    meetings.forEach((m) => { if (m.src) names[filmTag(m.src)] = m.meeting; });
+    kit.forEach((k) => { if (k.link && filmTag(k.link)) names[filmTag(k.link)] = k.label; });
+    return names;
+  }
+  const countTable = (rows, nameOf, what) => rows.length
+    ? `<div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>${esc(what)}</th><th>Count</th></tr></thead><tbody>
+        ${rows.map((r) => `<tr><td>${esc(nameOf(r.id))}</td><td>${Number(r.count) || 0}</td></tr>`).join('')}
+      </tbody></table></div>`
+    : '<p class="muted small">None counted yet.</p>';
+  async function renderCountsTab() {
+    $('[data-panel]').innerHTML = '<p class="muted small">Loading…</p>';
+    const read = (c) => store.list(c).then((rows) => rows.sort((a, b) => (b.count || 0) - (a.count || 0)), (err) => ({ err }));
+    const [visits, downloads, plays, films] = await Promise.all([read(COUNTERS.visits), read(COUNTERS.downloads), read(COUNTERS.plays), filmNames()]);
+    const total = (rows) => (rows.err ? '—' : rows.reduce((n, r) => n + (Number(r.count) || 0), 0).toLocaleString());
+    const part = (title, rows, nameOf, what, note) => `
+      <h3 style="margin-top:1.4rem">${esc(title)} <span class="muted small">· ${total(rows)} in all</span></h3>
+      <p class="muted small">${esc(note)}</p>
+      ${rows.err
+        ? `<p class="form-msg form-msg--err">These couldn’t load: the database doesn’t yet have the rule for this count. Wyatt publishes it with the site’s database rules. (${esc(rows.err.code || rows.err.message || String(rows.err))})</p>`
+        : countTable(rows, nameOf, what)}`;
+    $('[data-panel]').innerHTML = `
+      ${head('counts', 'Totals since counting began. Each is a number per page, workbook or video and nothing about who: no names, no accounts, no one followed from page to page, and nothing about anyone’s place in the workbook.')}
+      ${part('Page visits', visits, pageName, 'Page', 'A page opened in a browser tab. Opening it again in the same tab isn’t counted twice. /admin and the interactive workbook aren’t counted.')}
+      ${part('Workbook downloads', downloads, downloadName, 'Workbook and language', 'A press of a Download button, by edition and language.')}
+      ${part('Video plays', plays, (id) => films[id] || id, 'Video', 'Someone starting a video, once per video per browser tab.')}`;
   }
 
   /* ---------------------------------------------- people */

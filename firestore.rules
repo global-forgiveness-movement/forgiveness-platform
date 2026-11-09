@@ -69,6 +69,28 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    /* Page visits and film plays (SOW, 5 Nov: /admin totals): the same
+       counter shape as downloads — anyone may push one up by one, nobody may
+       set or delete it — named by a page or film only. Only editors read them. */
+    match /visits/{tag} {
+      allow read: if isEditor();
+      allow create: if tag.matches('^[A-Za-z0-9_-]{1,80}$')
+                    && request.resource.data.keys().hasOnly(['count'])
+                    && request.resource.data.count == 1;
+      allow update: if request.resource.data.keys().hasOnly(['count'])
+                    && request.resource.data.count == resource.data.count + 1;
+      allow delete: if false;
+    }
+    match /plays/{tag} {
+      allow read: if isEditor();
+      allow create: if tag.matches('^[A-Za-z0-9_-]{1,80}$')
+                    && request.resource.data.keys().hasOnly(['count'])
+                    && request.resource.data.count == 1;
+      allow update: if request.resource.data.keys().hasOnly(['count'])
+                    && request.resource.data.count == resource.data.count + 1;
+      allow delete: if false;
+    }
+
     /* ---- contact messages: write-only from the public ---- */
     /* The contact page carries no email address at all; it writes here instead,
        and /admin is the only way to read it. Same shape as groups below: anyone
