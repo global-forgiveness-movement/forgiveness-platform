@@ -1,6 +1,10 @@
 /* storage.js — all data stays in this browser via localStorage. Nothing is ever sent anywhere. */
 
-const KEY = 'reach-forgiveness.v1';
+import { WORKBOOK_EDITIONS, editionFrom } from '../../js/workbook-editions.js';
+
+/* Each edition keeps its own answers and place (js/workbook-editions.js). */
+export const EDITION = editionFrom(location.search);
+const KEY = WORKBOOK_EDITIONS[EDITION].key;
 
 let cache = null;
 

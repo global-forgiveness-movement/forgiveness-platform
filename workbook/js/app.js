@@ -1,7 +1,16 @@
 /* app.js — hash router + step engine. Static, offline-friendly, zero network calls with user data. */
 
-import { store } from './storage.js';
-import { LESSONS, REACH, LETTER, RESOURCES, CREDITS } from './content.js';
+import { store, EDITION } from './storage.js';
+import * as REACH_EDITION from './content.js';
+import { churchEdition, CHURCH_NAMES } from './church.js';
+
+/* ONE app, two editions (js/workbook-editions.js): the church edition is the
+   REACH lessons with its prayer sections added (church.js), never a copy. */
+const CHURCH = EDITION === 'church';
+const { REACH, RESOURCES, CREDITS } = REACH_EDITION;
+const { LESSONS, LETTER } = CHURCH ? churchEdition(REACH_EDITION) : REACH_EDITION;
+const FILE = CHURCH ? CHURCH_NAMES.file : 'reach-forgiveness';
+if (CHURCH) document.title = `Your Path to REACH Forgiveness, ${CHURCH_NAMES.subtitle} — an interactive workbook`;
 
 const app = document.getElementById('app');
 
@@ -559,6 +568,7 @@ function viewWelcome() {
       <div class="welcome-hero">
         <h1 class="welcome-title"><span class="wt-line">Your Path to</span> <span class="script wt-script">REACH</span> <span class="wt-line wt-big">Forgiveness</span></h1>
         <p class="welcome-sub">Self-directed learning exercises to become a more forgiving person in a few hours</p>
+        ${CHURCH ? `<p class="welcome-sub"><b>${CHURCH_NAMES.subtitle}</b></p>` : ''}
       </div>
       <div class="promise">
         ${CHECKLEAF}
@@ -568,8 +578,14 @@ function viewWelcome() {
         </div>
       </div>
       <div class="welcome-facts">
-        <p>${LEAF()}<span><b>12 experiences</b>, each 10–20 minutes</span></p>
-        <p>${LEAF()}<span>Evidence-based: tested in randomized trials with 4,500+ participants</span></p>
+        ${CHURCH
+          /* The church PDF states no per-lesson time, so none is claimed. NEW WORDS, for Kate's review (SOW). */
+          ? `<p>${LEAF()}<span><b>12 experiences</b>, with prayer, Scripture and reflection at the opening, halfway and the close</span></p>`
+          : `<p>${LEAF()}<span><b>12 experiences</b>, each 10–20 minutes</span></p>`}
+        ${CHURCH
+          /* The trial tested the REACH edition, not this adaptation — say only what is true of it. NEW WORDS, for Kate's review (SOW). */
+          ? `<p>${LEAF()}<span>Built on the REACH Forgiveness workbook, tested in randomized trials with 4,500+ participants</span></p>`
+          : `<p>${LEAF()}<span>Evidence-based: tested in randomized trials with 4,500+ participants</span></p>`}
         <p>${LEAF()}<span>Pick up right where you left off, any time</span></p>
         <p>${LEAF()}<span><b>You’ll see how you changed:</b> it compares where you start with where you end</span></p>
       </div>
@@ -619,7 +635,7 @@ function viewJourney() {
           <span class="lc-text">
             <span class="lc-num">Lesson ${l.n}${l.part ? ` · ${l.part}` : ''}${l.letter ? ` · <i class="script lc-letter">${l.letter}</i>` : ''}</span>
             <span class="lc-title">${l.title}</span>
-            <span class="lc-status">${done ? 'Complete' : inProgress ? 'In progress' : `${l.steps.length} steps · 10–20 min`}</span>
+            <span class="lc-status">${done ? 'Complete' : inProgress ? 'In progress' : `${l.steps.length} steps${CHURCH ? '' : ' · 10–20 min'}`}</span>
           </span>
         </a>
       </li>`);
@@ -725,8 +741,8 @@ function viewPrivacy() {
       <p class="tiny muted">Downloads are generated on your device by your browser — nothing is uploaded.</p>
     </article>`);
   const main = shell(inner);
-  main.querySelector('#dl-json').addEventListener('click', () => download('reach-forgiveness-data.json', store.exportJSON(), 'application/json'));
-  main.querySelector('#dl-text').addEventListener('click', () => download('reach-forgiveness-responses.txt', exportText(), 'text/plain'));
+  main.querySelector('#dl-json').addEventListener('click', () => download(`${FILE}-data.json`, store.exportJSON(), 'application/json'));
+  main.querySelector('#dl-text').addEventListener('click', () => download(`${FILE}-responses.txt`, exportText(), 'text/plain'));
   main.querySelector('#erase').addEventListener('click', () => {
     if (confirm('Erase everything you have written and all progress from this device? This cannot be undone.')) {
       store.eraseAll();
@@ -744,7 +760,7 @@ function download(name, content, type) {
 }
 
 function exportText() {
-  const out = [`YOUR PATH TO REACH FORGIVENESS — my responses`, `Exported ${new Date().toLocaleString()}`, `(This file was created on your device. Keep it somewhere private.)`, ''];
+  const out = [CHURCH ? CHURCH_NAMES.exportTitle : `YOUR PATH TO REACH FORGIVENESS — my responses`, `Exported ${new Date().toLocaleString()}`, `(This file was created on your device. Keep it somewhere private.)`, ''];
   const answers = store.allAnswers();
   LESSONS.forEach((l) => {
     const lines = [];
@@ -759,7 +775,9 @@ function exportText() {
           else if (typeof v === 'object') str = JSON.stringify(v);
           lines.push(`• ${label || key}\n  ${String(str).replace(/\n/g, '\n  ')}`);
         };
-        if (b.key) grab(b.key, b.prompt || (b.t === 'scale' ? 'Rating' : null));
+        /* A recall block only shows an earlier answer again; that answer is
+           already listed where it was written. */
+        if (b.key && b.t !== 'recall') grab(b.key, b.prompt || (b.t === 'scale' ? 'Rating' : null));
         if (b.items) b.items.forEach((it) => it.key && grab(it.key, it.label));
       });
     });

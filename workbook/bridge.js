@@ -18,24 +18,29 @@ if (app) app.style.visibility = 'hidden';
   try {
     const { onAuth } = await import('../js/auth.js');
     const { syncProgress, readLocalProgress } = await import('../js/progress-sync.js');
+    const { WORKBOOK_EDITIONS, editionFrom } = await import('../js/workbook-editions.js');
+    /* Which edition this is (from the address): its own place syncs, and
+       sign-up sends a new person straight back to it. */
+    const edition = editionFrom(location.search);
+    const read = () => readLocalProgress(edition);
 
     let uid = null;
     let lastSynced = null;
 
     const sync = async () => {
       if (!uid) return;
-      const { updatedAt } = readLocalProgress();
+      const { updatedAt } = read();
       if (updatedAt && updatedAt !== lastSynced) {
-        await syncProgress(uid);
-        lastSynced = readLocalProgress().updatedAt;
+        await syncProgress(uid, edition);
+        lastSynced = read().updatedAt;
       }
     };
 
     onAuth((user) => {
-      if (!user) { location.replace('../join/?next=workbook'); return; }
+      if (!user) { location.replace(`../join/?next=${WORKBOOK_EDITIONS[edition].next}`); return; }
       reveal();
       uid = user?.id || null;
-      if (uid) syncProgress(uid).then(() => (lastSynced = readLocalProgress().updatedAt));
+      if (uid) syncProgress(uid, edition).then(() => (lastSynced = read().updatedAt));
     });
 
     setInterval(sync, 20_000);

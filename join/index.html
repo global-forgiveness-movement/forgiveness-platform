@@ -74,17 +74,23 @@
     heldSlot.hidden = false;
   }
   import { signUp, signIn, signInGoogle, resetPassword, authMessage, onAuth, AUTH_MODE } from '../js/auth.js';
+  import { WORKBOOK_EDITIONS, workbookHref } from '../js/workbook-editions.js';
 
   if (AUTH_MODE === 'demo') document.querySelector('[data-demo-note]').hidden = false;
 
   /* Signed in — whether already or just now — this page's job is done. It
      goes back where the visitor was headed: the interactive workbook when
-     that is what sent them here (?next=workbook), otherwise My Path. Only
+     that is what sent them here (?next=… for its edition), otherwise My Path. Only
      names on this list are followed — never an address from the URL. */
   /* Wyatt, 6 Oct: "Create your group" on Home goes straight to making an
      account, then to My Path with the create form open — not halfway down
      another page. */
-  const NEXT = { workbook: '../workbook/', group: '../my-path/#new-group' };
+  /* The church edition's workbook too (SOW: sign-up returns people to the
+     workbook they chose). Addresses from js/workbook-editions.js alone. */
+  const NEXT = {
+    ...Object.fromEntries(Object.values(WORKBOOK_EDITIONS).map((e) => [e.next, workbookHref(e.id)])),
+    group: '../my-path/#new-group',
+  };
   const params = new URLSearchParams(location.search);
   const nextKey = NEXT[params.get('next')] ? params.get('next') : '';
   const next = NEXT[nextKey] || '../my-path/';

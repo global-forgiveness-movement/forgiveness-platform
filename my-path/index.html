@@ -133,28 +133,30 @@
   import { getCollection, kitRows, fieldAttr } from '../js/content.js';
   import { mountCreateGroup, mountGroupDetails } from '../js/group-create.js';
   import { mountCodeEntry } from '../js/code-entry.js';
-  import { downloadFor, SERIES } from '../js/data.js';
+  import { SERIES } from '../js/data.js';
+  import { WORKBOOK_EDITIONS, workbookHref } from '../js/workbook-editions.js';
 
   const TOTAL_LESSONS = 12;
 
   /* Wyatt, 6 Oct: "we want someone to WANT to pick their work back up, not
      drown in text." The name of the thing, how far they are, one big button
-     — the same button that started it on the Workbooks page. */
-  function progressCard(p, series) {
+     — the same button that started it on the Workbooks page.
+     SOW, 5 Nov: My Path opens the right edition for each person. The group on
+     screen decides it (a church group's members get the church edition);
+     with no group, the edition they have started (REACH if both or neither).
+     Someone partway through the other edition keeps a way back to it. */
+  const startedIn = (p) => !!(p && (p.progress || p.completed.length));
+  function progressCard(byEdition, series) {
+    const edition = series?.workbookEdition
+      || (startedIn(byEdition.church) && !startedIn(byEdition.reach) ? 'church' : 'reach');
+    const other = edition === 'church' ? 'reach' : 'church';
+    const p = byEdition[edition];
     const done = p.completed.length;
-    const started = !!(p.progress || done);
-    /* Wyatt, 5 Nov: the group on screen uses an edition with no interactive
-       version, so its workbook is that edition's PDF, not the REACH app. Someone
-       already partway through the app keeps a way back to their place. */
-    if (series?.pdfOnly) {
-      const dl = downloadFor(series.pdfOnly, 'en', '../');
-      return `<h3 class="wb-title">${esc(series.workbook)}</h3>
-        <a class="btn btn--primary btn--lg btn--down" style="margin-top:0.8rem" href="${dl.href}" data-download="${dl.tag}" download>${dl.label}</a>
-        ${started ? `<p class="small" style="margin-top:0.8rem"><a href="../workbook/">Continue the interactive REACH Forgiveness Workbook</a> (${done} of ${TOTAL_LESSONS} lessons complete)</p>` : ''}`;
-    }
-    return `<h3 class="wb-title">The interactive workbook</h3>
+    const elsewhere = byEdition[other];
+    return `<h3 class="wb-title">${esc(WORKBOOK_EDITIONS[edition].name)}</h3>
       <p class="small">${done} of ${TOTAL_LESSONS} lessons complete</p>
-      <a class="btn btn--primary btn--lg btn--go" href="../workbook/">${started ? 'Continue' : 'Begin'}</a>`;
+      <a class="btn btn--primary btn--lg btn--go" href="${workbookHref(edition)}">${startedIn(p) ? 'Continue' : 'Begin'}</a>
+      ${startedIn(elsewhere) ? `<p class="small" style="margin-top:0.8rem"><a href="${workbookHref(other)}">Continue the ${esc(WORKBOOK_EDITIONS[other].name)}</a> (${elsewhere.completed.length} of ${TOTAL_LESSONS} lessons complete)</p>` : ''}`;
   }
   /* The card is drawn from two things that load side by side: this person's
      progress and the group on screen. Each paints when it arrives. */
@@ -176,10 +178,13 @@
     document.querySelector('[data-render="name-ask"]').hidden = !!u.name;
     /* The workbook and the groups load side by side — neither waits for the
        other (each box says "Loading…" until its own answer arrives). */
-    const progress = syncProgress(u.id).then((p) => {
-      cardProgress = p;
-      paintProgressCard();
-    });
+    /* One edition after the other: each writes only its own place. */
+    const progress = syncProgress(u.id, 'reach')
+      .then(async (reach) => ({ reach, church: await syncProgress(u.id, 'church') }))
+      .then((byEdition) => {
+        cardProgress = byEdition;
+        paintProgressCard();
+      });
     /* A code they typed before they had an account, attached now — and
        shown, since it is the group they came for. */
     const groupsDrawn = applyHeldGroupCode(u.id).then(async (held) => {

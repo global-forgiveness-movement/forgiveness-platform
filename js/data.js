@@ -345,6 +345,7 @@ export const SERIES = {
     id: 'secular',
     name: '3-Session Forgiveness Group Series',
     workbook: 'REACH Forgiveness Workbook',
+    workbookEdition: 'reach',
     framing: 'Secular — any setting, any faith or none',
     videoKey: 'secularTrailer',
     prep: { title: 'Get the workbook', detail: 'Everyone has their own copy: free PDF or print.' },
@@ -358,9 +359,9 @@ export const SERIES = {
     id: 'church',
     name: '6-Session Forgiveness Group Series for Churches',
     workbook: 'REACH Forgiveness Workbook, Adapted for Churches',
-    /* No interactive edition yet (Wyatt, 5 Nov), so My Path hands a member of
-       this series this edition's PDF. Delete this line when one exists. */
-    pdfOnly: 'church',
+    /* The interactive edition My Path opens for this series' members
+       (js/workbook-editions.js; SOW, 5 Nov). */
+    workbookEdition: 'church',
     framing: 'Christian — scripture, prayer, and reflection woven through',
     videoKey: 'churchTrailer',
     prep: { title: 'Get the workbook', detail: 'Everyone has their own copy: free PDF or print.' },
