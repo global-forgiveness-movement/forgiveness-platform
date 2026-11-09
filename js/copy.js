@@ -63,20 +63,52 @@ export function sanitize(html) {
 
 /* ------------------------------------------------------------ applying */
 /* A data-copy element takes its override the moment it exists — at load, or
-   later when a renderer draws it (the same label repeated on every card). */
+   later when a renderer draws it (the same label repeated on every card).
+   A key with no override shows its committed words, so a word this browser
+   remembered but an editor has since put back to the original returns too. */
 function adoptCopy(el) {
   const key = el.dataset.copy;
   if (!defaults.has(key)) defaults.set(key, el.innerHTML);
   const html = published[key];
   if (typeof html === 'string') el.innerHTML = sanitize(html);
+  else if (el.innerHTML !== defaults.get(key)) el.innerHTML = defaults.get(key);
 }
 
+/* NO FLASH OF OLD WORDS (Kate, 9 Nov: "the old text appears and then it
+   changes to the updated text"). The committed HTML is the default and an
+   editor's words arrive from the store a moment later, so a visitor used to
+   read the old words first. Now:
+   - css/site.css keeps every [data-copy] invisible (its space held, so
+     nothing jumps) until <html data-copy-ready>;
+   - this browser's last known words, if any, go on at once and the page is
+     ready straight away; the store's answer then wins;
+   - a first visit waits for the store, never longer than STORE_PATIENCE_MS,
+     and then shows whatever it has.
+   ONE place says words may show: copyReady() below (site.js calls the same
+   attribute only if this file can't load at all). */
+const CACHE = 'gfm.copy.v1';
+const cachedSlots = () => {
+  try { return JSON.parse(localStorage.getItem(CACHE) || 'null'); } catch { return null; }
+};
+const rememberSlots = (slots) => {
+  try { localStorage.setItem(CACHE, JSON.stringify(slots)); } catch { /* storage blocked: the store still answers */ }
+};
+const copyReady = () => document.documentElement.setAttribute('data-copy-ready', '');
+
 export async function applyCopy() {
+  const remembered = cachedSlots();
+  if (remembered) {
+    published = remembered;
+    document.querySelectorAll('[data-copy]').forEach(adoptCopy);
+    copyReady();
+  }
   try {
     const doc = await withPatience(store.get('content', 'copy'));
     published = doc?.slots || {};
-  } catch { published = {}; }
+    rememberSlots(published);
+  } catch { if (!remembered) published = {}; }
   document.querySelectorAll('[data-copy]').forEach(adoptCopy);
+  copyReady();
 }
 
 /* ------------------------------------------------------ reading a value */

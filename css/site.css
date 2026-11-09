@@ -556,6 +556,9 @@ hr.leafline { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
 .copybar-btn[disabled] { opacity: 0.45; cursor: default; }
 [data-copy-editing] [data-copy] { outline: 2px dashed rgba(0, 136, 122, 0.55); outline-offset: 3px; border-radius: 3px; cursor: text; }
 [data-copy-editing] [data-copy]:focus { outline: 2px solid var(--teal); background: rgba(250, 184, 18, 0.12); }
+/* Page words wait, space held, until the editor's version is on (js/copy.js, copyReady), so
+   nobody reads the old words first (Kate, 9 Nov). */
+html:not([data-copy-ready]) [data-copy] { visibility: hidden; }
 /* A passage an editor emptied takes no room — except while editing, so it can be filled again. */
 html:not([data-copy-editing]) [data-copy]:empty { display: none; }
 [data-copy-editing] [data-copy]:empty { display: block; min-height: 1.5em; }

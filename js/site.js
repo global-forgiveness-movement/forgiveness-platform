@@ -14,7 +14,7 @@ import { videoFrame } from './video.js';
 const leaf = (fill) =>
   `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C7 7 4 12 4 16a8 8 0 0 0 16 0c0-4-3-9-8-14z" fill="${fill}" transform="rotate(40 12 12)"/></svg>`;
 
-export const STAMP = 'GFM-V1 · 2026-11-05a';
+export const STAMP = 'GFM-V1 · 2026-11-09a';
 
 /* Resolve everything relative to the site root (js/ → root), so pages work
    at any depth and on any host (github.io project path or a custom domain). */
@@ -329,7 +329,12 @@ async function buildShell() {
      asks for the same hydration again rather than keeping its own. */
   window.addEventListener('gfm:videos', hydrateVideos);
   appendCustomNav();
-  import('./copy.js').then((m) => m.mountCopy()).catch((err) => console.warn('page text unavailable:', err));
+  /* Page words stay hidden until copy.js says they're final (no flash of
+     old words); if it can't even load, the committed words show. */
+  import('./copy.js').then((m) => m.mountCopy()).catch((err) => {
+    document.documentElement.setAttribute('data-copy-ready', '');
+    console.warn('page text unavailable:', err);
+  });
   watchDownloads();
   document.documentElement.setAttribute('data-shell-ready', '');
   keepAnchorAligned();
