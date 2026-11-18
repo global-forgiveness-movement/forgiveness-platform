@@ -133,7 +133,7 @@
   import { filmTag } from '../js/video.js';
   import { WORKBOOKS, LANGUAGES } from '../js/data.js';
   import { listInbox, SUBMISSIONS } from '../js/inbox.js';
-  import { repairFacilitators, peopleRows } from '../js/groups.js';
+  import { repairFacilitators, peopleRows, fillWhoJoined } from '../js/groups.js';
   import { ORDERED_PAGES, orderedNames, sectionsOf, rememberOrder } from '../js/page-order.js';
 
   const $ = (sel, el = document) => el.querySelector(sel);
@@ -517,7 +517,26 @@
       <p class="small" style="margin:0 0 0.7rem">Groups created before September 28 don’t record who runs them, so their facilitator can’t tick meetings. This names the account that registered each one; anything it can’t match is listed, never guessed. Already done for the groups that existed on September 28.</p>
       <button class="btn btn--outline" type="button" data-repair>Give older groups back their facilitator</button>
       <div data-repair-report role="status" style="margin-top:0.8rem"></div>
+      <p class="small" style="margin:1.2rem 0 0.7rem">Group leaders see who joined with their code on My Path. People who joined before November 18 appear there once they next open My Path; this adds everyone now, from their accounts. Safe to press again.</p>
+      <button class="btn btn--outline" type="button" data-fill-joined>Fill in who joined each group</button>
+      <div data-fill-report role="status" style="margin-top:0.8rem"></div>
     </details>`;
+
+  /* Kate, 18 Nov: entries for people who joined before the leader's list
+     existed (js/groups.js fillWhoJoined, from members/). */
+  async function runFillJoined(e) {
+    const btn = e.currentTarget;
+    const out = $('[data-fill-report]');
+    btn.disabled = true;
+    out.innerHTML = '<p class="small muted" style="margin:0">Working…</p>';
+    try {
+      const r = await fillWhoJoined();
+      out.innerHTML = `<p class="small" style="margin:0"><b>${r.people} ${r.people === 1 ? 'person is' : 'people are'} in a group.</b> ${r.wrote ? `Added or updated ${r.wrote} ${r.wrote === 1 ? 'entry' : 'entries'}.` : 'Every list was already up to date.'}</p>`;
+    } catch (err) {
+      out.innerHTML = `<p class="form-msg form-msg--err" style="margin:0">That didn’t finish: ${esc(err.message || String(err))}. If the database rules for group lists aren’t published yet, publish them first. Press it again to carry on.</p>`;
+    }
+    btn.disabled = false;
+  }
 
   async function runRepair(e) {
     const btn = e.currentTarget;
@@ -616,6 +635,7 @@
       </div></div>`).join('') || '<p class="muted">No saves yet. Each time you save, a copy of the version before lands here.</p>'}
       ${REPAIR_CARD}`;
     $('[data-repair]').addEventListener('click', runRepair);
+    $('[data-fill-joined]').addEventListener('click', runFillJoined);
     document.querySelectorAll('[data-restore]').forEach((b) =>
       b.addEventListener('click', async () => {
         if (!twoPress(b)) return;

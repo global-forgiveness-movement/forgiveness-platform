@@ -817,6 +817,11 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 }
 .path-col .flow { margin-top: 1.2rem; }
 .group-finish { margin: 1rem 0 0; }
+/* Kate, 18 Nov: the leader's list of who joined with the code. */
+.who-joined { margin: 1.2rem 0 0; padding: 1rem 0 0; border-top: 1px solid var(--line); }
+.who-joined h4 { margin: 0 0 0.3rem; font-family: var(--font-head); font-weight: 600; color: var(--navy); }
+.who-joined > p { margin: 0 0 0.6rem; }
+.who-joined-list { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.25rem; }
 .linkish { min-height: var(--tap); background: none; border: 0; padding: 0; font: inherit; font-size: var(--fs-small); color: var(--plum); text-decoration: underline; cursor: pointer; }
 .group-more { margin-top: 1.8rem; border-top: 1px solid var(--line); }
 .group-more-item { border-bottom: 1px solid var(--line); padding: 0.8rem 0; }

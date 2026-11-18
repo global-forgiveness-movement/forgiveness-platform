@@ -124,7 +124,7 @@
   import { syncProgress } from '../js/progress-sync.js';
   import {
     myGroups, joinGroup, finishGroup, bringBackGroup, codeRecord, CODE_SHAPE,
-    applyHeldGroupCode,
+    applyHeldGroupCode, whoJoined, keepWhoJoined,
     loadSeries, groupState, myTicks, groupTicks, actOnGroup, tickMine, SESSION_VIDEO, nameGroup,
   } from '../js/groups.js';
   import { deriveSeries, pathView, roleFor } from '../js/group-engine.js';
@@ -190,6 +190,7 @@
     const groupsDrawn = applyHeldGroupCode(u.id).then(async (held) => {
       if (held) choose(held.code);
       await renderGroup(u.id);
+      keepWhoJoined(u.id);
     });
     await Promise.all([progress, groupsDrawn]);
     /* Arriving from "Create my group" on the Groups page: straight to it. */
@@ -322,7 +323,10 @@
       if (isChosen && me) known.ticks.set(g.code, me);
       const role = roleFor({ surface: 'mypath', user, membership: g, codeDoc });
       const view = deriveSeries({ series: allSeries[g.seriesId], group, me, ticks, role, now: new Date(), video: SESSION_VIDEO, code: g.code });
-      return { g, view, isChosen, isOpen: isChosen && !closed };
+      /* Kate, 18 Nov: its leader sees who joined with the code. The engine
+         says who may (seesWhoJoined); read only for the open group. */
+      const joined = isChosen && view.seesWhoJoined ? await whoJoined(g.code, userId) : undefined;
+      return { g, view, joined, isChosen, isOpen: isChosen && !closed };
     }));
     if (mine !== drawNo) return;
 
@@ -391,7 +395,25 @@
   }
 
   /* The chosen group: its code, the one next thing, then every step. */
-  function groupHtml({ g, view }) {
+  /* NEW WORDS (Kate, 18 Nov), for Kate's review: the leader's list of who
+     joined with the code. Names only, and the line says so. */
+  function whoJoinedHtml(g, joined) {
+    if (joined === undefined) return '';
+    const row = (p) => `<li>${p.name ? esc(p.name) : '<span class="muted">Someone who hasn’t added their name</span>'}${p.status === 'past' ? ' <span class="small muted">· finished</span>' : ''}</li>`;
+    const body = joined === null
+      ? '<p class="small muted">We couldn’t load who’s joined just now. Please reload the page in a moment.</p>'
+      : joined.length
+        ? `<ul class="who-joined-list">${joined.map(row).join('')}</ul>`
+        : `<p class="small muted">No one has joined with your code yet. Give them <span class="groupcode">${esc(g.code)}</span> to enter on My Path.</p>`;
+    return `
+      <section class="who-joined" aria-label="Who's joined">
+        <h4>Who’s joined${joined?.length ? ` (${joined.length})` : ''}</h4>
+        <p class="small muted">People who entered your group’s code. You see their names only, never their workbooks.</p>
+        ${body}
+      </section>`;
+  }
+
+  function groupHtml({ g, view, joined }) {
     const p = view.panel;
     /* Its leader is asked about the group until they answer, on any device
        (the engine reads the mark in the group's state), above the meeting
@@ -406,6 +428,7 @@
           ${nextBox(view)}
         </div>
       </div>
+      ${whoJoinedHtml(g, joined)}
       ${seriesFlow(view)}
       <p class="group-finish"><button type="button" class="linkish" data-finish="${esc(g.code)}">${esc(p.finish)}</button></p>`;
   }
@@ -516,7 +539,8 @@
 
     join(card, { userId, folded }) {
       card.innerHTML = `${folded ? '' : '<h3>Join with a code</h3>'}
-        <p class="small">Your facilitator gives you the code. Joining never shares your workbook, or anything you write in it, with anyone.</p>
+        <!-- NEW WORDS (Kate, 18 Nov), for Kate's review: the leader now sees your name. -->
+        <p class="small">Your facilitator gives you the code. Your group’s leader will see your name. Joining never shares your workbook, or anything you write in it, with anyone.</p>
         <form class="form" data-join>
           <label>Group code
             <input name="code" placeholder="${CODE_SHAPE}" autocomplete="off" spellcheck="false" required>

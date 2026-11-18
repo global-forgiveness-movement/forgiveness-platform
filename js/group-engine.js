@@ -151,12 +151,15 @@ export function meetingsHeld({ series, group = null, now = new Date() }) {
    table IS the anti-drift property — a new rule for one role is one line
    here, and every other role's rows sit beside it.
    `preview`: plays every meeting's film, ticked or not (Kate, 1 Nov).
-   `playDone`: plays a film once its meeting is done. */
+   `playDone`: plays a film once its meeting is done.
+   `seesWhoJoined`: the names of the people who joined with the group's code
+   (Kate, 18 Nov: "Leaders see who used the code to register"). Names only:
+   never their workbook or their ticks — that is seesTicks, still off. */
 const CAN = {
-  visitor:     { inGroup: false, tickGroup: false, tickMine: false, setMeeting: false, preview: false, playDone: false, guide: false, seesTicks: false },
-  none:        { inGroup: false, tickGroup: false, tickMine: false, setMeeting: false, preview: false, playDone: false, guide: false, seesTicks: false },
-  member:      { inGroup: true,  tickGroup: false, tickMine: true,  setMeeting: false, preview: false, playDone: true,  guide: false, seesTicks: false },
-  facilitator: { inGroup: true,  tickGroup: true,  tickMine: true,  setMeeting: true,  preview: true,  playDone: true,  guide: true,  seesTicks: FACILITATOR_SEES_MEMBER_TICKS },
+  visitor:     { inGroup: false, tickGroup: false, tickMine: false, setMeeting: false, preview: false, playDone: false, guide: false, seesTicks: false, seesWhoJoined: false },
+  none:        { inGroup: false, tickGroup: false, tickMine: false, setMeeting: false, preview: false, playDone: false, guide: false, seesTicks: false, seesWhoJoined: false },
+  member:      { inGroup: true,  tickGroup: false, tickMine: true,  setMeeting: false, preview: false, playDone: true,  guide: false, seesTicks: false, seesWhoJoined: false },
+  facilitator: { inGroup: true,  tickGroup: true,  tickMine: true,  setMeeting: true,  preview: true,  playDone: true,  guide: true,  seesTicks: FACILITATOR_SEES_MEMBER_TICKS, seesWhoJoined: true },
 };
 
 /* What My Path puts in "Your group" for each role: the cards, in order,
@@ -371,6 +374,8 @@ export function deriveSeries({ series, group = null, me = null, ticks = [], role
     /* The edition whose facilitator materials this viewer gets, or none.
        Which rows those are is the list's: kitRows() in js/content.js. */
     kit: can.guide ? [series.id] : [],
+    /* Whether My Path lists who joined (js/groups.js whoJoined). */
+    seesWhoJoined: can.seesWhoJoined,
     finished: can.inGroup && steps.every((s) => s.kind !== 'together' || s.state === 'done'),
     ...pathView(role),
   };

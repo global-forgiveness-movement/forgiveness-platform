@@ -244,6 +244,10 @@ async function changeMembership(userId, code, change) {
   const groups = { ...doc.groups };
   if (next) groups[code] = next; else delete groups[code];
   await writeMember(userId, { ...doc, groups });
+  /* The group's list of who joined follows the membership, never the other
+     way round. A list that can't be written (rules not yet published) never
+     stops the joining itself; My Path writes it again next visit. */
+  await writeWhoJoined(userId, { ...doc, groups }, code).catch(() => {});
 }
 
 /* A name a person gives their own group (29 Sep call), kept on their own
@@ -288,6 +292,83 @@ export const bringBackGroup = (userId, code) =>
     delete back.pastAt;
     return back;
   });
+
+/* ------------------------------------------------ who joined a group
+
+   Kate, 18 Nov: "Leaders see who used the code to register." A leader's
+   own members/ record is theirs alone (and editors'), so the leader can't
+   read anyone else's. Each member instead keeps one small entry per group,
+   in that group's own list:
+
+     groupRoster/{code}/people/{uid} = { name, status, joinedAt }
+
+   written by that member (from their own members/ record, here and nowhere
+   else) and readable by them, by the account the code's record names as
+   facilitator, and by editors (firestore.rules). Names only: never an
+   email, never the workbook, never a tick.
+
+   ONE fact, ONE place: whoJoinedEntries() says what a person's entries
+   are; every writer (joining, finishing, a name change on My Path, the
+   /admin fill for people who joined before 18 Nov) writes what it says.
+   scripts/qa/one-who-joined.sh goes red if anything else writes the list. */
+const WHO_JOINED = (code) => `groupRoster/${code}/people`;
+
+/* Pure: the entries a members doc (any shape) stands for, one per group. */
+export function whoJoinedEntries(raw) {
+  const { doc } = membershipsOf(raw);
+  const name = String(doc.name || '').trim().slice(0, 80);
+  return Object.entries(doc.groups)
+    .filter(([code, g]) => parseGroupCode(code)?.code === code && SERIES[g?.seriesId])
+    .map(([code, g]) => ({ code, entry: { name, status: g.status === 'past' ? 'past' : 'active', joinedAt: String(g.joinedAt || '') } }));
+}
+
+const same = (a, b) => !!a && !!b && a.name === b.name && a.status === b.status && a.joinedAt === b.joinedAt;
+
+/* Write this person's entries — every group, or `only` one — skipping any
+   already right. A group no longer in their record loses their entry. */
+async function writeWhoJoined(userId, doc, only = null) {
+  const entries = whoJoinedEntries(doc).filter((e) => !only || e.code === only);
+  if (only && !entries.length) { await store.remove(WHO_JOINED(only), userId); return 0; }
+  let wrote = 0;
+  await Promise.all(entries.map(async ({ code, entry }) => {
+    const have = await store.get(WHO_JOINED(code), userId).catch(() => null);
+    if (same(have, entry)) return;
+    await store.set(WHO_JOINED(code), userId, entry, { replace: true });
+    wrote++;
+  }));
+  return wrote;
+}
+
+/* My Path, on every sign-in (and after a name change, which signs in
+   again): brings this person's entries up to date. Never throws. */
+export async function keepWhoJoined(userId) {
+  try { await writeWhoJoined(userId, await readMember(userId)); } catch { /* next visit */ }
+}
+
+/* For the group's leader: everyone else who joined with the code, oldest
+   first. `null` means the list could not be read (not "nobody"). */
+export async function whoJoined(code, leaderId) {
+  try {
+    const people = await withPatience(store.list(WHO_JOINED(code)));
+    return people
+      .filter((p) => p.id !== leaderId)
+      .map((p) => ({ name: String(p.name || ''), status: p.status === 'past' ? 'past' : 'active', joinedAt: String(p.joinedAt || '') }))
+      .sort((a, b) => a.joinedAt.localeCompare(b.joinedAt));
+  } catch { return null; }
+}
+
+/* /admin, editors only: entries for everyone who joined a group before
+   18 Nov, from their members/ records. Safe to run twice. */
+export async function fillWhoJoined() {
+  const members = await store.list('members');
+  let people = 0, wrote = 0;
+  for (const m of members) {
+    const n = await writeWhoJoined(m.id, m);
+    if (whoJoinedEntries(m).length) people++;
+    wrote += n;
+  }
+  return { people, wrote };
+}
 
 /* The group's own record — public, and the one place that says who runs it. */
 export async function codeRecord(code) {
@@ -374,7 +455,8 @@ export async function groupTicks(code) {
 }
 
 /* Account deletion: everything the account stores in the group world —
-   every membership (auth.js removes members/{uid}), every tick, and the
+   every membership (auth.js removes members/{uid}), their name on every
+   group's list of who joined, every tick, and the
    shared state of every group this account facilitates, found the one way
    facilitation is decided: the code's own record. "Deleting removes your
    account and everything it stores" (My Path) has to stay literally true. */
@@ -385,6 +467,7 @@ export async function eraseGroupData(userId) {
   const mine = (await myGroups(userId)) || [];
   await Promise.all(mine.map(async (g) => { if (createdBy(await codeRecord(g.code), userId)) codes.add(g.code); }));
   await Promise.all([...codes].map((code) => store.remove('groupState', code).catch(() => {})));
+  await Promise.all(mine.map((g) => store.remove(WHO_JOINED(g.code), userId).catch(() => {})));
   await store.remove('memberTicks', userId).catch(() => {});
 }
 

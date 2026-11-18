@@ -11,12 +11,14 @@
 
 import { holdGroupCode, heldGroupCode, forgetGroupCode, heldCodeLine, groupCodeProblem, CODE_SHAPE } from './groups.js';
 
+/* NEW WORDS (Kate, 18 Nov), for Kate's review: the privacy line below now
+   says the leader sees your name (js/groups.js whoJoined). */
 export function mountCodeEntry(slot, { base = '../', onShow = () => {} } = {}) {
   slot.innerHTML = `
     <div class="card precode">
       <p class="kicker" style="margin-bottom:0.3rem" data-copy="mypath.p.been-given-a-group">Been given a group code?</p>
       <h3 data-copy="mypath.h3.put-it-in-now">Put it in now</h3>
-      <p class="small" data-locked="A privacy promise: the code makes it true, so it changes only with the code.">Enter it here and we’ll hold on to it. You still need a free account to save your place — we’ll connect you to your group the moment you have one. Entering a code never tells your facilitator anything about your workbook.</p>
+      <p class="small" data-locked="A privacy promise: the code makes it true, so it changes only with the code.">Enter it here and we’ll hold on to it. You still need a free account to save your place — we’ll connect you to your group the moment you have one. Your group’s leader will see your name, never anything about your workbook.</p>
       <form class="form" novalidate data-locked="The form itself: its words change with the code.">
         <label>Group code
           <input name="code" placeholder="${CODE_SHAPE}" autocomplete="off" spellcheck="false">

@@ -18,8 +18,9 @@ rules_version = '2';
      submit one, nobody may read them back except an editor.
    - A person's workbook progress belongs to them alone. Their account record
      (name, email, email choice, groups) is theirs to change; editors may read
-     it for /admin → People. Nothing in here lets one signed-in user read
-     another's.
+     it for /admin → People. The one thing one signed-in user may read about
+     another: a group's facilitator sees the names of the people who joined
+     with its code (groupRoster, below). Nothing else.
 */
 
 service cloud.firestore {
@@ -155,6 +156,26 @@ service cloud.firestore {
       allow create, update: if facilitates(code)
                             && request.resource.data.keys().hasOnly(['steps', 'updatedAt']);
       allow delete: if facilitates(code) || isEditor();
+    }
+
+    /* ---- who joined a group (Kate, 18 Nov) ---- */
+    /* "Leaders see who used the code to register." One entry per person
+       per group: their name, whether the group is active or past for them,
+       and when they joined. Nothing else: no email, no workbook, no ticks.
+       Each person writes only their own entry, and only for a group their
+       own members record says they are in. The group's facilitator (the
+       account its code record names) may read the whole list; nobody else
+       may read anyone's entry but their own. Editors read, and write the
+       one-time fill from members/ in /admin. */
+    match /groupRoster/{code}/people/{uid} {
+      allow read: if isOwner(uid) || facilitates(code) || isEditor();
+      allow create, update: if ((isOwner(uid) && inGroup(code)) || isEditor())
+                            && request.resource.data.keys().hasOnly(['name', 'status', 'joinedAt'])
+                            && request.resource.data.name is string
+                            && request.resource.data.name.size() <= 80
+                            && request.resource.data.status in ['active', 'past']
+                            && request.resource.data.joinedAt is string;
+      allow delete: if isOwner(uid) || isEditor();
     }
 
     /* ---- one person's lesson ticks ---- */
