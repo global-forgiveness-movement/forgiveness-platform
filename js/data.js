@@ -287,27 +287,37 @@ export const WORKBOOKS = [
     },
   },
   {
-    id: 'receive',
-    badge: 'Christian · 3–4 hours',
-    name: 'RECEIVE Divine Forgiveness Workbook',
-    desc: 'A different direction of forgiveness. Where REACH Forgiveness is about forgiving another person, RECEIVE Divine Forgiveness is for Christians who believe God forgives them but find it hard to feel it. Seven steps, from remembering God’s love through to a plan for keeping hold of it.',
-    pills: ['7 steps', 'Christian'],
-    languages: false,
-    url: HFH,
-    files: {
-      en: { path: 'assets/workbooks/RECEIVE-Divine-Forgiveness-Workbook.pdf', format: 'PDF', size: '2.9 MB' },
-    },
-  },
-  {
     id: 'activity',
     badge: 'For communities',
     name: 'Community-Wide Forgiveness Activity Book',
+    ask: 'Bring forgiveness to a whole community',
+    line: 'Activities for leaders of a campus, a church or a town.',
+    art: 'community',
+    tone: 'navy',
     desc: 'For anyone running forgiveness work at the scale of a campus, a congregation, or a town — activities you can adapt and combine into a campaign.',
     pills: ['Campaign-scale'],
     languages: false,
     url: HFH,
     files: {
       en: { path: 'assets/workbooks/Community-Wide-Forgiveness-Activity-Book.pdf', format: 'PDF', size: '2.3 MB' },
+    },
+  },
+  {
+    id: 'receive',
+    badge: 'Christian · 3–4 hours',
+    name: 'RECEIVE Divine Forgiveness Workbook',
+    /* Wyatt, 19 Nov: the next-steps cards lead with what each one is for, in
+       plain words, and one line. NEW WORDS for Kate's review. */
+    ask: 'Feel God’s forgiveness',
+    line: 'For Christians who believe God forgives them but find it hard to feel.',
+    art: 'receive',
+    tone: 'gold',
+    desc: 'A different direction of forgiveness. Where REACH Forgiveness is about forgiving another person, RECEIVE Divine Forgiveness is for Christians who believe God forgives them but find it hard to feel it. Seven steps, from remembering God’s love through to a plan for keeping hold of it.',
+    pills: ['7 steps', 'Christian'],
+    languages: false,
+    url: HFH,
+    files: {
+      en: { path: 'assets/workbooks/RECEIVE-Divine-Forgiveness-Workbook.pdf', format: 'PDF', size: '2.9 MB' },
     },
   },
   /* Muslim-adapted edition: Kate is sending the final version (her 26 Aug

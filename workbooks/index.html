@@ -83,9 +83,24 @@
 
   <section class="section section--paper" data-section="next" data-section-label="Where to go next" data-band="own">
     <div class="wrap">
-      <h2 data-copy="workbooks.h2.if-reach-helped-here">If REACH Forgiveness helped, here is where to go next</h2>
-      <p class="muted" data-copy="workbooks.p.the-reach-forgiveness-workbook-2">The REACH Forgiveness Workbook is about forgiving someone who hurt you. These take up different questions, and all of them are free.</p>
-      <div class="grid grid--2" data-render="workbooks-more"></div>
+      <!-- Wyatt, 19 Nov: the old cards looked like the same PDF again and never
+           said how each differs from REACH. Each card now shows the direction
+           of the forgiveness (REACH: you forgive someone; RECEIVE: God's
+           forgiveness comes to you; the activity book: a whole community), in
+           its own color, with a plain heading and one line. REACH sits first,
+           faded, as the reference. NEW WORDS for Kate's review. -->
+      <h2 data-copy="workbooks.h2.if-reach-helped-here">Where to go next</h2>
+      <p class="muted" data-copy="workbooks.p.the-reach-forgiveness-workbook-2">Three directions of forgiveness. All free.</p>
+      <div class="next-row" data-render="workbooks-more">
+        <div class="next-card next-card--done">
+          <span class="next-art" data-art="reach"></span>
+          <div>
+            <p class="next-kicker" data-copy="workbooks.next.reach-kicker">You’ve done this</p>
+            <h3 data-copy="workbooks.next.reach-ask">Forgive someone who hurt you</h3>
+            <p class="next-name" data-copy="workbooks.next.reach-name">REACH Forgiveness Workbook</p>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -118,17 +133,22 @@
     const href = httpOnly(w.link);
     return href ? `<a class="btn btn--primary btn--go" href="${href}" target="_blank" rel="noopener" ${fieldAttr('workbooks', w, w.key, 'button')}>${w.button || 'Open'}</a>` : '';
   };
-  /* brief: the top row shows only the name and the button (Wyatt, 27 Oct),
-     plus the one line saying both editions are for anyone (Kate, 1 Nov). */
-  const card = (w, brief = false) => `
-    <div class="card wb-card" id="${w.id || w.key}">
-      ${brief || !w.badge ? '' : `<p class="kicker" ${fieldAttr('workbooks', w, w.key, 'badge')}>${w.badge}</p>`}
-      <h3 ${fieldAttr('workbooks', w, w.key, 'name')}>${w.name}</h3>
-      ${brief ? `<p class="small" data-copy="workbooks.p.for-anyone">For anyone, on your own or in a group.</p>` : ''}
-      ${w.about ? `<p class="small muted" ${fieldAttr('workbooks', w, w.key, 'about')}>${w.about}</p>` : ''}
-      ${brief ? '' : `${w.desc ? `<p ${fieldAttr('workbooks', w, w.key, 'desc')}>${w.desc}</p>` : ''}
-      ${(w.pills || []).length ? `<p class="dl-row">${w.pills.map((p, n) => `<span class="pill" ${fieldAttr('workbooks', w, w.key, `pills.${n}`)}>${p}</span>`).join('')}</p>` : ''}`}
-      <div class="dl-row">${button(w, brief)}</div>
+  /* The next-steps pictures: who forgives whom. Code, not words. */
+  const ART = {
+    reach: '<svg viewBox="0 0 200 90" aria-hidden="true"><g class="a-ink"><circle cx="40" cy="34" r="11"/><path d="M20 76c0-13 9-21 20-21s20 8 20 21"/><circle cx="160" cy="34" r="11"/><path d="M140 76c0-13 9-21 20-21s20 8 20 21"/><path d="M66 48h62" stroke-dasharray="2 7"/><path d="M122 41l9 7-9 7"/></g></svg>',
+    receive: '<svg viewBox="0 0 200 110" aria-hidden="true"><g class="a-glow"><circle cx="100" cy="20" r="10"/><path d="M82 8l-4-4M118 8l4-4M76 22h-6M124 22h6"/><path d="M100 36v18" stroke-dasharray="2 7"/><path d="M93 50l7 9 7-9"/><path d="M60 98c-8-10-8-24 0-34M140 98c8-10 8-24 0-34"/></g><g class="a-ink"><circle cx="100" cy="72" r="8"/><path d="M78 106c0-12 10-20 22-20s22 8 22 20"/></g></svg>',
+    community: '<svg viewBox="0 0 200 100" aria-hidden="true"><g class="a-ink"><circle cx="100" cy="30" r="9"/><path d="M84 62c0-11 7-18 16-18s16 7 16 18"/><circle cx="52" cy="44" r="8"/><path d="M38 74c0-10 6-16 14-16s14 6 14 16"/><circle cx="148" cy="44" r="8"/><path d="M134 74c0-10 6-16 14-16s14 6 14 16"/><circle cx="76" cy="66" r="7"/><path d="M64 92c0-8 5-13 12-13s12 5 12 13"/><circle cx="124" cy="66" r="7"/><path d="M112 92c0-8 5-13 12-13s12 5 12 13"/></g><ellipse class="a-ring" cx="100" cy="60" rx="94" ry="38"/></svg>',
+  };
+  document.querySelectorAll('[data-art]').forEach((el) => (el.innerHTML = ART[el.dataset.art] || ''));
+  /* A next-steps card: its plain heading (ask) and one line, or, for a
+     resource Kate adds in /admin without them, its name and description. */
+  const nextCard = (w) => `
+    <div class="next-card next-card--${w.tone || 'plain'}" id="${w.id || w.key}">
+      ${ART[w.art] ? `<span class="next-art">${ART[w.art]}</span>` : ''}
+      <h3 ${fieldAttr('workbooks', w, w.key, w.ask ? 'ask' : 'name')}>${w.ask || w.name}</h3>
+      ${w.ask ? `<p class="next-name" ${fieldAttr('workbooks', w, w.key, 'name')}>${w.name}</p>` : ''}
+      ${w.line || w.desc ? `<p ${fieldAttr('workbooks', w, w.key, w.line ? 'line' : 'desc')}>${w.line || w.desc}</p>` : ''}
+      <div class="next-foot">${button(w, false)}</div>
     </div>`;
 
   const { top, more } = await getWorkbooks();
@@ -144,7 +164,7 @@
     const about = document.querySelector(`[data-render="wbm-${w.id}-about"]`);
     if (about && w.about) about.innerHTML = `<details class="wbm-more"><summary data-copy="workbooks.matrix.whats-different">What’s different?</summary><p ${fieldAttr('workbooks', w, w.key, 'about')}>${w.about}</p></details>`;
   });
-  document.querySelector('[data-render="workbooks-more"]').innerHTML = more.map((w) => card(w)).join('');
+  document.querySelector('[data-render="workbooks-more"]').insertAdjacentHTML('beforeend', more.map(nextCard).join(''));
   /* These looked exactly like buttons and were inert spans — a Spanish speaker
      pressed one, nothing happened, and the reasonable conclusion was that the
      site is broken. Every language here has a hosted file, so they ARE links

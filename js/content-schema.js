@@ -85,12 +85,14 @@ export const COLLECTIONS = {
      own link. See workbookRows() in js/content.js. */
   workbooks: {
     label: 'Workbooks and resources',
-    help: 'The cards on the Workbooks page. The first two (reach and church) always sit in the top row. Every other row is a card under “If REACH Forgiveness helped, here is where to go next”, in this order. To add a new resource, press “+ add another”, give it a name, a line or two, and the link its button opens (a Google Drive or Dropbox share link works). Words can also be changed right on the page.',
+    help: 'The cards on the Workbooks page. The first two (reach and church) always sit in the top row. Every other row is a card under “Where to go next”, in this order. To add a new resource, press “+ add another”, give it a name, a line or two, and the link its button opens (a Google Drive or Dropbox share link works). Words can also be changed right on the page.',
     fields: [
       { key: 'id', label: 'Edition (set by the site)', type: 'text', readonly: true },
-      { key: 'badge', label: 'Small line above the title', type: 'text' },
+      { key: 'ask', label: 'Plain heading (what it is for)', type: 'text', help: 'The big words on a “where to go next” card, e.g. “Feel God’s forgiveness”. Empty: the name is the heading.' },
       { key: 'name', label: 'Name', type: 'text' },
-      { key: 'desc', label: 'Description', type: 'textarea' },
+      { key: 'line', label: 'One line', type: 'text', help: 'One sentence under the heading. Empty: the description shows instead.' },
+      { key: 'badge', label: 'Small line above the title (not shown on the next-steps cards)', type: 'text' },
+      { key: 'desc', label: 'Description (shown only when there is no one line)', type: 'textarea' },
       { key: 'link', label: 'Link (only for a resource you add)', type: 'url', help: 'Where its button goes. The site’s own editions use their own files and ignore this.' },
       { key: 'button', label: 'Button words (optional)', type: 'text', help: 'Leave empty for “Open”.' },
     ],

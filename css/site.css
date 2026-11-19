@@ -910,6 +910,35 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
   .wbm-cell .btn { flex: 1 1 auto; }
   .wbm-church.wbm-cell { border-top: 0; }
 }
+/* Workbooks: where to go next (Wyatt, 19 Nov). Each card pictures the
+   direction of its forgiveness and has its own color, button included, so
+   none looks like the REACH download again. REACH sits first, faded. */
+.next-row { display: grid; grid-template-columns: 0.75fr 1fr 1fr; gap: 1rem; margin-top: 1.4rem; }
+.next-card { border-radius: var(--radius); padding: 1.3rem; display: flex; flex-direction: column; gap: 0.5rem; min-width: 0; }
+.next-card h3 { font-size: var(--fs-heading); margin: 0; }
+.next-card p { margin: 0; }
+.next-name { font-size: var(--fs-small); font-weight: 600; color: var(--muted); }
+.next-foot { margin-top: auto; padding-top: 0.6rem; }
+.next-art svg { display: block; width: 100%; max-width: 13rem; height: auto; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.next-art .a-ink { stroke: var(--navy); }
+.next-art .a-glow { stroke: #b07a00; }
+.next-art .a-ring { stroke: #7fa6bd; stroke-width: 2.5; stroke-dasharray: 3 8; }
+.next-card--done { border: 2px dashed rgba(60, 124, 108, 0.45); color: #3c7c6c; }
+.next-card--done .a-ink { stroke: #3c7c6c; }
+.next-card--done h3 { font-size: var(--fs-body); color: #2f6a5c; }
+.next-kicker { font-family: var(--font-head); font-size: var(--fs-small); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+.next-card--gold { background: #fbf0d0; }
+.next-card--navy { background: #dfeaf1; }
+.next-card--plain { background: var(--white); border: 1.5px solid var(--line); }
+.next-card--gold .btn--primary { background: #8a5d00; --btn-edge: #5e3f00; }
+.next-card--gold .btn--primary:hover { background: #9c6a00; }
+.next-card--navy .btn--primary { background: var(--navy); --btn-edge: #001F2D; }
+.next-card--navy .btn--primary:hover { background: #0A4C6B; }
+@media (max-width: 860px) {
+  .next-row { grid-template-columns: minmax(0, 1fr); }
+  .next-card--done { flex-direction: row; align-items: center; gap: 1rem; }
+  .next-card--done .next-art svg { width: 6.5rem; }
+}
 /* Workbooks: each language is a download button that names its file. */
 .wb-langs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.7rem; margin-top: 1rem; }
 @media (max-width: 640px) { .wb-langs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

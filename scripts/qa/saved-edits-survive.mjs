@@ -52,6 +52,7 @@ const HIDDEN_ON_PURPOSE = {
   'why.span.harvards-human-flourishing': 'same',
   'why.b.two-weeks-later': 'same',
   'why.span.they-were-less-depressed': 'same',
+  'workbooks/receive/desc': 'Workbooks "where to go next": each card is a plain heading and one line now; the description stays editable in /admin and shows only for a card with no one line (Wyatt, 19 Nov)',
 };
 
 /* ------------------------------------------------------------ serve */

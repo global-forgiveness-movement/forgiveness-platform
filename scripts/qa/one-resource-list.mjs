@@ -32,14 +32,14 @@ ok(COLLECTIONS.workbooks && !COLLECTIONS.workbooks.fixed, 'the workbooks list ha
 const ids = (rows) => rows.map((r) => r.id || r.key);
 const base = workbookRows(DEFAULTS.workbooks);
 ok(ids(base.top).join() === TOP_EDITIONS.join(), `top row: ${TOP_EDITIONS.join(', ')}`);
-ok(ids(base.more).join() === 'receive,activity', 'by default: RECEIVE, then the activity book');
+ok(ids(base.more).join() === 'activity,receive', 'by default: the activity book, then RECEIVE (Wyatt, 19 Nov)');
 const added = workbookRows([...DEFAULTS.workbooks, { id: 'new-guide-x1', name: 'A new guide', desc: 'Kate’s', link: 'https://example.org/g.pdf' }]);
-ok(ids(added.more).join() === 'receive,activity,new-guide-x1' && added.more[2].link, 'a row Kate adds appears, last, with its link');
+ok(ids(added.more).join() === 'activity,receive,new-guide-x1' && added.more[2].link, 'a row Kate adds appears, last, with its link');
 const trimmed = workbookRows(DEFAULTS.workbooks.filter((w) => w.id !== 'receive' && w.id !== 'reach'));
 ok(ids(trimmed.more).join() === 'activity', 'a row removed from the list goes from the page');
 ok(ids(trimmed.top).join() === TOP_EDITIONS.join() && trimmed.top[0].files, 'the top editions show even if their row is removed, files intact');
 const moved = workbookRows([...DEFAULTS.workbooks].reverse());
-ok(ids(moved.more).join() === 'activity,receive', 'reordering the list reorders the cards');
+ok(ids(moved.more).join() === 'receive,activity', 'reordering the list reorders the cards');
 ok(moved.more.every((r) => r.files), 'a row matching a hosted edition keeps its files');
 
 if (fails.length) { console.error(`RED — the resource cards have a second decider:\n  ✗ ${fails.join('\n  ✗ ')}`); process.exit(1); }
