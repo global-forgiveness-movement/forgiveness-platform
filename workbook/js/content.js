@@ -417,7 +417,7 @@ export const LESSONS = [
           p(`<b>Each letter of REACH stands for one part of the process:</b>`),
           { t: 'reachlist' },
           p(`<i>(In some languages, these letters might not make a word like they do in English.)</i>`),
-          p(`<b>These next five lessons will walk you through each step of the process.</b> We begin here with <span class="script accent">Recall the Hurt</span>.`),
+          p(`<b>These next five lessons will walk you through each step of the process.</b> We begin here with <b class="accent">Recall the Hurt</b>.`),
         ],
       },
       {

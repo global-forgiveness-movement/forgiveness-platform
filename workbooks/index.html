@@ -48,11 +48,11 @@
 
         <div class="wbm-row wbm-reach" id="wbm-reach-name"><b data-copy="workbooks.matrix.everyone">For everyone</b><span data-copy="workbooks.matrix.everyone-sub">The original</span></div>
         <div class="wbm-cell wbm-reach wbm-online" id="interactive"><a class="btn btn--primary btn--go" href="../workbook/" aria-describedby="wbm-reach-name" data-copy="workbooks.a.start-the-interactive-workbook">Start online</a></div>
-        <div class="wbm-cell wbm-reach" id="reach" data-render="wbm-dl-reach"></div>
+        <div class="wbm-cell wbm-reach" id="reach" data-render="wbm-dl-reach"><p class="loading" role="status">Loading…</p></div>
 
         <div class="wbm-row wbm-church" id="wbm-church-name"><b data-copy="workbooks.matrix.churches">For churches</b><span data-copy="workbooks.matrix.churches-sub">With prayer and Scripture</span><div data-render="wbm-church-about"></div></div>
         <div class="wbm-cell wbm-church wbm-online" id="interactive-church"><a class="btn btn--plum btn--go" data-workbook="church" aria-describedby="wbm-church-name" data-copy="workbooks.a.start-the-church-workbook">Start online</a></div>
-        <div class="wbm-cell wbm-church" id="church" data-render="wbm-dl-church"></div>
+        <div class="wbm-cell wbm-church" id="church" data-render="wbm-dl-church"><p class="loading" role="status">Loading…</p></div>
       </div>
       <p class="wbm-lock"><svg class="wbm-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span data-locked="privacy promise">What you write stays on your device.</span></p>
       <!-- Kate's line, under the row. -->
@@ -100,6 +100,7 @@
             <p class="next-name" data-copy="workbooks.next.reach-name">REACH Forgiveness Workbook</p>
           </div>
         </div>
+        <div class="next-card next-card--plain" data-next-loading><p class="loading" role="status">Loading…</p></div>
       </div>
     </div>
   </section>
@@ -164,6 +165,7 @@
     const about = document.querySelector(`[data-render="wbm-${w.id}-about"]`);
     if (about && w.about) about.innerHTML = `<details class="wbm-more"><summary data-copy="workbooks.matrix.whats-different">What’s different?</summary><p ${fieldAttr('workbooks', w, w.key, 'about')}>${w.about}</p></details>`;
   });
+  document.querySelector('[data-next-loading]')?.remove();
   document.querySelector('[data-render="workbooks-more"]').insertAdjacentHTML('beforeend', more.map(nextCard).join(''));
   /* These looked exactly like buttons and were inert spans — a Spanish speaker
      pressed one, nothing happened, and the reasonable conclusion was that the

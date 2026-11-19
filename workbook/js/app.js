@@ -65,27 +65,23 @@ const renderers = {
   scripttitle: (b) => el(`<h2 class="script-display">${b.text}</h2>`),
   quiztitle: () => el(`<h2 class="script-display quiz-title">Quiz<br>Yourself</h2>`),
   privacy: () => el(PRIVACY_CHIP),
-  think: (b) => el(`<aside class="think"><span class="think-badge">${CLOUD}<span class="think-label script">Think<br>About This</span></span><div>${b.html}</div></aside>`),
+  think: (b) => el(`<aside class="think"><span class="think-badge">${CLOUD}<span class="think-label">Think<br>About This</span></span><div>${b.html}</div></aside>`),
   note: (b) => el(`<div class="note">${b.html}</div>`),
   quote: (b) => el(`<figure class="quote"><blockquote>&ldquo;${b.text}&rdquo;</blockquote></figure>`),
   cols: (b) => el(`<div class="cols ${b.cards ? 'cols--cards' : ''}"><div>${b.a}</div><div>${b.b}</div></div>`),
   ex: (b) => {
-    if (!b.title) return el(`<p class="ex-num script">Exercise ${b.num}</p>`);
-    return el(`<header class="ex-head"><p class="ex-num script">Exercise ${b.num}</p><h2 class="ex-title">${b.title}${b.sub ? ` <span class="ex-sub">${b.sub}</span>` : ''}</h2></header>`);
+    if (!b.title) return el(`<p class="ex-num">Exercise ${b.num}</p>`);
+    return el(`<header class="ex-head"><p class="ex-num">Exercise ${b.num}</p><h2 class="ex-title">${b.title}${b.sub ? ` <span class="ex-sub">${b.sub}</span>` : ''}</h2></header>`);
   },
-  reachlist: () => el(`<ul class="reach-list">${REACH.map((r) => `<li><span class="script reach-letter">${r.letter}</span><div><span class="script reach-word">${r.word}</span><p>${r.desc}</p></div></li>`).join('')}</ul>`),
+  reachlist: () => staggerIn(el(`<ul class="reach-list">${REACH.map((r) => `<li><span class="reach-letter">${r.letter}</span><div><span class="reach-word">${r.word}</span><p>${r.desc}</p></div></li>`).join('')}</ul>`), 200, 350),
   icons: (b) => el(`<div class="icon-row">${b.items.map((i) => `<span class="obj-icon">${ICONS[i] || ''}</span>`).join('')}</div>`),
   benefits: (b) => el(`<div class="benefit-cards">${b.items.map((x) => `<section class="benefit"><h3>${x.title}</h3><p>${x.body}</p></section>`).join('')}</div>`),
   numbered: (b) => el(`<ol class="numbered">${b.items.map((x) => `<li>${x}</li>`).join('')}</ol>`),
   reveal: (b) => {
-    const node = el(`<ul class="reveal">${b.items.map((x) => `<li>${CHECKLEAF}<span>${x}</span></li>`).join('')}</ul>`);
-    requestAnimationFrame(() => node.querySelectorAll('li').forEach((li, i) => setTimeout(() => li.classList.add('in'), 150 + i * 450)));
-    return node;
+    return staggerIn(el(`<ul class="reveal">${b.items.map((x) => `<li>${CHECKLEAF}<span>${x}</span></li>`).join('')}</ul>`), 150, 450);
   },
   quiz: (b) => {
-    const node = el(`<ul class="quizlist">${b.items.map((x) => `<li>${CHECKLEAF}<span>${x}</span></li>`).join('')}</ul>`);
-    requestAnimationFrame(() => node.querySelectorAll('li').forEach((li, i) => setTimeout(() => li.classList.add('in'), 150 + i * 450)));
-    return node;
+    return staggerIn(el(`<ul class="quizlist">${b.items.map((x) => `<li>${CHECKLEAF}<span>${x}</span></li>`).join('')}</ul>`), 150, 450);
   },
   example: (b) => el(`<div class="dialogue-example">${b.lines.map((l) => `<div class="bubble bubble--${l.who === 'ME' ? 'me' : 'them'}"><span class="who">${l.who === 'ME' ? 'Me' : 'Wrongdoer'}</span><p>${l.text}</p></div>`).join('')}</div>`),
   recall: (b) => {
@@ -238,7 +234,7 @@ const renderers = {
       return row;
     });
     rows.forEach((r) => wrap.appendChild(r));
-    const revealBox = el(`<div class="rank-reveal think" hidden><span class="think-badge">${CLOUD}<span class="think-label script">Think<br>About This</span></span><div>${b.reveal}</div></div>`);
+    const revealBox = el(`<div class="rank-reveal think" hidden><span class="think-badge">${CLOUD}<span class="think-label">Think<br>About This</span></span><div>${b.reveal}</div></div>`);
     wrap.appendChild(revealBox);
     function sync() {
       const cur = store.get(b.key, {});
@@ -259,7 +255,7 @@ const renderers = {
     if (b.intro) wrap.appendChild(el(`<p class="body">${b.intro}</p>`));
     const row = el(`<div class="blank-row"></div>`);
     b.items.forEach((item) => {
-      const box = el(`<label class="blank">${item.hint ? `<span class="blank-hint ${b.stacked ? 'script' : ''}">${item.hint}</span>` : ''}<input type="text" size="${item.size || 14}" autocapitalize="none" autocomplete="off"><span class="blank-check">${CHECKLEAF}</span></label>`);
+      const box = el(`<label class="blank">${item.hint ? `<span class="blank-hint ${b.stacked ? 'stacked' : ''}">${item.hint}</span>` : ''}<input type="text" size="${item.size || 14}" autocapitalize="none" autocomplete="off"><span class="blank-check">${CHECKLEAF}</span></label>`);
       const input = box.querySelector('input');
       input.value = store.get(item.key, '');
       const check = () => {
@@ -274,7 +270,7 @@ const renderers = {
     return wrap;
   },
 
-  movement: (b) => el(`<div class="movement"><span class="movement-tag script">Movement Activity</span><ul>${b.steps.map((s) => `<li>${LEAF()}<span>${s}</span></li>`).join('')}</ul></div>`),
+  movement: (b) => el(`<div class="movement"><span class="movement-tag">Movement Activity</span><ul>${b.steps.map((s) => `<li>${LEAF()}<span>${s}</span></li>`).join('')}</ul></div>`),
 
   timer: (b) => {
     const total = b.seconds;
@@ -401,7 +397,7 @@ const renderers = {
   reachwrite: (b) => {
     const wrap = el(`<div class="reachwrite"></div>`);
     b.items.forEach((item) => {
-      const card = el(`<section class="rw-card"><header><span class="rw-leaf">${LEAF()}<span class="script rw-letter">${item.letter}</span></span><div><p class="script rw-word">${item.word}</p><h3>${item.title}</h3></div></header><p class="prompt">${item.prompt}</p></section>`);
+      const card = el(`<section class="rw-card"><header><span class="rw-leaf">${LEAF()}<span class="rw-letter">${item.letter}</span></span><div><p class="rw-word">${item.word}</p><h3>${item.title}</h3></div></header><p class="prompt">${item.prompt}</p></section>`);
       const ta = document.createElement('textarea');
       ta.rows = 4;
       ta.value = typeof store.get(item.key) === 'string' ? store.get(item.key) : '';
@@ -603,10 +599,21 @@ function viewLetter() {
   shell(inner, { dark: true });
 }
 
+/* ONE way a list's items fade in, one after another (Wyatt, 19 Nov). Plain
+   timers, not requestAnimationFrame, which a background tab pauses (the
+   list stayed blank); and with reduced motion, everything shows at once.
+   The REACH list inside a lesson (Exercise 4.1) never faded in at all
+   before: only the five-steps page started it. */
+function staggerIn(node, start, step) {
+  const items = node.querySelectorAll('li');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) items.forEach((li) => li.classList.add('in'));
+  else items.forEach((li, i) => setTimeout(() => li.classList.add('in'), start + i * step));
+  return node;
+}
+
 function viewReach() {
   const inner = el(`<div class="reach-view"><h1 class="page-title">The five steps to <span class="script accent">REACH</span> Forgiveness</h1><div class="reach-mount"></div><div class="stepnav"><a class="btn btn--primary" href="#/lesson/1">Start Lesson 1 →</a><a class="btn btn--ghost" href="#/journey">See the whole journey</a></div></div>`);
   renderBlocks([{ t: 'reachlist' }], inner.querySelector('.reach-mount'));
-  requestAnimationFrame(() => inner.querySelectorAll('.reach-list li').forEach((li, i) => setTimeout(() => li.classList.add('in'), 200 + i * 350)));
   shell(inner);
 }
 
@@ -620,7 +627,7 @@ function viewJourney() {
   if (prog && !(completed.size === LESSONS.length)) {
     const lesson = LESSONS.find((l) => l.n === prog.lesson);
     if (lesson) {
-      const card = el(`<a class="resume" href="#/lesson/${prog.lesson}/${prog.step}"><span class="resume-label script">Welcome back</span><p>Continue <b>Lesson ${prog.lesson}: ${lesson.title}</b> — ${lesson.steps[prog.step - 1] ? lesson.steps[prog.step - 1].name : ''}</p><span class="btn btn--primary">Continue →</span></a>`);
+      const card = el(`<a class="resume" href="#/lesson/${prog.lesson}/${prog.step}"><span class="resume-label">Welcome back</span><p>Continue <b>Lesson ${prog.lesson}: ${lesson.title}</b> — ${lesson.steps[prog.step - 1] ? lesson.steps[prog.step - 1].name : ''}</p><span class="btn btn--primary">Continue →</span></a>`);
       inner.appendChild(card);
     }
   }
@@ -633,7 +640,7 @@ function viewJourney() {
         <a href="#/lesson/${l.n}">
           <span class="lc-leaf">${done ? CHECKLEAF : LEAF()}</span>
           <span class="lc-text">
-            <span class="lc-num">Lesson ${l.n}${l.part ? ` · ${l.part}` : ''}${l.letter ? ` · <i class="script lc-letter">${l.letter}</i>` : ''}</span>
+            <span class="lc-num">Lesson ${l.n}${l.part ? ` · ${l.part}` : ''}${l.letter ? ` · <i class="lc-letter">${l.letter}</i>` : ''}</span>
             <span class="lc-title">${l.title}</span>
             <span class="lc-status">${done ? 'Complete' : inProgress ? 'In progress' : `${l.steps.length} steps${CHURCH ? '' : ' · 10–20 min'}`}</span>
           </span>
@@ -676,7 +683,7 @@ function viewStep(n, s) {
   const inner = el(`
     <div class="step ${step.dark ? 'step--dark' : ''}">
       <div class="step-meta">
-        <a class="step-lesson" href="#/lesson/${n}">Lesson ${n}${l.letter ? ` · <span class="script">${l.letter}</span>` : ''}</a>
+        <a class="step-lesson" href="#/lesson/${n}">Lesson ${n}${l.letter ? ` · ${l.letter}` : ''}</a>
         <span class="step-count">${s} of ${l.steps.length}</span>
       </div>
       <div class="dots">${dots}</div>
@@ -723,7 +730,7 @@ function viewPrivacy() {
       <h1 class="page-title">Privacy &amp; your data</h1>
       <div class="promise slim">${CHECKLEAF}<div><p><b>The short version:</b> everything you write stays on this device. Nothing is ever sent anywhere.</p></div></div>
       <h2>How it works</h2>
-      <p>This workbook is a set of static files — there is <b>no database of your answers and no analytics</b>. When you type a response, it is saved by your browser using a feature called <i>localStorage</i>, which lives entirely on your device. Your responses are never transmitted over the internet. You can verify this: open your browser's developer tools and watch the network tab — after the page loads, no requests carry anything you typed.</p>
+      <p>This workbook is a set of static files — there is <b>no database of your answers</b>. The only thing counted is how many times the workbook is opened — a number, nothing about you or what you write. When you type a response, it is saved by your browser using a feature called <i>localStorage</i>, which lives entirely on your device. Your responses are never transmitted over the internet. You can verify this: open your browser's developer tools and watch the network tab — after the page loads, no requests carry anything you typed.</p>
       <p>It opens with a free account, which keeps your place. The site syncs <b>your place</b> — which lesson and step you're on, and which lessons you've completed — so you can pick up on another device. It never syncs your answers. What you write stays here.</p>
       <h2>What that means in practice</h2>
       <ul>

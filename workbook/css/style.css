@@ -57,9 +57,9 @@ textarea, input[type='text'], input[type='number'] {
   font-size: 1rem;
   color: var(--ink);
 }
-.tiny { font-size: 0.8rem; }
+.tiny { font-size: 0.86rem; }
 .small { font-size: 0.85rem; }
-.muted { color: rgba(36, 51, 62, 0.6); }
+.muted { color: rgba(36, 51, 62, 0.75); }
 .accent { color: var(--teal); }
 
 /* ------------------------------------------------ page & chrome */
@@ -88,6 +88,8 @@ textarea, input[type='text'], input[type='number'] {
 .platform-brand { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--navy); }
 .platform-brand svg { width: 20px; height: 20px; flex: none; }
 .platform-mypath { color: var(--teal-deep); }
+.platform-bar a { white-space: nowrap; }
+@media (max-width: 420px) { .platform-bar { font-size: 0.82rem; } .platform-brand svg { width: 16px; height: 16px; } }
 .page--dark { background: var(--navy); color: #f2f4f0; }
 .page--dark a { color: var(--sage); }
 
@@ -167,6 +169,10 @@ main { flex: 1; width: 100%; max-width: 680px; margin: 0 auto; padding: 0.5rem v
 .btn--primary { background: var(--teal); color: #fff; box-shadow: 0 6px 18px rgba(15, 102, 89, 0.3); }
 .btn--primary:hover { background: var(--teal-deep); }
 .btn--primary .leaf { fill: #fff; }
+/* .page--dark a (sage) out-ranked the button's white: "Finish Lesson" and
+   "Continue" looked grayed out on dark steps (Wyatt, 19 Nov). */
+.page--dark a.btn--primary { color: #fff; }
+.page--dark a.btn--light { color: var(--teal-deep); }
 .btn--light { background: #fff; color: var(--teal-deep); }
 .btn--ghost { background: transparent; color: inherit; border-color: currentColor; opacity: 0.85; }
 .btn--danger { background: transparent; color: #a13333; border-color: #a13333; }
@@ -200,7 +206,7 @@ main { flex: 1; width: 100%; max-width: 680px; margin: 0 auto; padding: 0.5rem v
 .body { margin: 0.9rem 0; }
 .lead {
   font-family: var(--font-head); font-weight: 600;
-  font-size: clamp(1.25rem, 4.5vw, 1.6rem); line-height: 1.35;
+  font-size: clamp(1.12rem, 3.6vw, 1.32rem); line-height: 1.45;
   color: var(--teal);
   margin: 1.2rem 0;
 }
@@ -224,8 +230,8 @@ main { flex: 1; width: 100%; max-width: 680px; margin: 0 auto; padding: 0.5rem v
 }
 
 .ex-head { margin: 1rem 0 1.1rem; }
-.ex-num { font-family: var(--font-script); font-size: 1.7rem; color: var(--navy); margin: 0 0 -0.2rem; }
-.step--dark .ex-num { color: var(--cream); }
+.ex-num { font-family: var(--font-head); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--plum); margin: 0 0 0.3rem; }
+.step--dark .ex-num { color: var(--mustard); }
 .ex-title {
   color: var(--teal); font-size: clamp(1.35rem, 5vw, 1.8rem); margin: 0;
   padding-bottom: 0.5rem; border-bottom: 2px solid rgba(119, 0, 97, 0.35);
@@ -235,25 +241,27 @@ main { flex: 1; width: 100%; max-width: 680px; margin: 0 auto; padding: 0.5rem v
 .script-display {
   font-family: var(--font-script); font-weight: 400;
   font-size: clamp(3rem, 12vw, 4.6rem); line-height: 1;
-  color: #fff; margin: 0.5rem 0 1rem;
-  padding-bottom: 0.8rem; border-bottom: 1.5px solid rgba(255, 255, 255, 0.5);
+  color: var(--teal); margin: 0.5rem 0 1rem;
+  padding-bottom: 0.8rem; border-bottom: 1.5px solid rgba(0, 136, 122, 0.4);
 }
+/* White only on a dark step: on cream, "Let Us Pray" was white on cream. */
+.step--dark .script-display, .page--dark .script-display { color: #fff; border-bottom-color: rgba(255, 255, 255, 0.5); }
 
 .think {
   position: relative;
   background: var(--plum); color: #fff;
   border-radius: var(--radius-soft);
   padding: 1.1rem 1.2rem;
-  margin: 1.8rem 0 1rem;
-  font-size: 0.93rem; line-height: 1.55;
+  margin: 3.2rem 0 1rem;
+  font-size: 0.95rem; line-height: 1.6;
 }
 .think a { color: var(--mustard); }
-.think-badge { position: absolute; top: -1.4rem; right: 0.6rem; width: 92px; }
-.think .cloud { width: 92px; fill: var(--lavender); stroke: var(--navy); stroke-width: 1.5; }
+.think-badge { position: absolute; top: -3.2rem; right: 0.6rem; width: 112px; }
+.think .cloud { width: 112px; fill: var(--lavender); stroke: var(--navy); stroke-width: 1.5; }
 .think-label {
   position: absolute; inset: 0; display: grid; place-content: center;
-  color: var(--navy); font-size: 1.05rem; line-height: 0.9; text-align: center;
-  transform: translateY(-8px);
+  color: var(--navy); font-family: var(--font-head); font-weight: 700; font-size: 0.72rem; line-height: 1.1; text-align: center;
+  text-transform: uppercase; letter-spacing: 0.04em; transform: translateY(-6px);
 }
 
 .note {
@@ -263,11 +271,15 @@ main { flex: 1; width: 100%; max-width: 680px; margin: 0 auto; padding: 0.5rem v
 }
 .step--dark .note, .page--dark .note { color: var(--ink); }
 
-.quote { margin: 1.4rem 0; text-align: center; }
+.quote { margin: 1.4rem 0; }
+/* Left-aligned with a rule, regular weight: a nine-line quote in bold,
+   centered italics was hard to read (Wyatt, 19 Nov). */
 .quote blockquote {
-  margin: 0; font-family: var(--font-head); font-weight: 600; font-style: italic;
-  color: var(--teal); font-size: clamp(1.1rem, 4vw, 1.3rem); line-height: 1.5;
+  margin: 0; padding: 0.2rem 0 0.2rem 1.1rem; border-left: 4px solid var(--sage);
+  font-family: var(--font-body); font-weight: 500; font-style: italic;
+  color: var(--navy); font-size: clamp(1.05rem, 3.4vw, 1.2rem); line-height: 1.6;
 }
+.step--dark .quote blockquote, .page--dark .quote blockquote { color: #fff; }
 
 .cols { display: grid; gap: 1rem; margin: 1.2rem 0; }
 .cols--cards > div { background: var(--paper); border-radius: var(--radius); padding: 1rem 1.2rem; box-shadow: inset 0 0 0 1px var(--line); }
@@ -303,16 +315,21 @@ main { flex: 1; width: 100%; max-width: 680px; margin: 0 auto; padding: 0.5rem v
 
 .reach-list { list-style: none; margin: 1.4rem 0; padding: 0; }
 .reach-list li {
-  display: flex; gap: 1.1rem; align-items: flex-start;
+  display: grid; grid-template-columns: 3.2rem minmax(0, 1fr); gap: 1rem; align-items: start;
   padding: 1.1rem 0; border-bottom: 1.5px solid var(--line);
   opacity: 0; transform: translateY(10px);
   transition: opacity 0.6s, transform 0.6s;
 }
 .reach-list li.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reach-list li, .reveal li, .quizlist li { opacity: 1; transform: none; transition: none; } }
 .reach-list li:last-child { border-bottom: 0; }
-.reach-letter { font-size: 3.4rem; line-height: 0.8; color: var(--navy); min-width: 2.6rem; text-align: center; }
-.reach-word { display: block; font-size: 1.6rem; color: var(--teal); line-height: 1; margin-bottom: 0.2rem; }
-.reach-list p { margin: 0; font-family: var(--font-head); font-weight: 600; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--slate); }
+/* Wyatt, 19 Nov: the script letters crowded their words and read thin.
+   Each letter now sits in its own round badge, the word in bold, and the
+   description in plain sentence case. */
+.reach-letter { display: grid; place-content: center; width: 3.2rem; height: 3.2rem; border-radius: 50%; background: var(--teal); color: #fff;
+  font-family: var(--font-head); font-weight: 700; font-size: 1.5rem; line-height: 1; }
+.reach-word { display: block; font-family: var(--font-head); font-weight: 700; font-size: 1.25rem; color: var(--navy); line-height: 1.2; margin: 0.15rem 0 0.3rem; }
+.reach-list p { margin: 0; font-size: 1rem; line-height: 1.5; color: var(--ink); }
 .reach-list p, .reach-list .reach-word { text-wrap: balance; }
 
 .icon-row { display: flex; gap: 1.2rem; justify-content: center; margin: 1.4rem 0; }
@@ -426,7 +443,7 @@ textarea:focus-visible, input:focus-visible {
 }
 .step--dark .blank { background: var(--cream); color: var(--ink); }
 .blank-hint { font-weight: 800; color: var(--plum); }
-.blank-hint.script { font-family: var(--font-script); font-size: 1.5rem; font-weight: 400; color: var(--navy); }
+.blank-hint.stacked { font-family: var(--font-head); font-size: 1.1rem; font-weight: 700; color: var(--navy); }
 .blank input { border: 0; background: transparent; border-bottom: 1.5px dashed rgba(119, 0, 97, 0.5); padding: 0.15rem 0.2rem; min-width: 0; }
 .blank .blank-check { opacity: 0; transition: opacity 0.3s; }
 .blank.ok .blank-check { opacity: 1; }
@@ -444,8 +461,8 @@ textarea:focus-visible, input:focus-visible {
   position: absolute; top: -1rem; right: 1rem;
   background: var(--paper); color: var(--navy);
   border: 1.5px solid var(--navy);
-  border-radius: 999px; padding: 0.15rem 1rem;
-  font-size: 1.15rem; transform: rotate(-2deg);
+  border-radius: 999px; padding: 0.2rem 0.9rem;
+  font-family: var(--font-head); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; transform: rotate(-2deg);
 }
 .movement ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.8rem; }
 .movement li { display: flex; gap: 0.7rem; align-items: flex-start; font-size: 0.95rem; }
@@ -471,8 +488,8 @@ textarea:focus-visible, input:focus-visible {
 .step--dark .timer-num { color: var(--cream); }
 .timer.done .timer-num { color: var(--teal); }
 .timer-btns { display: flex; gap: 0.7rem; justify-content: center; margin-top: 0.9rem; }
-.timer-hint { font-size: 0.8rem; color: rgba(36, 51, 62, 0.55); margin-top: 0.6rem; }
-.step--dark .timer-hint { color: rgba(242, 244, 240, 0.55); }
+.timer-hint { font-size: 0.9rem; color: var(--slate); margin-top: 0.6rem; }
+.step--dark .timer-hint { color: rgba(242, 244, 240, 0.8); }
 
 .dialogue-example, .dialogue-lines { display: grid; gap: 0.8rem; margin: 1.2rem 0; }
 .bubble {
@@ -510,8 +527,8 @@ textarea:focus-visible, input:focus-visible {
 .rw-card header { display: flex; gap: 0.9rem; align-items: center; margin-bottom: 0.4rem; }
 .rw-leaf { position: relative; width: 58px; height: 58px; flex: none; display: grid; place-content: center; }
 .rw-leaf .leaf { width: 58px; height: 58px; fill: var(--teal); position: absolute; inset: 0; }
-.rw-letter { position: relative; color: #fff; font-size: 2rem; line-height: 1; }
-.rw-word { margin: 0; color: var(--teal); font-size: 1.5rem; line-height: 1; }
+.rw-letter { position: relative; color: #fff; font-family: var(--font-head); font-weight: 700; font-size: 1.5rem; line-height: 1; }
+.rw-word { margin: 0 0 0.15rem; color: var(--navy); font-family: var(--font-head); font-weight: 700; font-size: 1.2rem; line-height: 1.15; }
 .rw-card h3 { margin: 0; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal-deep); }
 .rw-card .prompt { margin-top: 0.4rem; font-size: 0.9rem; }
 
@@ -639,7 +656,7 @@ textarea:focus-visible, input:focus-visible {
   border-radius: var(--radius-soft); padding: 1.2rem 1.3rem;
   margin: 0 0 1.6rem; box-shadow: var(--shadow);
 }
-.resume-label { font-size: 1.7rem; color: var(--mustard); display: block; line-height: 1; }
+.resume-label { font-family: var(--font-head); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mustard); display: block; line-height: 1.2; }
 .resume p { margin: 0.4rem 0 0.9rem; }
 .lesson-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.7rem; }
 .lesson-card a {
@@ -658,7 +675,7 @@ textarea:focus-visible, input:focus-visible {
 .lc-leaf .checkleaf { width: 26px; height: 26px; }
 .lc-text { display: grid; }
 .lc-num { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--plum); }
-.lc-letter { font-size: 1.15rem; text-transform: none; letter-spacing: 0; }
+.lc-letter { color: var(--teal-deep); }
 .lc-title { font-family: var(--font-head); font-weight: 600; font-size: 1.02rem; color: var(--navy); line-height: 1.3; }
 .lc-status { font-size: 0.78rem; color: rgba(36, 51, 62, 0.55); }
 .lesson-card.done .lc-status { color: var(--teal-deep); font-weight: 700; }
@@ -694,7 +711,6 @@ textarea:focus-visible, input:focus-visible {
 .step-meta { display: flex; justify-content: space-between; align-items: baseline; margin-top: 0.4rem; }
 .step-lesson { font-family: var(--font-head); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; color: var(--teal-deep); }
 .step--dark .step-lesson { color: var(--sage); }
-.step-lesson .script { font-size: 1.05rem; letter-spacing: 0; text-transform: none; }
 .step-count { font-size: 0.78rem; color: rgba(36, 51, 62, 0.5); }
 .step--dark .step-count { color: rgba(242, 244, 240, 0.5); }
 .dots { display: flex; gap: 6px; margin: 0.6rem 0 0.8rem; flex-wrap: wrap; }
@@ -721,6 +737,8 @@ textarea:focus-visible, input:focus-visible {
   justify-content: space-between; align-items: center;
 }
 .stepnav .btn--primary { margin-left: auto; }
+.reach-view .stepnav { justify-content: flex-start; }
+.reach-view .stepnav .btn--primary { margin-left: 0; }
 
 /* dark step page background */
 #main:has(.step--dark) { max-width: none; padding: 0; }

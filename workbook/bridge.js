@@ -39,6 +39,9 @@ if (app) app.style.visibility = 'hidden';
     onAuth((user) => {
       if (!user) { location.replace(`../join/?next=${WORKBOOK_EDITIONS[edition].next}`); return; }
       reveal();
+      /* One anonymous count per open (Wyatt, 19 Nov): the edition's name and
+         nothing else. The workbook's privacy page says so. */
+      import('../js/metrics.js').then(({ recordOpen }) => recordOpen(edition)).catch(() => {});
       uid = user?.id || null;
       if (uid) syncProgress(uid, edition).then(() => (lastSynced = read().updatedAt));
     });

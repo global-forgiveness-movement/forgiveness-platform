@@ -92,6 +92,28 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    /* Interactive-workbook opens and the per-day sums (Wyatt, 19 Nov): the
+       same counter shape again. An open is named by its edition only; a day
+       by its kind and date only. Only editors read them. */
+    match /opens/{tag} {
+      allow read: if isEditor();
+      allow create: if tag in ['reach', 'church']
+                    && request.resource.data.keys().hasOnly(['count'])
+                    && request.resource.data.count == 1;
+      allow update: if request.resource.data.keys().hasOnly(['count'])
+                    && request.resource.data.count == resource.data.count + 1;
+      allow delete: if false;
+    }
+    match /daily/{tag} {
+      allow read: if isEditor();
+      allow create: if tag.matches('^(visits|downloads|plays|opens)_[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+                    && request.resource.data.keys().hasOnly(['count'])
+                    && request.resource.data.count == 1;
+      allow update: if request.resource.data.keys().hasOnly(['count'])
+                    && request.resource.data.count == resource.data.count + 1;
+      allow delete: if false;
+    }
+
     /* ---- contact messages: write-only from the public ---- */
     /* The contact page carries no email address at all; it writes here instead,
        and /admin is the only way to read it. Same shape as groups below: anyone
