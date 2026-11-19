@@ -31,7 +31,12 @@ function firstTimeThisTab(kind, tag) {
   return true;
 }
 
+/* A copy running on this computer (a Dev preview, a local check) counts
+   nothing, so reviewing a change never adds to the real totals. */
+const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+
 function count(kind, raw, once) {
+  if (LOCAL) return;
   const tag = tagOf(raw);
   if (!tag || (once && !firstTimeThisTab(kind, tag))) return;
   store.increment(COUNTERS[kind], tag, 'count').catch(() => {});

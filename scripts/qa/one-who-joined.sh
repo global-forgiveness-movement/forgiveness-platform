@@ -11,7 +11,7 @@ set -u
 cd "$(dirname "$0")/../.."
 fail=0
 say() { echo "RED: $*"; fail=1; }
-files=$(git ls-files -co --exclude-standard '*.js' '*.html' '*.mjs' | grep -v '^plan/')
+files=$(git ls-files -co --exclude-standard '*.js' '*.html' '*.mjs' | grep -vE '^(plan|scripts/qa)/')  # tests may name it
 
 other=$(grep -nE 'groupRoster' $files | grep -v '^js/groups.js:')
 [ -z "$other" ] || say "the who-joined list is named outside js/groups.js:
