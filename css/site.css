@@ -874,11 +874,54 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .group-name input:focus { outline: 3px solid var(--mustard); outline-offset: 1px; border-color: var(--teal); }
 .flow-plan label { font-weight: 600; }
 
-/* Workbooks (Kate, 6 Oct): the three ways to do the workbook, one row. Each
-   card's button sits at its foot, so the three line up. */
-.wb-row > .card, .wb-row .wb-card { display: flex; flex-direction: column; }
-.wb-row .card > .dl-row:last-child { margin-top: auto; padding-top: 0.6rem; }
-.wb-card--interactive { border: 2px solid var(--teal); }
+/* Workbooks: the 2×2 (Wyatt, 19 Nov). Format across the top, edition down
+   the side; each edition's row is its own color, down to its buttons. */
+.wbm { --wbm-reach: #e2efea; --wbm-church: #f2e3ec; --wbm-edge: rgba(0, 61, 87, 0.12);
+  display: grid; grid-template-columns: minmax(10rem, 0.8fr) minmax(0, 1fr) minmax(0, 1fr);
+  margin-top: 1.6rem; border-radius: var(--radius); overflow: hidden; background: var(--white); border: 1.5px solid var(--wbm-edge); }
+.wbm > * { padding: 1.1rem 1.25rem; min-width: 0; }
+.wbm-corner, .wbm-col { border-bottom: 1.5px solid var(--wbm-edge); }
+.wbm-col { display: flex; gap: 0.7rem; align-items: center; }
+.wbm-col b { display: block; font-family: var(--font-head); font-size: var(--fs-body); color: var(--navy); }
+.wbm-col span, .wbm-row > span { display: block; font-size: var(--fs-small); color: var(--muted); }
+.wbm-ico { width: 1.6rem; height: 1.6rem; flex: none; fill: none; stroke: var(--teal-deep); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.wbm-ico--dl { stroke: #8a5d00; }
+.wbm-row { display: flex; flex-direction: column; justify-content: center; gap: 0.15rem; }
+.wbm-row b { font-family: var(--font-head); font-size: var(--fs-body); line-height: 1.2; }
+.wbm-reach { background: var(--wbm-reach); }
+.wbm-reach.wbm-row b { color: var(--teal-deep); }
+.wbm-church { background: var(--wbm-church); border-top: 2px solid var(--white); }
+.wbm-church.wbm-row b { color: var(--plum); }
+.wbm-cell { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
+.wbm-cell select { min-height: var(--tap); font: 600 var(--fs-label) var(--font-head); color: var(--navy); background: var(--white); border: 1.5px solid var(--line); border-radius: 10px; padding: 0 0.8rem; }
+.wbm-more { margin-top: 0.35rem; font-size: var(--fs-small); }
+.wbm-more summary { cursor: pointer; color: var(--plum); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+.wbm-more p { margin: 0.5rem 0 0; color: var(--ink); }
+.btn--outline-plum { border-color: var(--plum); color: var(--plum); }
+.btn--outline-plum:hover { background: rgba(119, 0, 97, 0.07); }
+.wbm-lock { display: flex; gap: 0.5rem; align-items: center; margin: 0.9rem 0 0; font-size: var(--fs-small); color: var(--muted); }
+.wbm-lock .wbm-ico { width: 1.2rem; height: 1.2rem; }
+@media (max-width: 760px) {
+  .wbm { grid-template-columns: minmax(0, 1fr); }
+  .wbm-corner, .wbm-col { display: none; }
+  .wbm > * { padding-block: 0.5rem; }
+  .wbm-row { padding-top: 1.1rem; }
+  .wbm-cell:not(.wbm-online) { padding-bottom: 1.2rem; }
+  .wbm-cell .btn { flex: 1 1 auto; }
+  .wbm-church.wbm-cell { border-top: 0; }
+}
+/* Workbooks: each language is a download button that names its file. */
+.wb-langs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.7rem; margin-top: 1rem; }
+@media (max-width: 640px) { .wb-langs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.wb-lang { display: inline-flex; flex-direction: column; gap: 0.1rem; min-height: var(--tap); padding: 0.6rem 2.6rem 0.6rem 1rem; position: relative;
+  border: 2px solid var(--teal); border-radius: 12px; background: var(--white); text-decoration: none; color: var(--teal-deep);
+  box-shadow: 0 2px 0 #005C53; transition: transform 0.12s, box-shadow 0.12s, background 0.12s; }
+.wb-lang::after { content: "\2193" / ""; position: absolute; right: 0.9rem; top: 50%; transform: translateY(-50%); font-size: var(--fs-body); font-weight: 700; }
+.wb-lang:hover { background: rgba(0, 136, 122, 0.08); transform: translateY(-2px); box-shadow: 0 4px 0 #005C53; }
+.wb-lang:focus-visible { outline: 3px solid var(--mustard); outline-offset: 3px; }
+.wb-lang-name { font-family: var(--font-head); font-weight: 600; font-size: var(--fs-label); }
+.wb-lang-file { font-size: var(--fs-small); color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .wb-lang, .wb-lang:hover { transition: none; transform: none; } }
 /* My Path: the facilitator's manual and film (Kate, 6 Oct). */
 .kit-card { border-left: 4px solid var(--plum); margin-bottom: 1rem; }
 .kit-item { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; padding: 0.6rem 0; border-top: 1px solid var(--line); }
