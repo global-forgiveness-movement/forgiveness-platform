@@ -89,6 +89,7 @@ body {
   flex-direction: column;
 }
 img, svg, iframe { max-width: 100%; }
+img { height: auto; }   /* a capped width never leaves a picture stretched */
 a { color: var(--teal-deep); }
 h1, h2, h3, h4 { font-family: var(--font-head); line-height: 1.22; color: var(--navy); margin: 0 0 0.6em; }
 h1 { font-size: var(--fs-display); font-weight: 700; }

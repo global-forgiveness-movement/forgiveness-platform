@@ -137,9 +137,11 @@
   /* The next-steps pictures: the direction of each forgiveness, drawn with
      Gemini in the site's botanical style (scripts/art/gen-illustration.py
      next-*; Wyatt picked them 21 Nov). Decorative, so no alt text. */
-  const ART_SIZE = { reach: [720, 560], receive: [508, 720], community: [720, 523] };   // so nothing jumps as they load
-  const ART = Object.fromEntries(Object.entries(ART_SIZE).map(([k, [w, h]]) =>
-    [k, `<img src="../assets/illustrations/next-${k}.webp" width="${w}" height="${h}" alt="" loading="lazy" decoding="async">`]));
+  /* No width/height attributes: with a stale stylesheet (Pages caches CSS
+     for 10 minutes) they stretched the pictures tall (Wyatt, 21 Nov). The
+     frame's fixed height (.next-art) already keeps the page from jumping. */
+  const ART = Object.fromEntries(['reach', 'receive', 'community'].map((k) =>
+    [k, `<img src="../assets/illustrations/next-${k}.webp" alt="" loading="lazy" decoding="async">`]));
   document.querySelectorAll('[data-art]').forEach((el) => (el.innerHTML = ART[el.dataset.art] || ''));
   /* A next-steps card: its plain heading (ask) and one line, or, for a
      resource Kate adds in /admin without them, its name and description. */
