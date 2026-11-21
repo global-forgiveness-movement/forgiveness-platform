@@ -1106,19 +1106,24 @@ html[data-shell-ready]:not([data-copy-editing]) .def[data-reveal]:not(.is-on) > 
 .hero-why { margin: 0 0 1.3rem; }
 .hero .hero-lead { margin: 0; }
 .hero-art { width: 100%; max-width: 30rem; height: auto; justify-self: end; }
-/* A tablet keeps the two columns, the drawing a little smaller (Wyatt, 21 Nov:
-   at 640–860px the stacked hero sat left with a third of the width empty). */
-@media (max-width: 860px) { .hero { gap: 1.2rem 1.8rem; } }
-/* One column, on a phone only: the drawing sits under the headline (Wyatt,
-   27 Oct). The text column dissolves so the picture can slot between its pieces. */
-@media (max-width: 640px) {
-  .hero { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
+/* Tablet (Wyatt, 21 Nov): the title runs the full width on top, uncapped, so
+   it never breaks early; under it the words and button sit left and the
+   drawing fills the right, so no band of the page is left empty. */
+@media (max-width: 860px) {
+  .hero { grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr); gap: 0 1.8rem; }
   .hero-text { display: contents; }
-  .hero-text > * { order: 2; }
-  .hero-text > .hfp-eyebrow, .hero-text > h1 { order: 0; }
-  .hero-art { order: 1; justify-self: start; max-width: 15rem; margin: 0 0 1.2rem; }
+  .hero-text > .hfp-eyebrow, .hero-text > h1 { grid-column: 1 / -1; }
+  .hero h1 { max-width: none; }
+  .hero-text > :not(.hfp-eyebrow):not(h1) { grid-column: 1; }
+  .hero-art { grid-column: 2; grid-row: 3 / span 3; justify-self: center; align-self: center; max-width: 100%; }
 }
-@media (max-width: 560px) { .hero-art { max-width: 10.5rem; } }
+/* Phone: one column, the drawing under the headline (Wyatt, 27 Oct). */
+@media (max-width: 520px) {
+  .hero { grid-template-columns: minmax(0, 1fr); }
+  .hero-text > * { grid-column: 1; order: 2; }
+  .hero-text > .hfp-eyebrow, .hero-text > h1 { order: 0; }
+  .hero-art { grid-column: 1; grid-row: auto; order: 1; justify-self: start; max-width: 10.5rem; margin: 0 0 1.2rem; }
+}
 
 /* WHAT FORGIVENESS ISN'T (js/site.js renderDefinitionNot): two halves under
    the definition. Three words struck through in plum, three ticked in teal;
