@@ -134,12 +134,12 @@
     const href = httpOnly(w.link);
     return href ? `<a class="btn btn--primary btn--go" href="${href}" target="_blank" rel="noopener" ${fieldAttr('workbooks', w, w.key, 'button')}>${w.button || 'Open'}</a>` : '';
   };
-  /* The next-steps pictures: who forgives whom. Code, not words. */
-  const ART = {
-    reach: '<svg viewBox="0 0 200 90" aria-hidden="true"><g class="a-ink"><circle cx="40" cy="34" r="11"/><path d="M20 76c0-13 9-21 20-21s20 8 20 21"/><circle cx="160" cy="34" r="11"/><path d="M140 76c0-13 9-21 20-21s20 8 20 21"/><path d="M66 48h62" stroke-dasharray="2 7"/><path d="M122 41l9 7-9 7"/></g></svg>',
-    receive: '<svg viewBox="0 0 200 110" aria-hidden="true"><g class="a-glow"><circle cx="100" cy="20" r="10"/><path d="M82 8l-4-4M118 8l4-4M76 22h-6M124 22h6"/><path d="M100 36v18" stroke-dasharray="2 7"/><path d="M93 50l7 9 7-9"/><path d="M60 98c-8-10-8-24 0-34M140 98c8-10 8-24 0-34"/></g><g class="a-ink"><circle cx="100" cy="72" r="8"/><path d="M78 106c0-12 10-20 22-20s22 8 22 20"/></g></svg>',
-    community: '<svg viewBox="0 0 200 100" aria-hidden="true"><g class="a-ink"><circle cx="100" cy="30" r="9"/><path d="M84 62c0-11 7-18 16-18s16 7 16 18"/><circle cx="52" cy="44" r="8"/><path d="M38 74c0-10 6-16 14-16s14 6 14 16"/><circle cx="148" cy="44" r="8"/><path d="M134 74c0-10 6-16 14-16s14 6 14 16"/><circle cx="76" cy="66" r="7"/><path d="M64 92c0-8 5-13 12-13s12 5 12 13"/><circle cx="124" cy="66" r="7"/><path d="M112 92c0-8 5-13 12-13s12 5 12 13"/></g><ellipse class="a-ring" cx="100" cy="60" rx="94" ry="38"/></svg>',
-  };
+  /* The next-steps pictures: the direction of each forgiveness, drawn with
+     Gemini in the site's botanical style (scripts/art/gen-illustration.py
+     next-*; Wyatt picked them 21 Nov). Decorative, so no alt text. */
+  const ART_SIZE = { reach: [720, 560], receive: [508, 720], community: [720, 523] };   // so nothing jumps as they load
+  const ART = Object.fromEntries(Object.entries(ART_SIZE).map(([k, [w, h]]) =>
+    [k, `<img src="../assets/illustrations/next-${k}.webp" width="${w}" height="${h}" alt="" loading="lazy" decoding="async">`]));
   document.querySelectorAll('[data-art]').forEach((el) => (el.innerHTML = ART[el.dataset.art] || ''));
   /* A next-steps card: its plain heading (ask) and one line, or, for a
      resource Kate adds in /admin without them, its name and description. */

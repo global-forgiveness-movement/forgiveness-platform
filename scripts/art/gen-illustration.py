@@ -39,6 +39,10 @@ SUBJECTS = {
     'globe': "Subject: a simple round globe drawn as a thin navy outline with a few curved latitude and longitude lines, with two slender leafy branches curving around it.",
     'hero-path': "Subject: a gentle winding path drawn as two thin navy lines, rising from the bottom left toward a small half sun on a low horizon at the upper right. Slender leafy branches grow beside the path, and a few loose leaves drift upward and away from it, light and free. Calm, hopeful, open.",
     'start-a-group': "Subject: one small rounded screen shape in flat navy outline with a small flat teal play-triangle in its center, and in front of it three small open books in a gentle arc, as if gathered to watch together. A slender leafy branch grows up from each book, the three curving toward the screen. Lots of empty space, nothing touching the edges.",
+    # Workbooks "where to go next" (Wyatt, 19 Nov): the three directions of forgiveness, told with branches.
+    'next-reach': "Subject: two slender branches growing from the left and right edges toward each other; the left branch holds out a single mustard leaf across the gap to the right branch, as an offering. A gesture of letting go toward another. Lots of empty space, nothing touching the edges.",
+    'next-receive': "Subject: a small half sun at the top center with a few thin navy rays falling straight down onto one young branch below, whose leaves open upward toward the light to receive it. Quiet, grateful, still. Lots of empty space.",
+    'next-community': "Subject: seven or eight small slender branches rising from one shared gently curved ground line, of different heights, their leaves overlapping and intertwining into one wide shared canopy, like a whole neighborhood growing together. Wide and inclusive, lots of empty space at the edges.",
     'sunrise': "Subject: a half sun rising above a straight horizon line, drawn as a thin navy outline with a few short rays, and one slender branch in fresh leaf rising beside it.",
 }
 

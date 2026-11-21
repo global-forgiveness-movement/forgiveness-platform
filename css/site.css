@@ -923,12 +923,10 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .next-card p { margin: 0; }
 .next-name { font-size: var(--fs-small); font-weight: 600; color: var(--muted); }
 .next-foot { margin-top: auto; padding-top: 0.6rem; }
-.next-art svg { display: block; width: 100%; max-width: 13rem; height: auto; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-.next-art .a-ink { stroke: var(--navy); }
-.next-art .a-glow { stroke: #b07a00; }
-.next-art .a-ring { stroke: #7fa6bd; stroke-width: 2.5; stroke-dasharray: 3 8; }
+.next-art { display: block; height: 8.5rem; }
+.next-art img { display: block; height: 100%; width: auto; max-width: 100%; object-fit: contain; object-position: left center; }
+.next-card--done .next-art img { opacity: 0.75; }
 .next-card--done { border: 2px dashed rgba(60, 124, 108, 0.45); color: #3c7c6c; }
-.next-card--done .a-ink { stroke: #3c7c6c; }
 .next-card--done h3 { font-size: var(--fs-body); color: #2f6a5c; }
 .next-kicker { font-family: var(--font-head); font-size: var(--fs-small); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
 .next-card--gold { background: #fbf0d0; }
@@ -941,7 +939,7 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 @media (max-width: 860px) {
   .next-row { grid-template-columns: minmax(0, 1fr); }
   .next-card--done { flex-direction: row; align-items: center; gap: 1rem; }
-  .next-card--done .next-art svg { width: 6.5rem; }
+  .next-card--done .next-art { height: 5rem; flex: none; width: 6.5rem; }
 }
 /* Workbooks: each language is a download button that names its file. */
 .wb-langs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: 0.7rem; margin-top: 1rem; }
