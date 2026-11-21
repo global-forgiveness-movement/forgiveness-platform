@@ -140,7 +140,7 @@
   /* No width/height attributes: with a stale stylesheet (Pages caches CSS
      for 10 minutes) they stretched the pictures tall (Wyatt, 21 Nov). The
      frame's fixed height (.next-art) already keeps the page from jumping. */
-  const ART = Object.fromEntries(['reach', 'receive', 'community'].map((k) =>
+  const ART = Object.fromEntries(['reach', ...WORKBOOKS.map((w) => w.art).filter(Boolean)].map((k) =>
     [k, `<img src="../assets/illustrations/next-${k}.webp" alt="" loading="lazy" decoding="async">`]));
   document.querySelectorAll('[data-art]').forEach((el) => (el.innerHTML = ART[el.dataset.art] || ''));
   /* A next-steps card: its plain heading (ask) and one line, or, for a
