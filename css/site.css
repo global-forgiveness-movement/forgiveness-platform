@@ -906,6 +906,12 @@ h1 i, h1 em, h2 i, h2 em, h3 i, h3 em { font-style: normal; color: var(--teal); 
 .btn--outline-plum:hover { background: rgba(119, 0, 97, 0.07); }
 .wbm-lock { display: flex; gap: 0.5rem; align-items: center; margin: 0.9rem 0 0; font-size: var(--fs-small); color: var(--muted); }
 .wbm-lock .wbm-ico { width: 1.2rem; height: 1.2rem; }
+/* Tablet: a narrower label column, so each download button fits on one line. */
+@media (max-width: 1000px) {
+  .wbm { grid-template-columns: minmax(7.5rem, 0.6fr) minmax(0, 1fr) minmax(0, 1fr); }
+  .wbm > * { padding-inline: 0.9rem; }
+  .wbm-cell .btn { padding-inline: 1rem; }
+}
 @media (max-width: 760px) {
   .wbm { grid-template-columns: minmax(0, 1fr); }
   .wbm-corner, .wbm-col { display: none; }
@@ -1100,9 +1106,12 @@ html[data-shell-ready]:not([data-copy-editing]) .def[data-reveal]:not(.is-on) > 
 .hero-why { margin: 0 0 1.3rem; }
 .hero .hero-lead { margin: 0; }
 .hero-art { width: 100%; max-width: 30rem; height: auto; justify-self: end; }
-/* One column: the drawing sits under the headline (Wyatt, 27 Oct). The text
-   column dissolves so the picture can slot between its pieces. */
-@media (max-width: 860px) {
+/* A tablet keeps the two columns, the drawing a little smaller (Wyatt, 21 Nov:
+   at 640–860px the stacked hero sat left with a third of the width empty). */
+@media (max-width: 860px) { .hero { gap: 1.2rem 1.8rem; } }
+/* One column, on a phone only: the drawing sits under the headline (Wyatt,
+   27 Oct). The text column dissolves so the picture can slot between its pieces. */
+@media (max-width: 640px) {
   .hero { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
   .hero-text { display: contents; }
   .hero-text > * { order: 2; }
