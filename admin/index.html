@@ -20,17 +20,19 @@
     .adm-hint p { margin: 0; flex: 1 1 24rem; }
     .adm-hint a { white-space: nowrap; margin-left: auto; }
     .adm-layout { display: grid; grid-template-columns: 13.5rem minmax(0, 1fr); gap: 2.2rem; align-items: start; }
-    .adm-nav { position: sticky; top: 1rem; }
+    /* Pinned, but scrolls on its own when it's taller than the window
+       (Wyatt, 21 Nov: Safety net was cut off below the fold). */
+    .adm-nav { position: sticky; top: 1rem; max-height: calc(100vh - 2rem); overflow-y: auto; overscroll-behavior: contain; padding-right: 0.2rem; }
     .adm-nav h2 { font-family: var(--font-head); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em;
       text-transform: uppercase; color: var(--muted); margin: 1.1rem 0 0.3rem 0.7rem; }
     .adm-nav h2:first-child { margin-top: 0; }
     .adm-nav button { display: block; width: 100%; text-align: left; border: 0; background: none; border-radius: 10px;
-      padding: 0.45rem 0.7rem; font-family: var(--font-head); font-size: 0.92rem; color: var(--navy); cursor: pointer; }
+      padding: 0.35rem 0.7rem; font-family: var(--font-head); font-size: 0.92rem; color: var(--navy); cursor: pointer; }
     .adm-nav button:hover { background: var(--cream-soft); }
     .adm-nav button[aria-current="true"] { background: var(--tone); color: #fff; }
     /* Each group its own color (Wyatt, 19 Nov); Stats first, in gold. */
     .adm-navgroup { --tone: var(--teal); --tint: rgba(0, 136, 122, 0.08); background: var(--tint); border-left: 4px solid var(--tone);
-      border-radius: 12px; padding: 0.55rem 0.4rem 0.45rem; margin-bottom: 0.7rem; }
+      border-radius: 12px; padding: 0.45rem 0.4rem 0.35rem; margin-bottom: 0.5rem; }
     .adm-navgroup h2 { color: var(--tone) !important; margin: 0 0 0.25rem 0.55rem !important; }
     .adm-navgroup--blue { --tone: #2463a6; --tint: rgba(42, 120, 200, 0.1); }
     .adm-navgroup--lavender { --tone: #6e4a8f; --tint: rgba(198, 163, 200, 0.22); }
